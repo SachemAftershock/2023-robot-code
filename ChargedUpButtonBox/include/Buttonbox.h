@@ -3,15 +3,18 @@
 
 #include <Arduino.h>
 
-constexpr int ARCADE_BUTTON_PRESSED = 0;
-constexpr int INVALID_BUTTON_ID = 9999;
-constexpr int JOYSTICK_BUTTON_PRESSED = 1;
-constexpr int JOYSTICK_BUTTON_RELEASED = 0;
+constexpr uint8_t ARCADE_BUTTON_PRESSED = 0;
+constexpr uint16_t INVALID_BUTTON_ID = 9999;
+constexpr uint8_t JOYSTICK_BUTTON_PRESSED = 1;
+constexpr uint8_t JOYSTICK_BUTTON_RELEASED = 0;
 
 struct ButtonInfo {
     uint8_t buttonId;
     uint8_t joyStickId;
     uint8_t ledId;
+
+    uint8_t secondaryJoystickId;
+    uint8_t secondaryLedId;
 };
 
 class LED {
@@ -78,6 +81,7 @@ class ToggleButton: public Button {
   uint8_t m_SecondaryJoystickId;
 
   public:
+    ToggleButton(ButtonInfo buttonInfo): ToggleButton(buttonInfo.buttonId, buttonInfo.ledId, buttonInfo.secondaryLedId, buttonInfo.joyStickId, buttonInfo.secondaryJoystickId) {}
     ToggleButton(uint8_t buttonId, uint8_t defaultLedId, uint8_t secondaryLedId, 
     uint8_t primaryJoystickId, uint8_t secondaryJoystickId): 
     Button(buttonId, defaultLedId, primaryJoystickId), m_SecondaryLed(secondaryLedId) {
