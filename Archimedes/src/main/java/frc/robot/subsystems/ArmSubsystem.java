@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
-import frc.Constants.ArmConstants;
+import frc.robot.Constants.ArmConstants;
 
 public class ArmSubsystem extends TrapezoidProfileSubsystem{
 

@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.Constants.REVConstants;
 
 import javax.lang.model.util.ElementScanner14;
 
@@ -40,9 +40,9 @@ public class IngestConeCommand extends InstantCommand {
   //@Override
   public void execute() {
     double currentEncoderValue = mIntakeSubsystem.getEncoderValue();
-    if(Math.abs(currentEncoderValue-previousEncoderPosition) > Constants.kNEO550CountsperREV){
+    if(Math.abs(currentEncoderValue-previousEncoderPosition) > REVConstants.kNEO550CountsperREV){
       //change call to getVelocity in getPosition thinkAabout
-       mIntakeSubsystem.ingestCone();
+      mIntakeSubsystem.ingestCone();
     }
     else
     {

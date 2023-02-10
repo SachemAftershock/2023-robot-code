@@ -21,6 +21,9 @@ public class Lidar {
         mCounter.reset();
     }
 
+    public Lidar(int kprimarycontrollerport) {
+    }
+
     /**
      * Gets the distance in Centimeters
      * @return Measured Distance in Centimeters

@@ -44,4 +44,14 @@ public final class Constants {
   public static class Lidarportvalues{
     public static final int y = 0;
   }
+  public static class ArmConstants{
+    public static final double kMaxVelocityRadPerSecond = 0;
+    public static final double kArmOffsetRads = 0;
+    public static final double kMaxAccelerationRadPerSecSquared = 0;
+
+  }
+  public static class REVConstants{
+    public static final double kNEO550CountsperREV = 0;
+  }
+
   }
