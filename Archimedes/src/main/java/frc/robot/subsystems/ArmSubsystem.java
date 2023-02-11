@@ -1,72 +1,61 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
-import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
-import frc.lib.AftershockDifferentialDrive;
 import frc.lib.AftershockSubsystem;
+import frc.robot.Constants.ArmConstants;
+
 import static frc.robot.Constants.ArmConstants.*;
 
 public class ArmSubsystem extends AftershockSubsystem {
 
     private static ArmSubsystem mInstance;
     private CANSparkMax mArmMotor;
-    private TrapezoidProfile mMotionProfile;
-    private Constraints mConstraints;
     private SparkMaxPIDController mPIDController;
-    private RelativeEncoder mEncoder;
+    
+    private final TrapezoidProfile.Constraints m_constraints;
+    private TrapezoidProfile.State m_goal;
+    private TrapezoidProfile.State m_setpoint;
+    private static double kDt;
 
     public ArmSubsystem() {
         super();
+
         mArmMotor = new CANSparkMax(kArmMotorID, MotorType.kBrushless);
-        // mConstraints = new TrapezoidProfile.Constraints(ArmConstants.kMaxVelocityRadPerSecond, 
-        //                                                 ArmConstants.kMaxAccelerationRadPerSecSquared);
+        m_constraints =  new TrapezoidProfile.Constraints(1.75, 0.75);
+        m_goal = new TrapezoidProfile.State();
+        m_setpoint = new TrapezoidProfile.State();
+
+        kDt = ArmConstants.kDt;
+
         mPIDController = mArmMotor.getPIDController();
-        mEncoder = mArmMotor.getEncoder();
 
         mPIDController.setP(kP);
         mPIDController.setI(kI);
         mPIDController.setD(kD);
         mPIDController.setIZone(kIz);
-        mPIDController.setFF(kFF);
-        mPIDController.setOutputRange(kMinOutput, kMaxOutput);
 
-        mPIDController.setSmartMotionMaxVelocity(maxVel, smartMotionSlot);
-        mPIDController.setSmartMotionMinOutputVelocity(minVel, smartMotionSlot);
-        mPIDController.setSmartMotionMaxAccel(maxAcc, smartMotionSlot);
-        mPIDController.setSmartMotionAllowedClosedLoopError(allowedErr, smartMotionSlot);
-        
     }
 
     @Override
     public void initialize() {
-        // TODO Auto-generated method stub
-
-       
-
-        
+        m_goal = new TrapezoidProfile.State(0.5, 0.5);
     }
 
     @Override
     public void periodic() {
 
+        var profile = new TrapezoidProfile(m_constraints, m_goal, m_setpoint);
+        m_setpoint = profile.calculate(kDt);
+    
+        mPIDController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
     }
     
-    public void useState(TrapezoidProfile.State setpoint) {
-
-    }
 
     @Override
     public void outputTelemetry() {
-        // TODO Auto-generated method stub
         
     }
 
