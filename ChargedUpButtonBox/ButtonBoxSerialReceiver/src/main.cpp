@@ -5,10 +5,41 @@
 Timer t;
 char ch;
 
-enum systemModeEnum {Off, ProcessTheMessages };
-systemModeEnum currentSystemMode = ProcessTheMessages;
-systemModeEnum lastSystemMode = Off;
+enum systemModeEnum {eReady, eBusy };
+systemModeEnum currentSystemMode = eReady;
+systemModeEnum lastSystemMode = eBusy;
 int commandReceivedLedOnboardArduino = 13;
+
+enum buttonBoxLedsEnum { 
+  eLedRoboRioBusy = 0,
+
+  eLed_Slot1_Cone = 1,
+  eLed_Slot2_Cube = 2,
+  eLed_Slot3_Cone = 3,
+
+  eLed_Slot4_Cone = 4,
+  eLed_Slot5_Cube = 5,
+  eLed_Slot6_Cone = 6,
+
+  eLed_Slot7_Cone = 7,
+  eLed_Slot8_Cube = 8,
+  eLed_Slot9_Cone = 9,
+
+  eLed_HumanStationLeft = 10,
+  eLed_HumanStationRight = 11,
+
+  eLed_ConeMode = 12,
+  eLed_CubeMode = 13,
+
+  eLed_ElevatorHigh = 14,
+  eLed_ElevatorMedium = 15,
+  eLed_ElevatorLow = 16,
+  eLed_ElevatorFloor = 17,
+  eLed_ElevatorPark = 18,
+
+  eLed_Ingest = 19,
+  eLed_Eject = 20
+};
 
 bool blinkOn = false;
 
@@ -26,14 +57,14 @@ void processCommand(char theCh) {
   Serial.print("\n"); 
   switch (theCh)
   {
-    case 'o':
-      currentSystemMode = Off;
-      Serial.write("Commanded OFF. \n");
+    case 'r':
+      currentSystemMode = eReady;
+      Serial.write("Commanded RoboRIO is ready for next command. \n");
       break;
    
-    case 'p':
-      currentSystemMode = ProcessTheMessages;
-      Serial.write("Commanded PROCESS. \n");
+    case 'b':
+      currentSystemMode = eBusy;
+      Serial.write("Commanded RoboRIO is busy. \n");
       break;
 
     default:
@@ -46,17 +77,17 @@ void processCommand(char theCh) {
 void processCurrentMode() {
   switch (currentSystemMode) {
 
-    case Off:
-      if (lastSystemMode != Off) {
-
-        lastSystemMode = Off;
+    case eReady:
+      if (lastSystemMode != eReady) {
+        digitalWrite(eLedRoboRioBusy,LOW);
+        lastSystemMode = eReady;
       }
       break;
       
-    case ProcessTheMessages:
-      if (lastSystemMode != ProcessTheMessages) {
-
-        lastSystemMode = ProcessTheMessages;
+    case eBusy:
+      if (lastSystemMode != eBusy) {
+        digitalWrite(eLedRoboRioBusy,HIGH);
+        lastSystemMode = eBusy;
       }
       break;
             
@@ -91,6 +122,7 @@ void setup() {
   t.every(200, processCurrentMode);
   pinMode(commandReceivedLedOnboardArduino, OUTPUT);
   toggleCommandArrivedLed();
+  pinMode(eLedRoboRioBusy, OUTPUT);
   Serial.write("Arduino-Slave-I2C-ButtonBoxSerialReceiver Initialization Complete. \n");
 }
 

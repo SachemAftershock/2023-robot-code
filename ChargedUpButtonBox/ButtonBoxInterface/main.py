@@ -1,8 +1,10 @@
 from ntcore import NetworkTableInstance
 from serial import Serial, SerialTimeoutException, SerialException
+from serial.tools import list_ports
 from traceback import print_exc
 
-SERIAL_PORT = "COM5"
+SERIAL_PORT = ""  # Leave empty to try to find port automatically
+ARDUINO_NAME = "Arduino Mega 2560"  # The arduino to search for when scanning ports. Can leave blank if not scanning
 TEAM_NUMBER = 263
 NT_NAME = "DS Laptop"
 ROBORIO_BUSY = "b"
@@ -47,8 +49,16 @@ def main():
 
     print("Client started")
 
+    serial_port = SERIAL_PORT
+
+    if not serial_port:
+        ports = list(list_ports.comports())
+        for port in ports:
+            if ARDUINO_NAME in port.description:
+                serial_port = port.device
+
     try:
-        arduino = Serial(SERIAL_PORT)
+        arduino = Serial(serial_port)
     except SerialException:
         print_exc()
         print()
