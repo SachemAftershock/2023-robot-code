@@ -82,6 +82,11 @@ public class IntakeSubsystem extends AftershockSubsystem
         // TODO Auto-generated method stub
         
     }
+/**  public double getEncoderValue()
+    {
+        return sparkMotorController.getEncoder().getPosition();
+    }
+    */
 
 //right trigger, left trigger - cones
 //right bumper left bumper - cubes

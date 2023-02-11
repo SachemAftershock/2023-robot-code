@@ -3,22 +3,22 @@ import frc.lib.AftershockSubsystem;
 import frc.lib.Lidar;
 import frc.lib.PID;
 import frc.robot.Constants.PortConstants;
+import frc.robot.Enums.ElevatorPosition;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem.States;
 import frc.robot.Constants.PIDvalues;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 public class ElevatorCommand extends InstantCommand{
-    private static States mCurrentState;
+    private static ElevatorPosition mdesiredState;
     private ElevatorSubsystem mElevatorSubsystem;
     private final Lidar mLidarElevator = new Lidar(1); 
 
 
-    public ElevatorCommand(ElevatorSubsystem elevatorSubsystem, States state) 
+    public ElevatorCommand(ElevatorSubsystem elevatorSubsystem, ElevatorPosition desiredState ) 
     {        // Use addRequirements() here to declare subsystem dependencies.
         //addRequirements();
-        mCurrentState = state;
+        mdesiredState = desiredState;
         mElevatorSubsystem = elevatorSubsystem;
 
     }
@@ -27,8 +27,8 @@ public class ElevatorCommand extends InstantCommand{
     @Override
     public void initialize() {
 
-      double distance = mCurrentState.getDistance();
-      mElevatorSubsystem.startElevatorPID(distance);
+      /**double distance = mCurrentState.getDistance();
+      mElevatorSubsystem.startElevatorPID(distance);*/
       
     }
     
@@ -52,12 +52,6 @@ public class ElevatorCommand extends InstantCommand{
       } 
       return false;
     }
-
-
-
-    
-   
-
 }
 
 

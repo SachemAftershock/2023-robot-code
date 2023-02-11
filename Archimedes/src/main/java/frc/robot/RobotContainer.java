@@ -8,11 +8,14 @@ import frc.lib.AftershockXboxController;
 import frc.lib.Lidar;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Enums.ElevatorPosition;
+import edu.wpi.first.wpilibj.Joystick;
 // moved import frc.robot.Constants.ControllerConstants; to intakeSubsystem
 //import frc.robot.commands.Autos;
 //import frc.robot.commands.ExampleCommand;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
-
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,11 +37,16 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   
-
+  final ElevatorSubsystem mElevatorSubsystem = new ElevatorSubsystem();
   final IntakeSubsystem mIntakeSubsystem = new IntakeSubsystem();
+
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   public final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.kPrimaryControllerPort);
+  Joystick mJoystick  = new Joystick(ControllerConstants.kPrimaryControllerPort);
+  ButtonBox mButtonBox = new ButtonBox(0);
+
+  private static boolean isCone = false;
 
   /**private JoystickButton bInputCube = new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value);
   private JoystickButton bOutputCube = new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value);
@@ -51,6 +59,14 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     
+  }
+
+  public static boolean isCone() {
+    return isCone;
+  }
+
+  public static void setIsCone() {
+    isCone = true;
   }
   
   /**
@@ -70,16 +86,44 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-       
-    //m_driverController.rightBumper().onTrue(new IngestCubeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-   // m_driverController.leftBumper().onTrue(new OutputCubeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-    m_driverController.rightTrigger().onTrue(new IngestConeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-   // m_driverController.leftTrigger().onTrue(new OutputConeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  //m_driverController.rightBumper().onTrue(new IngestCubeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  m_driverController.leftBumper().onTrue(new OutputCubeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  m_driverController.rightTrigger().onTrue(new IngestConeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  m_driverController.leftTrigger().onTrue(new OutputConeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
 
-    //m_driverController.button(1).onTrue(new ElevatorCommand()).onFalse(new ElevatorCommand(mElevatorSubsystem));
-   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+
+  mButtonBox.cubeToggle().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.coneToggle().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  
+  
+  mButtonBox.ingestIntake().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.ejectIntake().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+
+
+  mButtonBox.highPosition().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.HIGH )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.mediumPosition().onTrue(new ElevatorCommand(mElevatorSubsystem,ElevatorPosition.MID )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.floorPosition().onTrue(new ElevatorCommand(mElevatorSubsystem,ElevatorPosition.FLOOR )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.humanPlayerPostion().onTrue(new ElevatorCommand(mElevatorSubsystem,ElevatorPosition.HUMAN)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.stowPostion().onTrue(new ElevatorCommand(mElevatorSubsystem,ElevatorPosition.STOW )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+
+  /**mButtonBox.cone1().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+  mButtonBox.cube2().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+  mButtonBox.cone3().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+  
+  mButtonBox.cone4().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+  mButtonBox.cube5().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+  mButtonBox.cone6().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+  
+  mButtonBox.cone7().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+  mButtonBox.cube8().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+  mButtonBox.cone9().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  */
+  
+  mButtonBox.leftHumanStation().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.rightHumanStation().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  
+  mButtonBox.cancel().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
   }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

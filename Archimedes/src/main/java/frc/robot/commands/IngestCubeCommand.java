@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import frc.lib.Lidar;
-import frc.robot.subsystems.ExampleSubsystem;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;

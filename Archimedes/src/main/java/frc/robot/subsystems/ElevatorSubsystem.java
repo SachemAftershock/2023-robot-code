@@ -9,6 +9,7 @@ import frc.robot.Constants.PIDvalues;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 
 
@@ -18,29 +19,12 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private PID mPID = new PID();
     private double elevatorDistance;     
     private CANSparkMax mMotor;
+    private Joystick ButtonBox;
+    private static ElevatorSubsystem mElevatorSubsystem = new ElevatorSubsystem();
 
     private double setpoint;
 
-    public static enum States {
-
-
-        eLOW(0.0), eMID(45.0), eHIGH(90.0),/*addd */ ;
-
-
-        double mDistance;
-
-        private States(double distance) {
-           mDistance = distance;
-        }
-        //added
-        public double getDistance()
-        {
-            return mDistance;
-        }
-        //added
-    }
-
-    public void ElevatorSubsystem() {
+    public void ElevatorSubsystem(XboxController mXboxController) {
 
         setpoint = 0.0;
         mMotor = new CANSparkMax(0, MotorType.kBrushless);
@@ -53,7 +37,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
     public void ElevatorTerminate(){
         //if(elevatorDistance==){
-         //   elevatorDistance=
+        //   elevatorDistance=
         //}
     }
     public void initialize() {
@@ -80,7 +64,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
 
     public boolean isFinished() {
-       return  mPID.getError() < PIDvalues.kElevatorEpsilon;
+        return  mPID.getError() < PIDvalues.kElevatorEpsilon;
     }
 
     public void end(){
@@ -90,5 +74,12 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     public void setElevatorSpeed(double speed){
         mMotor.set(speed);
     }
+    public static ElevatorSubsystem getInstance() {
+        return mElevatorSubsystem;
+    }
+    /**public void setState()
+    {
+    
+    }**/
     
 }

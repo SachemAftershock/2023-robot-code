@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;

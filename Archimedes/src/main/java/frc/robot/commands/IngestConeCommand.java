@@ -39,7 +39,7 @@ public class IngestConeCommand extends InstantCommand {
   // Called every time the scheduler runs while the command is scheduled.
   //@Override
   public void execute() {
-    double currentEncoderValue = mIntakeSubsystem.getEncoderValue();
+  /**double currentEncoderValue = mIntakeSubsystem.getEncoderValue();
     if(Math.abs(currentEncoderValue-previousEncoderPosition) > REVConstants.kNEO550CountsperREV){
       //change call to getVelocity in getPosition thinkAabout
       mIntakeSubsystem.ingestCone();
@@ -49,5 +49,7 @@ public class IngestConeCommand extends InstantCommand {
       mIntakeSubsystem.stopIntakeMotor();
     }
     previousEncoderPosition = currentEncoderValue;
+    */
   }
+  
 }
