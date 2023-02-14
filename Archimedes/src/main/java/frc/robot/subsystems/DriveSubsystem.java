@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.SPI;
 import frc.lib.AftershockSubsystem;
 import frc.lib.Limelight;
 import frc.lib.Limelight.FluidicalPoseInfo;
+import frc.robot.PhotonCameraWrapper;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
 //import org.photonvision.PhotonCamera;
@@ -26,6 +27,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Ports.DrivePorts.*;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 
 
 public class DriveSubsystem extends AftershockSubsystem {
@@ -192,11 +198,16 @@ public class DriveSubsystem extends AftershockSubsystem {
 	public void drive(SwerveModuleState[] states) {
 		mChassisSpeeds = mKinematics.toChassisSpeeds(states);
 	}
-
+	PhotonCameraWrapper pcw;
 	@Override
 	public void initialize() {
 		//mPoseEstimator.resetPosition(new Pose2d(), new Rotation2d());
 		zeroGyroscope();
+		try {
+			pcw = new PhotonCameraWrapper();
+		} catch (IOException e) {
+			pcw = null;
+		}
 	}
 
 	@Override
@@ -210,6 +221,13 @@ public class DriveSubsystem extends AftershockSubsystem {
 			mPoseEstimator.addVisionMeasurement(poseInfo.getPose(), poseInfo.getTimestamp());
 		}
 
+		//photonvision update pose
+		Optional<EstimatedRobotPose> result = pcw.getEstimatedGlobalPose(mPoseEstimator.getEstimatedPosition()); 
+		if (result.isPresent()) {
+			EstimatedRobotPose camPose = result.get();
+			mPoseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+			System.out.println(camPose);
+		}
 		mPoseEstimator.update(getGyroscopeRotation(), getPositions());
 
 		
