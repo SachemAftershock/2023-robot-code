@@ -3,7 +3,7 @@ import frc.lib.AftershockSubsystem;
 import frc.lib.Lidar;
 import frc.lib.PID;
 import frc.robot.Constants.PortConstants;
-import frc.robot.Enums.ElevatorPosition;
+import frc.robot.enums.ElevatorPosition;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.Constants.PIDvalues;
 import edu.wpi.first.wpilibj.XboxController;

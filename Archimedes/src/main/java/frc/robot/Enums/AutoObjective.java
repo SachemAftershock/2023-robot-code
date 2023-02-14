@@ -1,5 +1,4 @@
-package frc.robot.Enums;
-
+package frc.robot.enums;
 public enum AutoObjective {
     DRIVELINEAR, DRIVEROTATE, CARGOSEARCH,
     SHOOTHATCH, SHOOTCARGO, COLLECTCARGO, TILTCARGO, TILTHATCH, TILTTOPROCKET,

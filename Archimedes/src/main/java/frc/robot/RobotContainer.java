@@ -8,7 +8,7 @@ import frc.lib.AftershockXboxController;
 import frc.lib.Lidar;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Enums.ElevatorPosition;
+import frc.robot.enums.ElevatorPosition;
 import edu.wpi.first.wpilibj.Joystick;
 // moved import frc.robot.Constants.ControllerConstants; to intakeSubsystem
 //import frc.robot.commands.Autos;
@@ -46,7 +46,7 @@ public class RobotContainer {
   Joystick mJoystick  = new Joystick(ControllerConstants.kPrimaryControllerPort);
   ButtonBox mButtonBox = new ButtonBox(0);
 
-  private static boolean isCone = false;
+  private static boolean isCone;
 
   /**private JoystickButton bInputCube = new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value);
   private JoystickButton bOutputCube = new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value);
@@ -60,7 +60,7 @@ public class RobotContainer {
     configureBindings();
     
   }
-
+/*
   public static boolean isCone() {
     return isCone;
   }
@@ -68,7 +68,7 @@ public class RobotContainer {
   public static void setIsCone() {
     isCone = true;
   }
-  
+  */
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
@@ -87,24 +87,39 @@ public class RobotContainer {
     // cancelling on release.
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
   //m_driverController.rightBumper().onTrue(new IngestCubeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-  m_driverController.leftBumper().onTrue(new OutputCubeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-  m_driverController.rightTrigger().onTrue(new IngestConeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-  m_driverController.leftTrigger().onTrue(new OutputConeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  //m_driverController.leftBumper().onTrue(new OutputCubeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  //m_driverController.rightTrigger().onTrue(new IngestConeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  //m_driverController.leftTrigger().onTrue(new OutputConeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
 
 
-  mButtonBox.cubeToggle().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-  mButtonBox.coneToggle().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.cubeToggle().onTrue(new ConeOrCubeCommand(false)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.coneToggle().onTrue(new ConeOrCubeCommand(true)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
   
+  //mButtonBox.ConeCubeToggle().onTrue()
   
-  mButtonBox.ingestIntake().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-  mButtonBox.ejectIntake().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  if(ConeOrCubeCommand.getisCone()){
+    mButtonBox.ingestIntake().onTrue(new IngestConeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  }
+  else
+  {
+    mButtonBox.ingestIntake().onTrue(new IngestCubeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  }
+
+  if(ConeOrCubeCommand.getisCone()){
+    mButtonBox.ejectIntake().onTrue(new OutputConeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  }
+  else
+  {
+    mButtonBox.ejectIntake().onTrue(new OutputCubeCommand(mIntakeSubsystem)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  }
 
 
-  mButtonBox.highPosition().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.HIGH )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-  mButtonBox.mediumPosition().onTrue(new ElevatorCommand(mElevatorSubsystem,ElevatorPosition.MID )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-  mButtonBox.floorPosition().onTrue(new ElevatorCommand(mElevatorSubsystem,ElevatorPosition.FLOOR )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-  mButtonBox.humanPlayerPostion().onTrue(new ElevatorCommand(mElevatorSubsystem,ElevatorPosition.HUMAN)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-  mButtonBox.stowPostion().onTrue(new ElevatorCommand(mElevatorSubsystem,ElevatorPosition.STOW )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+
+  mButtonBox.highPosition().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.HIGH)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.mediumPosition().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.MID )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.floorPosition().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.FLOOR )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.humanPlayerPostion().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.HUMAN)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.stowPostion().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.STOW )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
 
   /**mButtonBox.cone1().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
   mButtonBox.cube2().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    

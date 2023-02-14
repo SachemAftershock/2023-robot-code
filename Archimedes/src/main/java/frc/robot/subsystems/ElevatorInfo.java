@@ -1,6 +1,6 @@
-package frc.robot;
-import frc.robot.Enums.ElevatorPosition;
-import frc.robot.Enums.ArmDistance;
+package frc.robot.subsystems;
+import frc.robot.enums.ArmDistance;
+import frc.robot.enums.ElevatorPosition;
 
 
 public class ElevatorInfo {

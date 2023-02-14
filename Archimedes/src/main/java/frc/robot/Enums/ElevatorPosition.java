@@ -1,4 +1,4 @@
-package frc.robot.Enums;
+package frc.robot.enums;
 
 import frc.robot.subsystems.ElevatorSubsystem;
 
