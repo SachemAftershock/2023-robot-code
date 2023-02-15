@@ -34,6 +34,6 @@ public class StopIntakeCommand extends InstantCommand {
   //@Override
   public void execute() {
     //double speed = this.speed;
-    mIntakeSubsystem.stopIntakeMotor();
+    mIntakeSubsystem.end();
   }
 }

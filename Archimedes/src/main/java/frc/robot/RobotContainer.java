@@ -118,7 +118,7 @@ public class RobotContainer {
   mButtonBox.highPosition().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.HIGH)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
   mButtonBox.mediumPosition().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.MID )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
   mButtonBox.floorPosition().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.FLOOR )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-  mButtonBox.humanPlayerPostion().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.HUMAN)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.humanPlayerPostion().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.HUMANPlay)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
   mButtonBox.stowPostion().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.STOW )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
 
   /**mButtonBox.cone1().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
@@ -134,10 +134,10 @@ public class RobotContainer {
   mButtonBox.cone9().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
   */
   
-  mButtonBox.leftHumanStation().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-  mButtonBox.rightHumanStation().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.leftHumanStation().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.HUMANStation )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
+  mButtonBox.rightHumanStation().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.HUMANStation)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
   
-  mButtonBox.cancel().onTrue(new ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
+  mButtonBox.cancel().onTrue(new ElevatorCommand(mElevatorSubsystem, ElevatorPosition.CANCEL )).onFalse(new StopIntakeCommand(mIntakeSubsystem));   // SmartDashboard.putNumber("cone intake", XboxController.Button.kRightBumper.value);    
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

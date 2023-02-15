@@ -66,7 +66,7 @@ public class IntakeSubsystem extends AftershockSubsystem
        // System.out.println(sparkMotorController.get());
     }
 
-    public void stopIntakeMotor() {
+    public void end() {
         sparkMotorController.set(0);
        // System.out.println(sparkMotorController.get());
     }

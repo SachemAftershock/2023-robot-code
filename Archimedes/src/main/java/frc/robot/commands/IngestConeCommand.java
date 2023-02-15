@@ -50,6 +50,14 @@ public class IngestConeCommand extends InstantCommand {
     }
     previousEncoderPosition = currentEncoderValue;
     */
+    mIntakeSubsystem.ingestCone();
   }
+ /** @Override
+    public void end(boolean interrupted) {
+      mIntakeSubsystem.end();
+
+    }*/
+
+    // Returns true when the command should end.
   
 }

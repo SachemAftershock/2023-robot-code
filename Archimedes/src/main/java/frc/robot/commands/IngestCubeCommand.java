@@ -42,7 +42,7 @@ private final Lidar mlidarIntake = new Lidar(0);
     }
     else
     {
-      mIntakeSubsystem.stopIntakeMotor();
+      mIntakeSubsystem.end();
     }
     
   }

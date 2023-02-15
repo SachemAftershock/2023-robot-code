@@ -6,8 +6,12 @@ public enum ElevatorPosition {
     STOW(0,0,0,0),
     FLOOR(0,37,0,37),
     MID(0,86,0,132),
-    HUMAN(0,0,0,0), 
-    HIGH(0,160,0,183);
+    HIGH(0,160,0,183), 
+
+    HUMANPlay(0,0,0,0), 
+    HUMANStation(0,0,0,0),
+
+    CANCEL(0,0,0,0);
 
 
     public final int elevatorHeightCube;
