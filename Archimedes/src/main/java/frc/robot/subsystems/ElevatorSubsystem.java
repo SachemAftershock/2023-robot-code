@@ -1,85 +1,80 @@
 package frc.robot.subsystems;
+
 import frc.lib.AftershockSubsystem;
 import frc.lib.Lidar;
 import frc.lib.PID;
-import frc.robot.Constants.PortConstants;
-import frc.robot.Constants.ControllerConstants;
-import frc.robot.Constants.PIDvalues;
+import frc.robot.RobotContainer;
+import frc.robot.enums.ElevatorState;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
-
+import static frc.robot.Ports.ElevatorPorts.*;
+import static frc.robot.Constants.ElevatorConstants.*;
 
 public class ElevatorSubsystem extends AftershockSubsystem {
-    
-    private Lidar m_lidar = new Lidar(ControllerConstants.kPrimaryControllerPort);   
-    private PID mPID = new PID();
-    private double elevatorDistance;     
+
+    private Lidar mLidar;
+    private PID mPID;
     private CANSparkMax mMotor;
-    private Joystick ButtonBox;
-    private static ElevatorSubsystem mElevatorSubsystem = new ElevatorSubsystem();
 
-    private double setpoint;
+    private ElevatorState mCurrentState;
+    private ElevatorState mDesiredState;
 
-    public void ElevatorSubsystem(XboxController mXboxController) {
+    public ElevatorSubsystem() {
+        mLidar = new Lidar(kElevatorLidarId);
+        mPID = null;
+        mMotor = new CANSparkMax(kElevatorMotorId, MotorType.kBrushless);
 
-        setpoint = 0.0;
-        mMotor = new CANSparkMax(0, MotorType.kBrushless);
+        mCurrentState = ElevatorState.eStow;
+        mDesiredState = ElevatorState.eStow;
     }
-    public void ElevatorPeriodic()
-    {
-        
-        elevatorDistance = m_lidar.getDistanceIn();//lidar distance in inches
-        
-    }
-    public void ElevatorTerminate(){
-        //if(elevatorDistance==){
-        //   elevatorDistance=
-        //}
-    }
+
+    @Override
     public void initialize() {
-        setpoint = 0.0;
-        // TODO Auto-generated method stub
-        //mPID.start(PIDvalues.kPIDvalue);
-    }   
-    public void outputTelemetry() {
-        // TODO Auto-generated method stub
-        
     }
 
-    public void startElevatorPID(double setpoint) {
+    @Override
+    public void periodic() {
+        if (mCurrentState == mDesiredState)
+            return;
 
-        this.setpoint = setpoint;
-        mPID.start(PIDvalues.kPIDvalue);
+        if (mPID == null) {
+            mPID = new PID();
+            mPID.start(kPidGains);
+        }
 
-    }
+        double setpoint = RobotContainer.isCone() ? mDesiredState.getConeHeight() : mDesiredState.getCubeHeight();
+        double current = mLidar.getDistanceIn();
 
-    public void runPID() {
-        double current = m_lidar.getDistanceIn();
+        if (Math.abs(current - setpoint) > kEpsilon) {
+            stop();
+            mCurrentState = mDesiredState;
+            mPID = null;
+            return;
+        }
+
         double speed = mPID.update(current, setpoint);
-        setElevatorSpeed(speed);
+        setSpeed(speed);
     }
 
-    public boolean isFinished() {
-        return  mPID.getError() < PIDvalues.kElevatorEpsilon;
+    public void setDesiredState(ElevatorState desiredState) {
+        mDesiredState = desiredState;
     }
 
-    public void end(){
-        mMotor.set(0);
+    public ElevatorState getState() {
+        return mCurrentState;
     }
 
-    public void setElevatorSpeed(double speed){
+    public void stop() {
+        setSpeed(0);
+    }
+
+    private void setSpeed(double speed) {
         mMotor.set(speed);
     }
-    public static ElevatorSubsystem getInstance() {
-        return mElevatorSubsystem;
+
+    @Override
+    public void outputTelemetry() {
     }
-    /**public void setState()
-    {
-    
-    }**/
-    
 }

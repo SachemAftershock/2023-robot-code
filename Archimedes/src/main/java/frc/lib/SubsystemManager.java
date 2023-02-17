@@ -11,23 +11,12 @@ import edu.wpi.first.wpilibj.DriverStation;
  * @author Shreyas Prasad
  */
 public class SubsystemManager {
-    
-    private static SubsystemManager mInstance;
-
     private List<AftershockSubsystem> mAllSubsystems;
 
     /**
      * Subsystem Manager Constructor
      */
-    private SubsystemManager() {
-    }
-
-    /**
-     * Sets List of Subsystems to Manage
-     * 
-     * @param allSubsystems List of all Subsystems to Manage
-     */
-    public void setSubsystems(AftershockSubsystem... allSubsystems) {
+    public SubsystemManager(AftershockSubsystem... allSubsystems) {
         mAllSubsystems = Arrays.asList(allSubsystems);
     }
 
@@ -52,9 +41,9 @@ public class SubsystemManager {
      */
     public boolean checkSystems() {
         boolean ret = true;
-        for(AftershockSubsystem subsystem : mAllSubsystems) {
+        for (AftershockSubsystem subsystem : mAllSubsystems) {
             boolean subsystemPassedCheck = subsystem.checkSystem();
-            if(!subsystemPassedCheck) {
+            if (!subsystemPassedCheck) {
                 DriverStation.reportWarning(subsystem.getName() + " FAILED SYSTEM CHECK", false);
             }
             ret &= subsystemPassedCheck;
@@ -69,17 +58,5 @@ public class SubsystemManager {
      */
     public List<AftershockSubsystem> getSubsystems() {
         return mAllSubsystems;
-    }
-
-    /**
-     * Gets Singleton Instance of Subsystem Manager
-     * 
-     * @return Singleton Instance of Subsystem Manager
-     */
-    public static SubsystemManager getInstance() {
-        if(mInstance == null) {
-            mInstance = new SubsystemManager();
-        }
-        return mInstance;
     }
 }
