@@ -66,10 +66,6 @@ public class Constants {
 
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
     }
-    public static class FieldConstants {
-        static final double length = Units.feetToMeters(54.3);
-        static final double width = Units.feetToMeters(26.3);
-    }
 
     public static class VisionConstants {
         public static final Transform3d robotToCam =
@@ -78,7 +74,7 @@ public class Constants {
                         new Rotation3d(
                                 0, 0,
                                 0)); // Cam mounted facing forward, half a meter forward of center, half a meter up from center
-       
+        
         public static final String cameraName = "CameraName";
     }
     

@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.subsystems;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -10,22 +10,22 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
-
-public class PhotonCameraWrapper {
+//Todo: Test if photonvision pose estimation works
+//Todo: update robot offset in visionconstants
+public class PhotonCameraSubsystem {
     public PhotonCamera photonCamera;
     public PhotonPoseEstimator photonPoseEstimator;
 
-    //todo: why io exception? is it needed
-    public PhotonCameraWrapper() throws IOException {
+    public PhotonCameraSubsystem() throws IOException {
         
         //Todo: check if layout works
-        final AprilTagFieldLayout atfl =  new AprilTagFieldLayout("src/main/java/frc/robot/2023-chargedup-atf1.json");
+        final AprilTagFieldLayout atfl =  new AprilTagFieldLayout("src/main/java/frc/robot/2023-chargedup-atfl.json");
         
-        //todo: add camera vision name to camera name in photonvision UI
-        //makes photoncamera object
+        //Todo: Set visionconstants.cameraName
+        //Makes photoncamera object
         photonCamera = new PhotonCamera(VisionConstants.cameraName); 
         
-        // Create pose estimator
+        //Creates photonvision pose estimator
         photonPoseEstimator = new PhotonPoseEstimator(atfl, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, VisionConstants.robotToCam);
     }
 
@@ -37,24 +37,5 @@ public class PhotonCameraWrapper {
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
         return photonPoseEstimator.update();
-
     }
-    public void photonPeriodic(){
-        /* 
-        Optional<EstimatedRobotPose> result = getEstimatedGlobalPose(Drivesubsystem.mPoseEstimator.getEstimatedPosition());
-        //get pose
-        EstimatedRobotPose pose = getEstimatedGlobalPose(DriveSubsystem.mPoseEstimator.getEstimatedPosition());
-    
-        //get pose.estimatedPose and pose.timestampSeconds
-        //estimatedpose puts in a 3d pose? we need 2d?
-        
-		
-        //todo: do i need to check if it has targets first?
-
-        if (pose.isPresent) {
-        m_poseEstimator.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
-        }
-        */
-
-   }
- }
+}

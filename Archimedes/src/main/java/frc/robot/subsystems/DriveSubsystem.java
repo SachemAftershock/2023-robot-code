@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.SPI;
 import frc.lib.AftershockSubsystem;
 import frc.lib.Limelight;
 import frc.lib.Limelight.FluidicalPoseInfo;
-import frc.robot.PhotonCameraWrapper;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
 //import org.photonvision.PhotonCamera;
@@ -198,13 +197,13 @@ public class DriveSubsystem extends AftershockSubsystem {
 	public void drive(SwerveModuleState[] states) {
 		mChassisSpeeds = mKinematics.toChassisSpeeds(states);
 	}
-	PhotonCameraWrapper pcw;
+	PhotonCameraSubsystem pcw;
 	@Override
 	public void initialize() {
 		//mPoseEstimator.resetPosition(new Pose2d(), new Rotation2d());
 		zeroGyroscope();
 		try {
-			pcw = new PhotonCameraWrapper();
+			pcw = new PhotonCameraSubsystem();
 		} catch (IOException e) {
 			pcw = null;
 		}
@@ -228,12 +227,8 @@ public class DriveSubsystem extends AftershockSubsystem {
 			mPoseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
 			System.out.println(camPose);
 		}
+
 		mPoseEstimator.update(getGyroscopeRotation(), getPositions());
-
-		
-		//var result = mPhotonCamera.getLatestResult();
-
-		//mPoseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
 
 		SwerveModuleState[] states = mKinematics.toSwerveModuleStates(mChassisSpeeds);
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxVelocityMetersPerSecond);
@@ -246,9 +241,6 @@ public class DriveSubsystem extends AftershockSubsystem {
 				states[2].angle.getRadians());
 		mBackRightModule.set(states[3].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE,
 				states[3].angle.getRadians());
-
-
-		//System.out.println(getPose());
 
 	}
 
