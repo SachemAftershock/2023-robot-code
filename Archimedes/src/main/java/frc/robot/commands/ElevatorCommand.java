@@ -18,8 +18,8 @@ public class ElevatorCommand extends InstantCommand{
     public ElevatorCommand(ElevatorSubsystem elevatorSubsystem, ElevatorPosition desiredState ) 
     {        // Use addRequirements() here to declare subsystem dependencies.
         //addRequirements();
-        mdesiredState = desiredState;
         mElevatorSubsystem = elevatorSubsystem;
+        mdesiredState = desiredState;
 
     }
 

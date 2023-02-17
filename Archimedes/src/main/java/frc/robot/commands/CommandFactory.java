@@ -9,7 +9,7 @@ public class CommandFactory extends SequentialCommandGroup{
         if(currentState.equals(ElevatorPosition.STOW)) {
         return new SequentialCommandGroup(new ElevatorCommand(elevatorSubsystem, desiredState));
     }
-    else{
+    else {
         
         return new SequentialCommandGroup();
     }

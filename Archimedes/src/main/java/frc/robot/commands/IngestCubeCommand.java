@@ -31,19 +31,22 @@ private final Lidar mlidarIntake = new Lidar(0);
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    
+    mIntakeSubsystem.ingestCube();
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   //@Override
   public void execute() {
-    if(mlidarIntake.getDistanceIn() > 6.0)
+    /**if(mlidarIntake.getDistanceIn() > 6.0)
     {
       mIntakeSubsystem.ingestCube();
     }
     else
     {
       mIntakeSubsystem.end();
-    }
-    
+    }*/
+    mIntakeSubsystem.ingestCube();
   }
 }

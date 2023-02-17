@@ -10,30 +10,30 @@ public class ButtonBox extends CommandGenericHID {
         //TODO Auto-generated constructor stub
 }
 
-    private static int ingestIntakeButtonId = 0;
-    private static int ejectIntakeButtonId = 1;
-    private static int highPositionButtonId = 2;
-    private static int mediumPostionButtonId = 3;
-    private static int floorPostionButtonId = 4;
-    private static int humanPlayerPostionId = 5;
-    private static int stowPostionId = 6;
-    private static int cone1Id = 7;
-    private static int cube2Id = 8;
-    private static int cone3Id = 9;
+    private static int ingestIntakeButtonId = 1;
+    private static int ejectIntakeButtonId = 2;
+    private static int highPositionButtonId = 20;
+    private static int mediumPostionButtonId = 21;
+    private static int floorPostionButtonId = 5;
+    private static int humanPlayerPostionId = 6;
+    private static int stowPostionId = 7;
+    private static int cone1Id = 8;
+    private static int cube2Id = 9;
+    private static int cone3Id = 10;
 
-    private static int cone4Id = 10;
-    private static int cube5Id = 11;
-    private static int cone6Id = 12;
+    private static int cone4Id = 11;
+    private static int cube5Id = 12;
+    private static int cone6Id = 13;
     
-    private static int cone7Id = 13;
-    private static int cube8Id = 14;
-    private static int cone9Id = 15;
+    private static int cone7Id = 14;
+    private static int cube8Id = 15;
+    private static int cone9Id = 16;
 
-    private static int leftHumanStationId = 16;
-    private static int rightHumanStationId = 17;
-    private static int cancelId = 18;
-    private static int cubeToggleId = 19;
-    private static int coneToggleId = 20;
+    private static int leftHumanStationId = 17;
+    private static int rightHumanStationId = 18;
+    private static int cancelId = 19;
+    private static int cubeToggleId = 3;
+    private static int coneToggleId = 4;
 
     //1 button toggling Cube or Cone state Button
     public Trigger cubeToggle() {
