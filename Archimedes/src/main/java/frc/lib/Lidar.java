@@ -4,14 +4,15 @@ import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalSource;
 
 /**
-* Class to Instantiate LIDAR Lite v3 Objects
-*/
+ * Class to Instantiate LIDAR Lite v3 Objects
+ */
 public class Lidar {
-    
+
     private Counter mCounter;
-    
+
     /**
      * Creates a LIDAR Lite v3 Object
+     * 
      * @param port DigitalInput Object
      */
     public Lidar(DigitalSource port) {
@@ -23,14 +24,16 @@ public class Lidar {
 
     /**
      * Gets the distance in Centimeters
+     * 
      * @return Measured Distance in Centimeters
      */
     public double getDistanceCm() {
         return mCounter.getPeriod() * 1000000.0 / 10.0;
     }
-    
+
     /**
      * Gets the distance in Inches
+     * 
      * @return Measures distance in Inches
      */
     public double getDistanceIn() {
