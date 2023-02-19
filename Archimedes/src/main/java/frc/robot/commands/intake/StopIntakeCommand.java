@@ -1,12 +1,12 @@
-package frc.robot.commands;
+package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class StopIntakeCommand extends InstantCommand {
-  
+
   private IntakeSubsystem mIntakeSubsystem;
-  
+
   public StopIntakeCommand(IntakeSubsystem intakeSubsystem) {
     mIntakeSubsystem = intakeSubsystem;
     addRequirements(mIntakeSubsystem);

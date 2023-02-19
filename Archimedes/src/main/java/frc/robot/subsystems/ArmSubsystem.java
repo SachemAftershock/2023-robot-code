@@ -4,12 +4,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.enums.ArmState;
 import frc.lib.AftershockSubsystem;
 
 import static frc.robot.Constants.ArmConstants.*;
+import static frc.robot.Ports.ArmPorts.*;
 
 public class ArmSubsystem extends AftershockSubsystem {
 
@@ -20,24 +19,22 @@ public class ArmSubsystem extends AftershockSubsystem {
     private final TrapezoidProfile.Constraints m_constraints;
     private TrapezoidProfile.State m_goal;
     private TrapezoidProfile.State m_setpoint;
-    private static double kDt;
+    private final double kDt = 0.02;
 
     public ArmSubsystem() {
         super();
 
-        mArmMotor = new CANSparkMax(kArmMotorID, MotorType.kBrushless);
+        mArmMotor = new CANSparkMax(kArmMotorId, MotorType.kBrushless);
         m_constraints = new TrapezoidProfile.Constraints(1.75, 0.75);
         m_goal = new TrapezoidProfile.State();
         m_setpoint = new TrapezoidProfile.State();
 
-        kDt = ArmConstants.kDt;
-
         mPIDController = mArmMotor.getPIDController();
 
-        mPIDController.setP(kP);
-        mPIDController.setI(kI);
-        mPIDController.setD(kD);
-        mPIDController.setIZone(kIz);
+        mPIDController.setP(kGains[0]);
+        mPIDController.setI(kGains[1]);
+        mPIDController.setD(kGains[2]);
+        mPIDController.setIZone(kIntegralZone);
 
     }
 

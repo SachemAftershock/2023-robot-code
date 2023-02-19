@@ -9,6 +9,8 @@ import frc.robot.enums.ElevatorState;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 import static frc.robot.Ports.ElevatorPorts.*;
 import static frc.robot.Constants.ElevatorConstants.*;
 
@@ -22,7 +24,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private ElevatorState mDesiredState;
 
     public ElevatorSubsystem() {
-        mLidar = new Lidar(kElevatorLidarId);
+        mLidar = new Lidar(new DigitalInput(kElevatorLidarId));
         mPID = null;
         mMotor = new CANSparkMax(kElevatorMotorId, MotorType.kBrushless);
 
@@ -36,8 +38,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
-        if (mCurrentState == mDesiredState)
-            return;
+        if (mCurrentState == mDesiredState) return;
 
         if (mPID == null) {
             mPID = new PID();

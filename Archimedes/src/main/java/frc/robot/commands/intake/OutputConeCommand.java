@@ -1,10 +1,10 @@
-package frc.robot.commands;
+package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class OutputConeCommand extends InstantCommand {
-  
+
   private IntakeSubsystem mIntakeSubsystem;
 
   public OutputConeCommand(IntakeSubsystem intakeSubsystem) {

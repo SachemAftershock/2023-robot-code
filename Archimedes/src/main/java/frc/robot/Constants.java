@@ -38,25 +38,23 @@ public class Constants {
     private static final double kMk4L1DriveReduction = (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0);
     private static final double kMk4WheelDiameter = 0.10033;
 
-    public static final double kMaxVelocityMetersPerSecond = 6380.0 / 60.0 *
-        kMk4L1DriveReduction * kMk4WheelDiameter * Math.PI;
+    public static final double kMaxVelocityMetersPerSecond = 6380.0 / 60.0 * kMk4L1DriveReduction * kMk4WheelDiameter * Math.PI;
 
     // TODO: Change
     public static final double kMaxAccelerationMetersPerSecondSquared = kMaxVelocityMetersPerSecond * 0.25;
 
-    public static final double kMaxAngularVelocityRadiansPerSecond = kMaxVelocityMetersPerSecond /
-        Math.hypot(kDrivetrainTrackwidthMeters / 2.0, kDrivetrainWheelbaseMeters / 2.0);
+    public static final double kMaxAngularVelocityRadiansPerSecond = kMaxVelocityMetersPerSecond
+      / Math.hypot(kDrivetrainTrackwidthMeters / 2.0, kDrivetrainWheelbaseMeters / 2.0);
 
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
   }
 
   public static class VisionConstants {
-    public static final Transform3d robotToCam = new Transform3d(
-        new Translation3d(0.5, 0.0, 0.5),
-        new Rotation3d(
-            0, 0,
-            0)); // Cam mounted facing forward, half a meter forward of center, half a meter up
-                 // from center
+    public static final Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
+    // Cam mounted facing forward, half
+    // a meter forward of center, half
+    // a meter up
+    // from center
 
     public static final String cameraName = "CameraName";
   }
@@ -77,6 +75,9 @@ public class Constants {
     public static final double kMaxVelocityRadPerSecond = 0;
     public static final double kArmOffsetRads = 0;
     public static final double kMaxAccelerationRadPerSecSquared = 0;
+    public static final double[] kGains = { 0.0, 0.0, 0.0 };
+    public static final double kIntegralZone = 0.0;
+    public static final double kDt = 0.02;
   }
 
   public static class ElevatorConstants {
