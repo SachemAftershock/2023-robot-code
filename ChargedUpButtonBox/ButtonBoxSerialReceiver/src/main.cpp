@@ -4,7 +4,8 @@
 
 LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 
-String errorMessage= "No Error";
+String errorMessage= "DrvNoCnts ";  // "No Error";
+int errCount = 0;
 
 enum ledEnum { eIngest, eEject};
 
@@ -86,9 +87,10 @@ void loop()
     processInputLine(command);
   }
 
+  lcd.clear();
   lcd.setCursor(0, 0); // set the cursor to column 0jjhkjh, line 0
   lcd.print("Status Busy/Idle");  // Print a message to the LCD  //TODO
   lcd.setCursor(0, 1); // set the cursor to column 0, line 1
   lcd.print("ER: ");
-  lcd.println(errorMessage.substring(0,12));
+  lcd.println(errorMessage.substring(0,12) + (errCount++ % 9));
 }
