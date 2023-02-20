@@ -18,7 +18,7 @@ public class SemiAutoCommand extends CommandBase {
     private TrajectoryConfig config = new TrajectoryConfig(
         DriveConstants.kMaxVelocityMetersPerSecond * 0.3, DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
-    private double distanceFromTag = 0.5588; // distance between scoring points
+    // private double distanceFromTag = 0.5588; // distance between scoring points
     private double channelMidpoint = 0.770763; // the midpoint of the channel
     private double distanceFromBuffer = 0.41 + .1875; // The distance between the apriltag and the channel, measured from the cone
                                                       // scoring area + a buffer number
@@ -33,10 +33,10 @@ public class SemiAutoCommand extends CommandBase {
         // // apriltag
         // // If right is neither, then the robot will go to the apriltag
         // if (right == 1) {
-        //     finalYPose += distanceFromTag;
+        // finalYPose += distanceFromTag;
         // }
         // else if (right == -1) {
-        //     finalYPose -= distanceFromTag;
+        // finalYPose -= distanceFromTag;
         // }
 
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
