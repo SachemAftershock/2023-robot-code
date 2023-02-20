@@ -12,18 +12,16 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import frc.lib.SubsystemManager;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
-import frc.robot.commands.*;
+import frc.robot.commands.drive.LinearDriveCommand;
+import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.commands.intake.IngestConeCommand;
 import frc.robot.commands.intake.IngestCubeCommand;
 import frc.robot.commands.intake.OutputConeCommand;
@@ -43,8 +41,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class RobotContainer {
     private static boolean mIsCone = true;
 
-    private final ElevatorSubsystem mElevatorSubsystem = new ElevatorSubsystem(); // TODO fix
-    private final IntakeSubsystem mIntakeSubsystem = new IntakeSubsystem();
+    private final ElevatorSubsystem mElevatorSubsystem = ElevatorSubsystem.getInstance();
+    private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
     private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
 
     private final SubsystemManager mSubsystemManager = new SubsystemManager(mElevatorSubsystem, mIntakeSubsystem);

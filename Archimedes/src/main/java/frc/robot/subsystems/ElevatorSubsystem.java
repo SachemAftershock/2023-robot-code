@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import frc.lib.AftershockSubsystem;
 import frc.lib.Lidar;
 import frc.lib.PID;
-import frc.robot.RobotContainer;
 import frc.robot.enums.ElevatorState;
 
 import com.revrobotics.CANSparkMax;
@@ -15,6 +14,7 @@ import static frc.robot.Ports.ElevatorPorts.*;
 import static frc.robot.Constants.ElevatorConstants.*;
 
 public class ElevatorSubsystem extends AftershockSubsystem {
+    private static ElevatorSubsystem mInstance;
 
     private Lidar mLidar;
     private PID mPID;
@@ -23,7 +23,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private ElevatorState mCurrentState;
     private ElevatorState mDesiredState;
 
-    public ElevatorSubsystem() {
+    private ElevatorSubsystem() {
         mLidar = new Lidar(new DigitalInput(kElevatorLidarId));
         mPID = null;
         mMotor = new CANSparkMax(kElevatorMotorId, MotorType.kBrushless);
@@ -45,7 +45,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
             mPID.start(kPidGains);
         }
 
-        double setpoint = RobotContainer.isCone() ? mDesiredState.getConeHeight() : mDesiredState.getCubeHeight();
+        double setpoint = mDesiredState.getHeight();
         double current = mLidar.getDistanceIn();
 
         if (Math.abs(current - setpoint) > kEpsilon) {
@@ -77,5 +77,13 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     @Override
     public void outputTelemetry() {
+    }
+
+    public synchronized static ElevatorSubsystem getInstance() {
+        if (mInstance == null) {
+            mInstance = new ElevatorSubsystem();
+        }
+
+        return mInstance;
     }
 }

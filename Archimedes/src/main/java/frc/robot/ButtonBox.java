@@ -112,7 +112,6 @@ public class ButtonBox extends CommandGenericHID {
 
     public Trigger leftHumanStation() {
         return this.button(leftHumanStationId);
-
     }
 
     public Trigger rightHumanStation() {

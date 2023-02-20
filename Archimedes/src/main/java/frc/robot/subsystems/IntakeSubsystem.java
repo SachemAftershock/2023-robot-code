@@ -8,9 +8,11 @@ import static frc.robot.Ports.IntakePorts.*;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends AftershockSubsystem {
+    private static IntakeSubsystem mInstance;
+
     private CANSparkMax mIntakeMotor = new CANSparkMax(kIntakeMotorId, MotorType.kBrushless);
 
-    public IntakeSubsystem() {
+    private IntakeSubsystem() {
         super();
     }
 
@@ -53,8 +55,16 @@ public class IntakeSubsystem extends AftershockSubsystem {
     public void stop() {
         setSpeed(0);
     }
-    
+
     private void setSpeed(double speed) {
         mIntakeMotor.set(speed);
+    }
+
+    public synchronized static IntakeSubsystem getInstance() {
+        if (mInstance == null) {
+            mInstance = new IntakeSubsystem();
+        }
+
+        return mInstance;
     }
 }

@@ -1,11 +1,14 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.enums.ArmState;
 import frc.lib.AftershockSubsystem;
+import frc.lib.Lidar;
 
 import static frc.robot.Constants.ArmConstants.*;
 import static frc.robot.Ports.ArmPorts.*;
@@ -14,42 +17,52 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     private static ArmSubsystem mInstance;
     private CANSparkMax mArmMotor;
-    private SparkMaxPIDController mPIDController;
 
-    private final TrapezoidProfile.Constraints m_constraints;
-    private TrapezoidProfile.State m_goal;
-    private TrapezoidProfile.State m_setpoint;
-    private final double kDt = 0.02;
+    private final Lidar mLidar;
+    private final ProfiledPIDController mProfileController;
+    private final TrapezoidProfile.Constraints mConstraints;
 
-    public ArmSubsystem() {
+    private ArmState mCurrentState;
+    private ArmState mDesiredState;
+
+    private ArmSubsystem() {
         super();
 
         mArmMotor = new CANSparkMax(kArmMotorId, MotorType.kBrushless);
-        m_constraints = new TrapezoidProfile.Constraints(1.75, 0.75);
-        m_goal = new TrapezoidProfile.State();
-        m_setpoint = new TrapezoidProfile.State();
+        mLidar = new Lidar(new DigitalInput(kArmLidarId));
 
-        mPIDController = mArmMotor.getPIDController();
+        mConstraints = new TrapezoidProfile.Constraints(kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared);
+        mProfileController = new ProfiledPIDController(kGains[0], kGains[1], kGains[2], mConstraints);
 
-        mPIDController.setP(kGains[0]);
-        mPIDController.setI(kGains[1]);
-        mPIDController.setD(kGains[2]);
-        mPIDController.setIZone(kIntegralZone);
-
+        mCurrentState = ArmState.eStow;
+        mDesiredState = ArmState.eStow;
     }
 
     @Override
     public void initialize() {
-        m_goal = new TrapezoidProfile.State(0.5, 0.5);
     }
 
     @Override
     public void periodic() {
+        if (mCurrentState == mDesiredState) return;
+        setSpeed(mProfileController.calculate(mLidar.getDistanceCm() / 100.0, mDesiredState.getLength()));
 
-        var profile = new TrapezoidProfile(m_constraints, m_goal, m_setpoint);
-        m_setpoint = profile.calculate(kDt);
+        if (Math.abs(mLidar.getDistanceCm() / 100.0 - mDesiredState.getLength()) > kEpsilon) {
+            stop();
+            mCurrentState = mDesiredState;
+        }
+    }
 
-        mPIDController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
+    public void stop() {
+        setSpeed(0);
+    }
+
+    public ArmState getState() {
+        return mCurrentState;
+    }
+
+    public void setDesiredState(ArmState desiredState) {
+        mDesiredState = desiredState;
     }
 
     @Override
@@ -57,15 +70,12 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     }
 
+    private void setSpeed(double speed) {
+        mArmMotor.set(speed);
+    }
+
     public static synchronized ArmSubsystem getInstance() {
-        if (mInstance != null) {
-            mInstance = new ArmSubsystem();
-        }
+        if (mInstance != null) mInstance = new ArmSubsystem();
         return mInstance;
     }
-
-    public ArmState getState() {
-        return ArmState.eStow;
-    }
-
 }

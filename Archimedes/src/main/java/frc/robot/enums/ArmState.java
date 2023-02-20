@@ -1,9 +1,9 @@
 package frc.robot.enums;
 
+import frc.robot.RobotContainer;
+
 public enum ArmState {
-    eStow(0, 0), eLow(0, 0),
-    eMid(0, 0), eHigh(0, 0),
-    ePlayerStation(0, 0);
+    eStow(0, 0), eLow(0, 0), eMid(0, 0), eHigh(0, 0), ePlayerStation(0, 0);
 
     private double mCubeLength;
     private double mConeLength;
@@ -13,12 +13,7 @@ public enum ArmState {
         this.mConeLength = coneLength;
     }
 
-    public double getCubeLength() {
-        return mCubeLength;
+    public double getLength() {
+        return RobotContainer.isCone() ? mConeLength : mCubeLength;
     }
-
-    public double getConeLength() {
-        return mConeLength;
-    }
-
 }
