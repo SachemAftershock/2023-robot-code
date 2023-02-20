@@ -4,14 +4,14 @@
 
 package frc.robot;
 
-import java.util.List;
+// import java.util.List;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+// import edu.wpi.first.math.geometry.Pose2d;
+// import edu.wpi.first.math.geometry.Rotation2d;
+// import edu.wpi.first.math.geometry.Translation2d;
+// import edu.wpi.first.math.trajectory.Trajectory;
+// import edu.wpi.first.math.trajectory.TrajectoryConfig;
+// import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -175,20 +175,23 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        TrajectoryConfig config = new TrajectoryConfig(
-            DriveConstants.kMaxVelocityMetersPerSecond * 0.3, DriveConstants.kMaxAccelerationMetersPerSecondSquared
-        );
+        // TrajectoryConfig config = new TrajectoryConfig(
+        // DriveConstants.kMaxVelocityMetersPerSecond * 0.3,
+        // DriveConstants.kMaxAccelerationMetersPerSecondSquared
+        // );
 
-        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(), List.of(new Translation2d(2.0, -0.5)
-        // new Translation2d(0, 1.2)//,
-        // new Translation2d(1, 1.5)
-        // new Translation2d(2.2,0)
-        ), new Pose2d(1.0, -0.4, new Rotation2d()), config);
+        // Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(),
+        // List.of(new Translation2d(2.0, -0.5)
+        // // new Translation2d(0, 1.2)//,
+        // // new Translation2d(1, 1.5)
+        // // new Translation2d(2.2,0)
+        // ), new Pose2d(1.0, -0.4, new Rotation2d()), config);
 
-        Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(
-            new Pose2d(), List.of(new Translation2d(0.5, 1.5), new Translation2d(1.0, 1.5), new Translation2d(1.5, 1.5)),
-            new Pose2d(1.5, 1.5, new Rotation2d()), config
-        );
+        // Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(
+        // new Pose2d(), List.of(new Translation2d(0.5, 1.5), new Translation2d(1.0,
+        // 1.5), new Translation2d(1.5, 1.5)),
+        // new Pose2d(1.5, 1.5, new Rotation2d()), config
+        // );
 
         return new LinearDriveCommand(mDriveSubsystem, 2.0, CardinalDirection.eX);
 

@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.Constants.DriveConstants;
 
-public class semiAutoCommand extends CommandBase {
+public class SemiAutoCommand extends CommandBase {
     private TrajectoryConfig config = new TrajectoryConfig(
         DriveConstants.kMaxVelocityMetersPerSecond * 0.3, DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
@@ -24,20 +24,20 @@ public class semiAutoCommand extends CommandBase {
                                                       // scoring area + a buffer number
     private DriveSubsystem mDrive;
 
-    public semiAutoCommand(Pose2d startingPoint, double xPose, double yPose, DriveSubsystem drive, int right) {
+    public SemiAutoCommand(Pose2d startingPoint, double xPose, double yPose, DriveSubsystem drive, int right) {
         mDrive = drive;
-        double finalYPose = xPose;
-        // If right is one, then the robot will shift to the right of the selected
-        // apriltag
-        // If right is -one, then the robot will shift to the left of the selected
-        // apriltag
-        // If right is neither, then the robot will go to the apriltag
-        if (right == 1) {
-            finalYPose += distanceFromTag;
-        }
-        else if (right == -1) {
-            finalYPose -= distanceFromTag;
-        }
+        // double finalYPose = xPose;
+        // // If right is one, then the robot will shift to the right of the selected
+        // // apriltag
+        // // If right is -one, then the robot will shift to the left of the selected
+        // // apriltag
+        // // If right is neither, then the robot will go to the apriltag
+        // if (right == 1) {
+        //     finalYPose += distanceFromTag;
+        // }
+        // else if (right == -1) {
+        //     finalYPose -= distanceFromTag;
+        // }
 
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
             startingPoint, List.of(
@@ -52,7 +52,8 @@ public class semiAutoCommand extends CommandBase {
             ), new Pose2d(xPose - distanceFromBuffer, yPose, new Rotation2d()), config
         );
         new SequentialCommandGroup(
-            FollowTrajectoryCommandFactory.generateCommand(mDrive, trajectory), FollowTrajectoryCommandFactory.generateCommand(mDrive, trajectory2)
+            FollowTrajectoryCommandFactory.generateCommand(mDrive, trajectory),
+            FollowTrajectoryCommandFactory.generateCommand(mDrive, trajectory2)
         );
     }
 }
