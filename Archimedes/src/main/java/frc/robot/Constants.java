@@ -15,6 +15,8 @@ public class Constants {
         public static final double kDriveControllerDeadband = 0.05;
         public static final boolean kSquareAxis = true;
 
+        public static final double kDriveSpeedScaleFactor = 0.5;
+
         public static final double[] kDriveAngularGains = { 0.02, 0.0, 0.0 }; // dont use I it sucks - Shreyas
         public static final double[] kDriveLinearGains = { 0.4, 0.0, 0.0 };
 

@@ -27,6 +27,7 @@ import frc.robot.commands.intake.IngestCubeCommand;
 import frc.robot.commands.intake.OutputConeCommand;
 import frc.robot.commands.intake.OutputCubeCommand;
 import frc.robot.commands.intake.StopIntakeCommand;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -44,6 +45,7 @@ public class RobotContainer {
     private final ElevatorSubsystem mElevatorSubsystem = ElevatorSubsystem.getInstance();
     private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
     private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
+    private final ArmSubsystem mArmSubsystem = ArmSubsystem.getInstance();
 
     private final SubsystemManager mSubsystemManager = new SubsystemManager(mElevatorSubsystem, mIntakeSubsystem);
 
@@ -59,7 +61,8 @@ public class RobotContainer {
         configureButtonBindings();
         mDriveSubsystem.setDefaultCommand(
             new ManualDriveCommand(
-                mDriveSubsystem, () -> -modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kMaxVelocityMetersPerSecond,
+                mDriveSubsystem, mArmSubsystem::getState,
+                () -> -modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kMaxVelocityMetersPerSecond,
                 () -> -modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kMaxVelocityMetersPerSecond,
                 () -> -modifyAxis(mPrimaryTwistController.getZ()) * DriveConstants.kMaxAngularVelocityRadiansPerSecond * 0.3
             )
@@ -73,10 +76,12 @@ public class RobotContainer {
     private void configureButtonBindings() {
         mButtonBox.cubeToggle().onTrue(new InstantCommand(() -> RobotContainer.toggleIsCone()));
 
-        mButtonBox.ingestIntake().onTrue(RobotContainer.isCone() ? new IngestConeCommand(mIntakeSubsystem) : new IngestCubeCommand(mIntakeSubsystem))
+        mButtonBox.ingestIntake()
+            .onTrue(RobotContainer.isCone() ? new IngestConeCommand(mIntakeSubsystem) : new IngestCubeCommand(mIntakeSubsystem))
             .onFalse(new StopIntakeCommand(mIntakeSubsystem));
 
-        mButtonBox.ejectIntake().onTrue(RobotContainer.isCone() ? new OutputConeCommand(mIntakeSubsystem) : new OutputCubeCommand(mIntakeSubsystem))
+        mButtonBox.ejectIntake()
+            .onTrue(RobotContainer.isCone() ? new OutputConeCommand(mIntakeSubsystem) : new OutputCubeCommand(mIntakeSubsystem))
             .onFalse(new StopIntakeCommand(mIntakeSubsystem));
 
         // mButtonBox.ingestIntake().onTrue(new
@@ -170,7 +175,9 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxVelocityMetersPerSecond * 0.3, DriveConstants.kMaxAccelerationMetersPerSecondSquared);
+        TrajectoryConfig config = new TrajectoryConfig(
+            DriveConstants.kMaxVelocityMetersPerSecond * 0.3, DriveConstants.kMaxAccelerationMetersPerSecondSquared
+        );
 
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(), List.of(new Translation2d(2.0, -0.5)
         // new Translation2d(0, 1.2)//,
