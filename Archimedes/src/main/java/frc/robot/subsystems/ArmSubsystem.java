@@ -45,9 +45,13 @@ public class ArmSubsystem extends AftershockSubsystem {
     @Override
     public void periodic() {
         if (mCurrentState == mDesiredState) return;
-        setSpeed(mProfileController.calculate(mLidar.getDistanceCm() / 100.0, mDesiredState.getLength()));
 
-        if (Math.abs(mLidar.getDistanceCm() / 100.0 - mDesiredState.getLength()) > kEpsilon) {
+        double current = mLidar.getDistanceCm() / 100;
+        double setpoint = mDesiredState.getLength();
+
+        setSpeed(mProfileController.calculate(current, setpoint));
+
+        if (Math.abs(current - setpoint) < kEpsilon) {
             stop();
             mCurrentState = mDesiredState;
         }

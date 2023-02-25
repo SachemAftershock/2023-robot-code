@@ -2,12 +2,13 @@ package frc.robot.subsystems;
 
 import frc.lib.AftershockSubsystem;
 import frc.lib.Lidar;
-import frc.lib.PID;
 import frc.robot.enums.ElevatorState;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import static frc.robot.Ports.ElevatorPorts.*;
@@ -17,7 +18,9 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private static ElevatorSubsystem mInstance;
 
     private Lidar mLidar;
-    private PID mPID;
+    private final ProfiledPIDController mProfileController;
+    private final TrapezoidProfile.Constraints mConstraints;
+
     private CANSparkMax mMotor;
 
     private ElevatorState mCurrentState;
@@ -25,7 +28,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     private ElevatorSubsystem() {
         mLidar = new Lidar(new DigitalInput(kElevatorLidarId));
-        mPID = null;
+        mConstraints = new TrapezoidProfile.Constraints(kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared);
+        mProfileController = new ProfiledPIDController(kPidGains[0], kPidGains[1], kPidGains[2], mConstraints);
         mMotor = new CANSparkMax(kElevatorMotorId, MotorType.kBrushless);
 
         mCurrentState = ElevatorState.eStow;
@@ -40,23 +44,15 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     public void periodic() {
         if (mCurrentState == mDesiredState) return;
 
-        if (mPID == null) {
-            mPID = new PID();
-            mPID.start(kPidGains);
-        }
-
         double setpoint = mDesiredState.getHeight();
         double current = mLidar.getDistanceIn();
 
-        if (Math.abs(current - setpoint) > kEpsilon) {
+        setSpeed(mProfileController.calculate(current, setpoint));
+
+        if (Math.abs(current - setpoint) < kEpsilon) {
             stop();
             mCurrentState = mDesiredState;
-            mPID = null;
-            return;
         }
-
-        double speed = mPID.update(current, setpoint);
-        setSpeed(speed);
     }
 
     public void setDesiredState(ElevatorState desiredState) {

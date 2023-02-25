@@ -97,6 +97,8 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 	private final Limelight mLimelight;
 
+	private Pose2d mWaypoint;
+
 	private DriveSubsystem() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
@@ -224,8 +226,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 	}
 
 	public SwerveModulePosition[] getPositions() {
-		return new SwerveModulePosition[] {
-				new SwerveModulePosition(mFrontLeftModule.getPosition(), new Rotation2d(mFrontLeftModule.getSteerAngle())),
+		return new SwerveModulePosition[] { new SwerveModulePosition(mFrontLeftModule.getPosition(), new Rotation2d(mFrontLeftModule.getSteerAngle())),
 				new SwerveModulePosition(mFrontRightModule.getPosition(), new Rotation2d(mFrontRightModule.getSteerAngle())),
 				new SwerveModulePosition(mBackLeftModule.getPosition(), new Rotation2d(mBackLeftModule.getSteerAngle())),
 				new SwerveModulePosition(mBackRightModule.getPosition(), new Rotation2d(mBackRightModule.getSteerAngle())), };
@@ -233,6 +234,14 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 	public SwerveDriveKinematics getKinematics() {
 		return mKinematics;
+	}
+
+	public Pose2d getWaypoint() {
+		return mWaypoint;
+	}
+
+	public void setWaypoint(Pose2d waypoint) {
+		mWaypoint = waypoint;
 	}
 
 	@Override

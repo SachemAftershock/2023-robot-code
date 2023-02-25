@@ -14,23 +14,30 @@ package frc.robot;
 // import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.lib.SubsystemManager;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.LoadingZone;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
+import frc.robot.commands.CommandFactory;
 import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
+import frc.robot.commands.drive.SetWaypointCommand;
 import frc.robot.commands.intake.IngestConeCommand;
 import frc.robot.commands.intake.IngestCubeCommand;
 import frc.robot.commands.intake.OutputConeCommand;
 import frc.robot.commands.intake.OutputCubeCommand;
 import frc.robot.commands.intake.StopIntakeCommand;
+import frc.robot.enums.SuperState;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+
+import static frc.robot.Constants.FieldConstants.kPlacingPoses;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -75,6 +82,7 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
         mButtonBox.cubeToggle().onTrue(new InstantCommand(() -> RobotContainer.toggleIsCone()));
+        mButtonBox.coneToggle().onTrue(new InstantCommand(() -> RobotContainer.toggleIsCone()));
 
         mButtonBox.ingestIntake()
             .onTrue(RobotContainer.isCone() ? new IngestConeCommand(mIntakeSubsystem) : new IngestCubeCommand(mIntakeSubsystem))
@@ -84,81 +92,30 @@ public class RobotContainer {
             .onTrue(RobotContainer.isCone() ? new OutputConeCommand(mIntakeSubsystem) : new OutputCubeCommand(mIntakeSubsystem))
             .onFalse(new StopIntakeCommand(mIntakeSubsystem));
 
-        // mButtonBox.ingestIntake().onTrue(new
-        // IngestCubeCommand(mIntakeSubsystem)).onFalse(new
-        // StopIntakeCommand(mIntakeSubsystem));
-        // mButtonBox.ejectIntake().onTrue(new
-        // OutputCubeCommand(mIntakeSubsystem)).onFalse(new
-        // StopIntakeCommand(mIntakeSubsystem));
+        mButtonBox.highPosition().onTrue(CommandFactory.commandFactory(SuperState.eHigh, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.mediumPosition().onTrue(CommandFactory.commandFactory(SuperState.eMid, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.floorPosition().onTrue(CommandFactory.commandFactory(SuperState.eLow, mElevatorSubsystem, mArmSubsystem));
 
-        // mButtonBox.highPosition().onTrue(new ElevatorCommand(mElevatorSubsystem,
-        // ElevatorPosition.HIGH)).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-        /**
-         * mButtonBox.mediumPosition().onTrue(new ElevatorCommand(mElevatorSubsystem,
-         * ElevatorPosition.MID )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-         * mButtonBox.floorPosition().onTrue(new ElevatorCommand(mElevatorSubsystem,
-         * ElevatorPosition.FLOOR )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-         * mButtonBox.humanPlayerPostion().onTrue(new
-         * ElevatorCommand(mElevatorSubsystem, ElevatorPosition.HUMANPlay)).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem)); mButtonBox.stowPostion().onTrue(new
-         * ElevatorCommand(mElevatorSubsystem, ElevatorPosition.STOW )).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem)); // SmartDashboard.putNumber("cone
-         * intake", XboxController.Button.kRightBumper.value);
-         */
+        mButtonBox.humanPlayerPostion().onTrue(CommandFactory.commandFactory(SuperState.ePlayerStation, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.stowPostion().onTrue(CommandFactory.commandFactory(SuperState.eStow, mElevatorSubsystem, mArmSubsystem));
 
-        /**
-         * mButtonBox.cone1().onTrue(new
-         * ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem)); // SmartDashboard.putNumber("cone
-         * intake", XboxController.Button.kRightBumper.value);
-         * mButtonBox.cube2().onTrue(new
-         * ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem)); // SmartDashboard.putNumber("cone
-         * intake", XboxController.Button.kRightBumper.value);
-         * mButtonBox.cone3().onTrue(new
-         * ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem)); // SmartDashboard.putNumber("cone
-         * intake", XboxController.Button.kRightBumper.value);
-         * 
-         * mButtonBox.cone4().onTrue(new
-         * ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem)); // SmartDashboard.putNumber("cone
-         * intake", XboxController.Button.kRightBumper.value);
-         * mButtonBox.cube5().onTrue(new
-         * ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem)); // SmartDashboard.putNumber("cone
-         * intake", XboxController.Button.kRightBumper.value);
-         * mButtonBox.cone6().onTrue(new
-         * ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem)); // SmartDashboard.putNumber("cone
-         * intake", XboxController.Button.kRightBumper.value);
-         * 
-         * mButtonBox.cone7().onTrue(new
-         * ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem)); // SmartDashboard.putNumber("cone
-         * intake", XboxController.Button.kRightBumper.value);
-         * mButtonBox.cube8().onTrue(new
-         * ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem)); // SmartDashboard.putNumber("cone
-         * intake", XboxController.Button.kRightBumper.value);
-         * mButtonBox.cone9().onTrue(new
-         * ElevatorCommand(mElevatorSubsystem,mCurrentState )).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem));
-         */
+        mButtonBox.cancel().onTrue(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
 
-        /**
-         * mButtonBox.leftHumanStation().onTrue(new ElevatorCommand(mElevatorSubsystem,
-         * ElevatorPosition.HUMANStation )).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem));
-         * mButtonBox.rightHumanStation().onTrue(new ElevatorCommand(mElevatorSubsystem,
-         * ElevatorPosition.HUMANStation)).onFalse(new
-         * StopIntakeCommand(mIntakeSubsystem));
-         * 
-         * mButtonBox.cancel().onTrue(new ElevatorCommand(mElevatorSubsystem,
-         * ElevatorPosition.CANCEL )).onFalse(new StopIntakeCommand(mIntakeSubsystem));
-         * // SmartDashboard.putNumber("cone intake",
-         * XboxController.Button.kRightBumper.value);
-         */
+        mButtonBox.cone1().onTrue(new SetWaypointCommand(kPlacingPoses[0].robotPlacementPose, mDriveSubsystem));
+        mButtonBox.cube2().onTrue(new SetWaypointCommand(kPlacingPoses[1].robotPlacementPose, mDriveSubsystem));
+        mButtonBox.cone3().onTrue(new SetWaypointCommand(kPlacingPoses[2].robotPlacementPose, mDriveSubsystem));
+
+        mButtonBox.cone4().onTrue(new SetWaypointCommand(kPlacingPoses[3].robotPlacementPose, mDriveSubsystem));
+        mButtonBox.cube5().onTrue(new SetWaypointCommand(kPlacingPoses[4].robotPlacementPose, mDriveSubsystem));
+        mButtonBox.cone6().onTrue(new SetWaypointCommand(kPlacingPoses[5].robotPlacementPose, mDriveSubsystem));
+
+        mButtonBox.cone7().onTrue(new SetWaypointCommand(kPlacingPoses[6].robotPlacementPose, mDriveSubsystem));
+        mButtonBox.cube8().onTrue(new SetWaypointCommand(kPlacingPoses[7].robotPlacementPose, mDriveSubsystem));
+        mButtonBox.cone9().onTrue(new SetWaypointCommand(kPlacingPoses[8].robotPlacementPose, mDriveSubsystem));
+
+        mButtonBox.leftHumanStation().onTrue(new SetWaypointCommand(LoadingZone.kDoubleSubstationPose, mDriveSubsystem));
+        // mButtonBox.rightHumanStation().onTrue(new SetWaypointCommand(,
+        // mDriveSubsystem));
     }
 
     public static void toggleIsCone() {
