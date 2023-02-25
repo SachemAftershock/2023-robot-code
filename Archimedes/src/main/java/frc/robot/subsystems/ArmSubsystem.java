@@ -61,6 +61,10 @@ public class ArmSubsystem extends AftershockSubsystem {
         setSpeed(0);
     }
 
+    public void jogArm(boolean isOut) {
+        setSpeed(isOut ? kJogSpeed : -kJogSpeed);
+    }
+
     public ArmState getState() {
         return mCurrentState;
     }

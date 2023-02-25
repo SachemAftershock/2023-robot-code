@@ -63,6 +63,8 @@ public class Constants {
 
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
 
+        public static double kRotationScalingConstant = 0.3;
+
         // TODO: Consider if we need this
         public static double kMinimumDistanceForAutoDrive = 0.0;
         public static double kDriveToTargetEpsilon = 0.1;
@@ -99,6 +101,42 @@ public class Constants {
         public static final double kDt = 0.02;
 
         public static final double kEpsilon = 0.0;
+
+        public static final double kJogSpeed = 0.2;
+
+
+
+        public static final double[][] kBarDistanceToArmExtension = {
+            {0,0}
+        };
+        
+
+        public static final int kBarDistanceIndex = 0;
+        public static final int kArmDistanceIndex = 1;
+
+        public static double getBarDistance(double desiredArmExtension) {
+            if (desiredArmExtension < kBarDistanceToArmExtension[0][kBarDistanceIndex]) {
+                return -1;
+            }
+
+            for (int i = 1; i < kBarDistanceToArmExtension.length; ++i) {
+                if (desiredArmExtension < kBarDistanceToArmExtension[i][kArmDistanceIndex]) {
+                    // x and y are flipped of what you expect bc this is a "reverse" look up
+                    // We know the desired arm distance, and have to map it to a interpolated bar distance
+                    double x1 = kBarDistanceToArmExtension[i][kArmDistanceIndex];
+                    double x0 = kBarDistanceToArmExtension[i - 1][kArmDistanceIndex];
+
+                    double y1 = kBarDistanceToArmExtension[i][kBarDistanceIndex];
+                    double y0 = kBarDistanceToArmExtension[i - 1][kBarDistanceIndex];
+
+                    double slope = (y1 - y0) / (x1 - x0);
+
+                    return slope * desiredArmExtension + y0; 
+                }
+            }
+
+            return -1;
+        }
     }
 
     public static class ElevatorConstants {
@@ -106,6 +144,8 @@ public class Constants {
         public static final double kMaxVelocityMeterPerSecond = 1.75;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.75;
         public static final double kEpsilon = 0.0;
+
+        public static final double kJogSpeed = 0.2;
     }
 
     /*

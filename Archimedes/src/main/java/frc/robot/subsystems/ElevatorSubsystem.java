@@ -67,6 +67,10 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         setSpeed(0);
     }
 
+    public void jogElevator(boolean moveUp) {
+        setSpeed(moveUp ? kJogSpeed : -kJogSpeed);
+    }
+
     private void setSpeed(double speed) {
         mMotor.set(speed);
     }

@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.PID;
+import frc.robot.ButtonBoxPublisher;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -80,6 +81,7 @@ public class DriveToCoordinateCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         mDrive.drive(new ChassisSpeeds());
+        ButtonBoxPublisher.enableLed(mDrive.getLedPosition());
     }
 
     @Override

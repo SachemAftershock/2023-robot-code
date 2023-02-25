@@ -12,17 +12,16 @@ package frc.robot;
 // import edu.wpi.first.math.trajectory.Trajectory;
 // import edu.wpi.first.math.trajectory.TrajectoryConfig;
 // import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-
 import frc.lib.SubsystemManager;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.LoadingZone;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
+import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.drive.DriveToCoordinateCommand;
 import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.commands.drive.SetWaypointCommand;
@@ -31,6 +30,7 @@ import frc.robot.commands.intake.IngestCubeCommand;
 import frc.robot.commands.intake.OutputConeCommand;
 import frc.robot.commands.intake.OutputCubeCommand;
 import frc.robot.commands.intake.StopIntakeCommand;
+import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import frc.robot.enums.SuperState;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -38,6 +38,10 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 import static frc.robot.Constants.FieldConstants.kPlacingPoses;
+
+import java.util.function.Function;
+
+import static frc.robot.Constants.DriveConstants.kRotationScalingConstant;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -56,9 +60,12 @@ public class RobotContainer {
 
     private final SubsystemManager mSubsystemManager = new SubsystemManager(mElevatorSubsystem, mIntakeSubsystem);
 
-    private final Joystick mPrimaryThrottleController = new Joystick(ControllerConstants.kPrimaryThrottleControllerPort);
-    private final Joystick mPrimaryTwistController = new Joystick(ControllerConstants.kPrimaryTwistControllerPort);
+    private final CommandJoystick mPrimaryThrottleController = new CommandJoystick(ControllerConstants.kPrimaryThrottleControllerPort);
+    private final CommandJoystick mPrimaryTwistController = new CommandJoystick(ControllerConstants.kPrimaryTwistControllerPort);
     private final ButtonBox mButtonBox = new ButtonBox(ControllerConstants.kButtonBoxPort);
+
+
+    private DriveToCoordinateCommand mDriveToCoordinateCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -71,7 +78,7 @@ public class RobotContainer {
                 mDriveSubsystem, mArmSubsystem::getState,
                 () -> -modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kMaxVelocityMetersPerSecond,
                 () -> -modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kMaxVelocityMetersPerSecond,
-                () -> -modifyAxis(mPrimaryTwistController.getZ()) * DriveConstants.kMaxAngularVelocityRadiansPerSecond * 0.3
+                () -> -modifyAxis(mPrimaryTwistController.getTwist()) * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant
             )
         );
     }
@@ -81,16 +88,32 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
+        mPrimaryThrottleController.getTrigger().onTrue(new InstantCommand(() -> {
+            mDriveToCoordinateCommand = new DriveToCoordinateCommand(mDriveSubsystem.getWaypoint(), mDriveSubsystem);
+            mDriveToCoordinateCommand.schedule();
+        })).onFalse(new InstantCommand(() -> {
+            mDriveToCoordinateCommand.cancel();
+            ButtonBoxPublisher.enableLed(mDriveSubsystem.getLedPosition());
+        }));
+
+
+
         mButtonBox.cubeToggle().onTrue(new InstantCommand(() -> RobotContainer.toggleIsCone()));
         mButtonBox.coneToggle().onTrue(new InstantCommand(() -> RobotContainer.toggleIsCone()));
 
         mButtonBox.ingestIntake()
             .onTrue(RobotContainer.isCone() ? new IngestConeCommand(mIntakeSubsystem) : new IngestCubeCommand(mIntakeSubsystem))
-            .onFalse(new StopIntakeCommand(mIntakeSubsystem));
+            .onFalse(new InstantCommand(() -> {
+                (new StopIntakeCommand(mIntakeSubsystem)).schedule();
+                ButtonBoxPublisher.disableLed(LedPosition.eIngest);
+            }));
 
         mButtonBox.ejectIntake()
             .onTrue(RobotContainer.isCone() ? new OutputConeCommand(mIntakeSubsystem) : new OutputCubeCommand(mIntakeSubsystem))
-            .onFalse(new StopIntakeCommand(mIntakeSubsystem));
+            .onFalse(new InstantCommand(() -> {
+                (new StopIntakeCommand(mIntakeSubsystem)).schedule();
+                ButtonBoxPublisher.disableLed(LedPosition.eEject);
+            }));
 
         mButtonBox.highPosition().onTrue(CommandFactory.commandFactory(SuperState.eHigh, mElevatorSubsystem, mArmSubsystem));
         mButtonBox.mediumPosition().onTrue(CommandFactory.commandFactory(SuperState.eMid, mElevatorSubsystem, mArmSubsystem));
@@ -99,27 +122,47 @@ public class RobotContainer {
         mButtonBox.humanPlayerPostion().onTrue(CommandFactory.commandFactory(SuperState.ePlayerStation, mElevatorSubsystem, mArmSubsystem));
         mButtonBox.stowPostion().onTrue(CommandFactory.commandFactory(SuperState.eStow, mElevatorSubsystem, mArmSubsystem));
 
-        mButtonBox.cancel().onTrue(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
+        mButtonBox.cancel().onTrue(new InstantCommand(() -> {
+            CommandScheduler.getInstance().cancelAll();
+            ButtonBoxPublisher.enableLed(LedPosition.eCancel);
+        }));
 
-        mButtonBox.cone1().onTrue(new SetWaypointCommand(kPlacingPoses[0].robotPlacementPose, mDriveSubsystem));
-        mButtonBox.cube2().onTrue(new SetWaypointCommand(kPlacingPoses[1].robotPlacementPose, mDriveSubsystem));
-        mButtonBox.cone3().onTrue(new SetWaypointCommand(kPlacingPoses[2].robotPlacementPose, mDriveSubsystem));
+        mButtonBox.cone1().onTrue(new SetWaypointCommand(kPlacingPoses[0].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo1));
+        mButtonBox.cube2().onTrue(new SetWaypointCommand(kPlacingPoses[1].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo2));
+        mButtonBox.cone3().onTrue(new SetWaypointCommand(kPlacingPoses[2].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo3));
 
-        mButtonBox.cone4().onTrue(new SetWaypointCommand(kPlacingPoses[3].robotPlacementPose, mDriveSubsystem));
-        mButtonBox.cube5().onTrue(new SetWaypointCommand(kPlacingPoses[4].robotPlacementPose, mDriveSubsystem));
-        mButtonBox.cone6().onTrue(new SetWaypointCommand(kPlacingPoses[5].robotPlacementPose, mDriveSubsystem));
+        mButtonBox.cone4().onTrue(new SetWaypointCommand(kPlacingPoses[3].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo4));
+        mButtonBox.cube5().onTrue(new SetWaypointCommand(kPlacingPoses[4].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo5));
+        mButtonBox.cone6().onTrue(new SetWaypointCommand(kPlacingPoses[5].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo6));
 
-        mButtonBox.cone7().onTrue(new SetWaypointCommand(kPlacingPoses[6].robotPlacementPose, mDriveSubsystem));
-        mButtonBox.cube8().onTrue(new SetWaypointCommand(kPlacingPoses[7].robotPlacementPose, mDriveSubsystem));
-        mButtonBox.cone9().onTrue(new SetWaypointCommand(kPlacingPoses[8].robotPlacementPose, mDriveSubsystem));
+        mButtonBox.cone7().onTrue(new SetWaypointCommand(kPlacingPoses[6].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo7));
+        mButtonBox.cube8().onTrue(new SetWaypointCommand(kPlacingPoses[7].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo8));
+        mButtonBox.cone9().onTrue(new SetWaypointCommand(kPlacingPoses[8].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo9));
 
-        mButtonBox.leftHumanStation().onTrue(new SetWaypointCommand(LoadingZone.kDoubleSubstationPose, mDriveSubsystem));
+        // TODO: Figure out stuff w human player coord left/right position
+        mButtonBox.leftHumanStation().onTrue(new SetWaypointCommand(LoadingZone.kDoubleSubstationPose, mDriveSubsystem, LedPosition.eHumanPlayerLeft));
         // mButtonBox.rightHumanStation().onTrue(new SetWaypointCommand(,
         // mDriveSubsystem));
+        Function<Boolean, InstantCommand> jogElevatorCommand = (isUp) -> new InstantCommand(() -> {
+            if (mButtonBox.isJoystickEnabled()) mElevatorSubsystem.jogElevator(true);
+        });
+
+        Function<Boolean, InstantCommand> jogArmCommand = (isOut) -> new InstantCommand(() -> {
+            if (mButtonBox.isJoystickEnabled()) mArmSubsystem.jogArm(isOut);
+        });
+
+        mButtonBox.upJoystickButton().onTrue(jogElevatorCommand.apply(true)).onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+        mButtonBox.downJoystickButton().onTrue(jogElevatorCommand.apply(false)).onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+        mButtonBox.rightJoystickButton().onTrue(jogArmCommand.apply(true)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
+        mButtonBox.leftJoystickButton().onTrue(jogArmCommand.apply(false)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
+
+        mButtonBox.enableJoystick().onTrue(new InstantCommand(() -> mButtonBox.toggleJoystick()));
     }
 
     public static void toggleIsCone() {
         mIsCone = !mIsCone;
+
+        ButtonBoxPublisher.enableLed(mIsCone ? LedPosition.eConeActive : LedPosition.eCubeActive);
     }
 
     public static boolean isCone() {

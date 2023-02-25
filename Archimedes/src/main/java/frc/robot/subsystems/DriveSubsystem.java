@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.SPI;
 import frc.lib.AftershockSubsystem;
 import frc.lib.Limelight;
 import frc.lib.Limelight.FluidicalPoseInfo;
+import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
 //import org.photonvision.PhotonCamera;
@@ -71,7 +72,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 	// MAX_VELOCITY_METERS_PER_SECOND /
 	// Math.hypot(kDrivetrainTrackwidthMeters / 2.0, kDrivetrainWheelbaseMeters /
 	// 2.0);
-
+	
 	private final SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
 		// Front left
 		new Translation2d(kDrivetrainTrackwidthMeters / 2.0, kDrivetrainWheelbaseMeters / 2.0),
@@ -98,6 +99,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 	private final Limelight mLimelight;
 
 	private Pose2d mWaypoint;
+	private LedPosition mLedPosition;
 
 	private DriveSubsystem() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
@@ -242,6 +244,14 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 	public void setWaypoint(Pose2d waypoint) {
 		mWaypoint = waypoint;
+	}
+
+	public LedPosition getLedPosition() {
+		return mLedPosition;
+	}
+
+	public void setLedPosition(LedPosition position) {
+		mLedPosition = position;
 	}
 
 	@Override

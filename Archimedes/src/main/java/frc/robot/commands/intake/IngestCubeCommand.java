@@ -1,6 +1,8 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.ButtonBoxPublisher;
+import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class IngestCubeCommand extends InstantCommand {
@@ -15,5 +17,6 @@ public class IngestCubeCommand extends InstantCommand {
   @Override
   public void execute() {
     mIntakeSubsystem.ingestCube();
+    ButtonBoxPublisher.enableLed(LedPosition.eIngest);
   }
 }

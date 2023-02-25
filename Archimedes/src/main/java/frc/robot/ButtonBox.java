@@ -34,6 +34,14 @@ public class ButtonBox extends CommandGenericHID {
     private static int cubeToggleId = 3;
     private static int coneToggleId = 4;
 
+    private static int leftJoystickButtonId = 22;
+    private static int rightJoystickButtonId = 23;
+    private static int upJoystickButtonId = 24;
+    private static int downJoystickButtonId = 25;
+    private static int enableJoystickId = 26;
+
+    private boolean mIsJoysticEnabled = false;
+
     // 1 button toggling Cube or Cone state Button
     public Trigger cubeToggle() {
         return this.button(cubeToggleId);
@@ -110,6 +118,7 @@ public class ButtonBox extends CommandGenericHID {
         return this.button(cone9Id);
     }
 
+    // #region Human Station Buttons
     public Trigger leftHumanStation() {
         return this.button(leftHumanStationId);
     }
@@ -117,9 +126,38 @@ public class ButtonBox extends CommandGenericHID {
     public Trigger rightHumanStation() {
         return this.button(rightHumanStationId);
     }
+    // #endregion
+
+    // Joystick buttons
+    public Trigger leftJoystickButton() {
+        return this.button(leftJoystickButtonId);
+    }
+
+    public Trigger rightJoystickButton() {
+        return this.button(rightJoystickButtonId);
+    }
+
+    public Trigger upJoystickButton() {
+        return this.button(upJoystickButtonId);
+    }
+
+    public Trigger downJoystickButton() {
+        return this.button(downJoystickButtonId);
+    }
+
+    public Trigger enableJoystick() {
+        return this.button(enableJoystickId);
+    }
 
     public Trigger cancel() {
         return this.button(cancelId);
     }
 
+    public boolean isJoystickEnabled() {
+        return mIsJoysticEnabled;
+    }
+
+    public void toggleJoystick() {
+        mIsJoysticEnabled = !mIsJoysticEnabled;
+    }
 }

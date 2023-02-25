@@ -1,6 +1,8 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.ButtonBoxPublisher;
+import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class OutputConeCommand extends InstantCommand {
@@ -19,5 +21,6 @@ public class OutputConeCommand extends InstantCommand {
   @Override
   public void execute() {
     mIntakeSubsystem.outputCone();
+    ButtonBoxPublisher.enableLed(LedPosition.eEject);
   }
 }
