@@ -83,7 +83,9 @@ public class ArmSubsystem extends AftershockSubsystem {
     }
 
     public static synchronized ArmSubsystem getInstance() {
-        if (mInstance != null) mInstance = new ArmSubsystem();
+        if (mInstance == null) {
+            mInstance = new ArmSubsystem();
+        }    
         return mInstance;
     }
 }
