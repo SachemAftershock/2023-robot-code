@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+
 // import java.util.List;
 
 // import edu.wpi.first.math.geometry.Pose2d;
@@ -19,16 +21,17 @@ import frc.lib.SubsystemManager;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
+import frc.robot.auto.AutoPathOne;
 import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
-import frc.robot.commands.drive.DriveToCoordinateCommand;
+import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.commands.drive.SetWaypointCommand;
 import frc.robot.commands.intake.IngestConeCommand;
 import frc.robot.commands.intake.IngestCubeCommand;
-import frc.robot.commands.intake.OutputConeCommand;
-import frc.robot.commands.intake.OutputCubeCommand;
+import frc.robot.commands.intake.EjectConeCommand;
+import frc.robot.commands.intake.EjectCubeCommand;
 import frc.robot.commands.intake.StopIntakeCommand;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import frc.robot.enums.SuperState;
@@ -65,7 +68,7 @@ public class RobotContainer {
     private final ButtonBox mButtonBox = new ButtonBox(ControllerConstants.kButtonBoxPort);
 
 
-    private DriveToCoordinateCommand mDriveToCoordinateCommand;
+    private DriveToWaypointCommand mDriveToCoordinateCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -89,7 +92,7 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
         mPrimaryThrottleController.getTrigger().onTrue(new InstantCommand(() -> {
-            mDriveToCoordinateCommand = new DriveToCoordinateCommand(mDriveSubsystem.getWaypoint(), mDriveSubsystem);
+            mDriveToCoordinateCommand = new DriveToWaypointCommand(mDriveSubsystem.getWaypoint(), mDriveSubsystem);
             mDriveToCoordinateCommand.schedule();
         })).onFalse(new InstantCommand(() -> {
             mDriveToCoordinateCommand.cancel();
@@ -109,18 +112,18 @@ public class RobotContainer {
             }));
 
         mButtonBox.ejectIntake()
-            .onTrue(RobotContainer.isCone() ? new OutputConeCommand(mIntakeSubsystem) : new OutputCubeCommand(mIntakeSubsystem))
+            .onTrue(RobotContainer.isCone() ? new EjectConeCommand(mIntakeSubsystem) : new EjectCubeCommand(mIntakeSubsystem))
             .onFalse(new InstantCommand(() -> {
                 (new StopIntakeCommand(mIntakeSubsystem)).schedule();
                 ButtonBoxPublisher.disableLed(LedPosition.eEject);
             }));
 
-        mButtonBox.highPosition().onTrue(CommandFactory.commandFactory(SuperState.eHigh, mElevatorSubsystem, mArmSubsystem));
-        mButtonBox.mediumPosition().onTrue(CommandFactory.commandFactory(SuperState.eMid, mElevatorSubsystem, mArmSubsystem));
-        mButtonBox.floorPosition().onTrue(CommandFactory.commandFactory(SuperState.eLow, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.highPosition().onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.mediumPosition().onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eMid, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.floorPosition().onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem));
 
-        mButtonBox.humanPlayerPostion().onTrue(CommandFactory.commandFactory(SuperState.ePlayerStation, mElevatorSubsystem, mArmSubsystem));
-        mButtonBox.stowPostion().onTrue(CommandFactory.commandFactory(SuperState.eStow, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.humanPlayerPostion().onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.ePlayerStation, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.stowPostion().onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevatorSubsystem, mArmSubsystem));
 
         mButtonBox.cancel().onTrue(new InstantCommand(() -> {
             CommandScheduler.getInstance().cancelAll();
@@ -175,35 +178,8 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // TrajectoryConfig config = new TrajectoryConfig(
-        // DriveConstants.kMaxVelocityMetersPerSecond * 0.3,
-        // DriveConstants.kMaxAccelerationMetersPerSecondSquared
-        // );
-
-        // Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        // List.of(new Translation2d(2.0, -0.5)
-        // // new Translation2d(0, 1.2)//,
-        // // new Translation2d(1, 1.5)
-        // // new Translation2d(2.2,0)
-        // ), new Pose2d(1.0, -0.4, new Rotation2d()), config);
-
-        // Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(
-        // new Pose2d(), List.of(new Translation2d(0.5, 1.5), new Translation2d(1.0,
-        // 1.5), new Translation2d(1.5, 1.5)),
-        // new Pose2d(1.5, 1.5, new Rotation2d()), config
-        // );
-
-        return new LinearDriveCommand(mDriveSubsystem, 2.0, CardinalDirection.eX);
-
-        // return new SequentialCommandGroup(
-        // //FollowTrajectoryCommandFactory.generateCommand(mDriveSubsystem,
-        // trajectory),
-        // //new RotateDriveCommand(mDriveSubsystem, 90),
-        // //FollowTrajectoryCommandFactory.generateCommand(mDriveSubsystem,
-        // trajectory2)
-        // //new RotateDriveCommand(mDriveSubsystem, -30)
-
-        // );
+        
+        return new AutoPathOne(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
     }
 
     private static double deadband(double value, double deadband) {

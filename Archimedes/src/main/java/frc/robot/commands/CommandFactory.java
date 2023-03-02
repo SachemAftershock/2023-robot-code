@@ -12,7 +12,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 
 public class CommandFactory {
 
-    public static SequentialCommandGroup commandFactory(
+    public static SequentialCommandGroup HandleSuperStructureSequence(
         SuperState desiredState, ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem
     ) {
         LedPosition position;

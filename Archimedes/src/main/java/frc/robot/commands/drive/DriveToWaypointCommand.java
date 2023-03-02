@@ -8,7 +8,7 @@ import frc.robot.ButtonBoxPublisher;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class DriveToCoordinateCommand extends CommandBase {
+public class DriveToWaypointCommand extends CommandBase {
 
     private DriveSubsystem mDrive;
     private double mXCoordSetpoint;
@@ -21,12 +21,16 @@ public class DriveToCoordinateCommand extends CommandBase {
 
     private boolean mIsFinished = false;
 
-    public DriveToCoordinateCommand(Pose2d setpoint, DriveSubsystem drive) {
+    public DriveToWaypointCommand(Pose2d setpoint, DriveSubsystem drive) {
         mDrive = drive;
         mSetpoint = setpoint;
 
         mPIDX = new PID();
         mPIDY = new PID();
+    }
+
+    public DriveToWaypointCommand(DriveSubsystem drive) {
+        this(drive.getWaypoint(), drive);
     }
 
     @Override

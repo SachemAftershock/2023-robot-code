@@ -5,13 +5,14 @@ import frc.robot.ButtonBoxPublisher;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class OutputConeCommand extends InstantCommand {
+public class EjectCubeCommand extends InstantCommand {
 
   private IntakeSubsystem mIntakeSubsystem;
 
-  public OutputConeCommand(IntakeSubsystem intakeSubsystem) {
+  public EjectCubeCommand(IntakeSubsystem intakeSubsystem) {
     mIntakeSubsystem = intakeSubsystem;
     addRequirements(mIntakeSubsystem);
+
   }
 
   @Override
@@ -20,7 +21,7 @@ public class OutputConeCommand extends InstantCommand {
 
   @Override
   public void execute() {
-    mIntakeSubsystem.outputCone();
+    mIntakeSubsystem.outputCube();
     ButtonBoxPublisher.enableLed(LedPosition.eEject);
   }
 }
