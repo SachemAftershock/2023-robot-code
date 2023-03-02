@@ -43,25 +43,20 @@ public class AutoPathOne extends SequentialCommandGroup{
     );
 
     Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(2.0, -0.5),
-        new Translation2d(0, 1.2),
-        new Translation2d(1, 1.5),
-        new Translation2d(2.2,0)
-        ), new Pose2d(1.0, -0.4, new Rotation2d()), config);
+        List.of(new Translation2d(1.9, 0.45),
+        new Translation2d(4.98, 0.92)
+        ), new Pose2d(6.45, 2.11, new Rotation2d()), config);
 
     Trajectory pathToCommunity = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(2.0, -0.5),
-        new Translation2d(0, 1.2),
-        new Translation2d(1, 1.5),
-        new Translation2d(2.2,0)
-        ), new Pose2d(1.0, -0.4, new Rotation2d()), config);
+        List.of(new Translation2d(6.46, 2.11),
+        new Translation2d(5.23, 0.74),
+        new Translation2d(3.19, 0.72)
+        ), new Pose2d(1.9, 1.62, new Rotation2d()), config);
 
     Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(2.0, -0.5),
-        new Translation2d(0, 1.2),
-        new Translation2d(1, 1.5),
-        new Translation2d(2.2,0)
-        ), new Pose2d(1.0, -0.4, new Rotation2d()), config);
+        List.of(new Translation2d(1.9, 1.62),
+        new Translation2d(2.39, 2.37)
+        ), new Pose2d(3.92, 2.39, new Rotation2d()), config);
 
     public AutoPathOne(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
@@ -71,7 +66,6 @@ public class AutoPathOne extends SequentialCommandGroup{
         mIntake = intake;
 
         addCommands(
-
             //Places cone preloaded in robot
             new InstantCommand(() -> RobotContainer.toggleIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm),

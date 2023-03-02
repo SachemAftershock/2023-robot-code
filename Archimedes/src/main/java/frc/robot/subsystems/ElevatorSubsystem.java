@@ -9,7 +9,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import static frc.robot.Ports.ElevatorPorts.*;
 import static frc.robot.Constants.ElevatorConstants.*;
@@ -18,13 +21,18 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private static ElevatorSubsystem mInstance;
 
     private Lidar mLidar;
-    private final ProfiledPIDController mProfileController;
+    private ProfiledPIDController mProfileController;
     private final TrapezoidProfile.Constraints mConstraints;
 
     private CANSparkMax mMotor;
 
     private ElevatorState mCurrentState;
     private ElevatorState mDesiredState;
+
+    ShuffleboardTab ElevatorSubsystemTab = Shuffleboard.getTab("Elevator Subsystem");
+    GenericEntry P = ElevatorSubsystemTab.add("Elevator P", 0).getEntry();
+    GenericEntry I = ElevatorSubsystemTab.add("Elevator I", 0).getEntry();
+    GenericEntry D = ElevatorSubsystemTab.add("Elevator D", 0).getEntry();
 
     private ElevatorSubsystem() {
         mLidar = new Lidar(new DigitalInput(kElevatorLidarId));
@@ -38,6 +46,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     @Override
     public void initialize() {
+        mProfileController = new ProfiledPIDController(P.getDouble(0), I.getDouble(0), D.getDouble(0), mConstraints);
     }
 
     @Override
@@ -77,6 +86,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     @Override
     public void outputTelemetry() {
+        ElevatorSubsystemTab.add("Raw Lidar Distance Inches", mLidar.getDistanceCm());
+        ElevatorSubsystemTab.add("Motor Velocity", mMotor.getEncoder().getVelocity());
     }
 
     public synchronized static ElevatorSubsystem getInstance() {
