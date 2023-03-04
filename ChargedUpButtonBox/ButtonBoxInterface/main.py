@@ -1,31 +1,32 @@
-from ntcore import NetworkTableInstance
+from ntcore import NetworkTableInstance, StringSubscriber
 from serial import Serial, SerialTimeoutException, SerialException
 from serial.tools import list_ports
 from traceback import print_exc
 
 SERIAL_PORT = ""  # Leave empty to try to find port automatically
 ARDUINO_NAME = "Arduino Mega 2560"  # The arduino to search for when scanning ports. Can leave blank if not scanning
-NT_TABLE_NAME = "ButtonBox"  # Name of the subtable on NT
-NT_TOPIC_NAME = "IsRioBusy"  # Name of the topic on NT
 TEAM_NUMBER = 263
 NT_NAME = "DS Laptop"
 ROBORIO_BUSY = "b"
 ROBORIO_READY = "r"
 
+NT_WAYPOINT_PATH = "/ButtonBox/Waypoint"
+NT_INTAKE_PATH = "/ButtonBox/Intake"
+NT_SUPERSTRUCTURE_PATH = "/ButtonBox/Superstructure"
+NT_TOGGLE_PATH = "/ButtonBox/Toggle"
+NT_JOYSTICK_PATH = "/ButtonBox/Joystick"
+NT_MESSAGE_PATH = "/ButtonBox/Message"
 
-def send_serial(serial: Serial, value: bool) -> bool:
-    """Sends true or false value over serial to arduino
 
-    Converts the true or false into rio busy or rio ready,
-    which are defined by constants set at the top of the file.
-    True means busy, and false means ready.
+def send_serial(serial: Serial, command: str) -> bool:
+    """Sends command over serial to arduino
 
     Paramaters
     ----------
     serial : Serial
         the serial object to send over
-    value : bool
-        the true or false value to send
+    command : str
+        the command to send
 
     Returns
     --------
@@ -33,10 +34,8 @@ def send_serial(serial: Serial, value: bool) -> bool:
     """
 
     try:
-        serial.write(
-            ROBORIO_BUSY.encode("utf-8") if value else ROBORIO_READY.encode("utf-8")
-        )
-        print(f"Rio is {'Busy' if value else 'Ready'}")
+        serial.write(command.encode("UTF-8"))
+        print(command)
     except SerialTimeoutException:
         print("Serial Write Timed Out")
     except TypeError:
@@ -58,10 +57,22 @@ def main():
     print("Button Box Interface v1")
 
     inst = NetworkTableInstance.getDefault()
-    buttonbox_table = inst.getTable(NT_TABLE_NAME)  # get NT instance and desired topic
 
-    ledTopic = buttonbox_table.getBooleanTopic(NT_TOPIC_NAME)
-    ledSub = ledTopic.subscribe(None)  # get the desired topic and subscribe to it
+    waypointSub = inst.getStringTopic(NT_WAYPOINT_PATH).subscribe()
+    intakeSub = inst.getStringTopic(NT_INTAKE_PATH).subscribe()
+    superstructureSub = inst.getStringTopic(NT_SUPERSTRUCTURE_PATH)
+    toggleSub = inst.getStringTopic(NT_TOGGLE_PATH).subscribe()
+    joystickSub = inst.getStringTopic(NT_JOYSTICK_PATH).subscribe()
+    messageSub = inst.getStringTopic(NT_MESSAGE_PATH).subscribe()
+
+    subList: list[StringSubscriber] = [
+        waypointSub,
+        intakeSub,
+        superstructureSub,
+        toggleSub,
+        joystickSub,
+        messageSub,
+    ]
 
     # start the client
     inst.startClient4(NT_NAME)
@@ -70,7 +81,9 @@ def main():
 
     print("Client started")
 
-    serial_port = SERIAL_PORT  # assign local variable to constant beacuse python inerpreter is weird
+    serial_port = (
+        SERIAL_PORT  # assign local variable beacuse python inerpreter is weird
+    )
 
     # find the correct serial port using the arduino name
     if not serial_port:
@@ -103,22 +116,18 @@ def main():
         return
 
     while True:
-        changes = (
-            ledSub.readQueue()
-        )  # check if there have been any changes since last check
+        for sub in subList:
+            queue = sub.readQueue()
 
-        if not changes:
-            continue
+            if not queue:
+                continue
 
-        if changes[0] is None:
-            continue
+            for message in queue:
+                if not message:
+                    continue
 
-        val = changes[
-            0
-        ].value  # changes is an array. since only one led would be changed, get the first index
-
-        if not send_serial(arduino, val):  # if sending failed, quit program gracefully
-            return
+                if not send_serial(arduino, message.value):
+                    return
 
 
 if __name__ == "__main__":

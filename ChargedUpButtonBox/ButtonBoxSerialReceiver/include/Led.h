@@ -132,6 +132,7 @@ public:
         (m_Leds + i)->enable();
       }
     }
+    disableOtherLeds(ledId);
   }
 
   void disableLed(uint8_t ledId)
@@ -145,16 +146,6 @@ public:
     }
   }
 
-  LED *findLed(uint8_t ledId)
-  {
-    for (size_t i = 0; i < m_Count; i++)
-    {
-      if ((m_Leds + i)->getId() == ledId)
-        return (m_Leds + i);
-    }
-    return NULL;
-  }
-
   void setLedStatus(uint8_t ledId, LedStatus status)
   {
     for (size_t i = 0; i < m_Count; i++)
@@ -164,16 +155,6 @@ public:
         led.setDesiredState(status);
     }
   }
-
-  // LedStatus getLedStatus(uint8_t ledId)
-  // {
-  //   for (size_t i = 0; i < m_Count; i++)
-  //   {
-  //     LED led = *(m_Leds + i);
-  //     if (led.getId() == ledId)
-  //       return led.getCurrentState();
-  //   }
-  // }
 
   void blinkLeds()
   {
@@ -192,6 +173,18 @@ public:
         led.enable();
 
       led.setTime(millis());
+    }
+  }
+
+private:
+  void disableOtherLeds(uint8_t ledId)
+  {
+    for (size_t i = 0; i < m_Count; i++)
+    {
+      if ((m_Leds + i)->getId() != ledId)
+      {
+        (m_Leds + i)->disable();
+      }
     }
   }
 };
