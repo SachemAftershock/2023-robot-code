@@ -1,6 +1,6 @@
 #include <Arduino.h>
-int LED_Start = 2;
-int LED_End = 7;
+int LED_Start = 1;
+int LED_End = 22;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
