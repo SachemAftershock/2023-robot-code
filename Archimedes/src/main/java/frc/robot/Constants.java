@@ -47,10 +47,10 @@ public class Constants {
 
         // angles in radians.
         // to convert from degrees to radians multiply by pi/180
-        public static final double kFrontLeftSteerOffset = -0.35 - (Math.PI / 2.0);// -.35;
-        public static final double kFrontRightSteerOffset = 0.4 - (Math.PI / 2.0);// 0.40;
-        public static final double kBackLeftSteerOffset = 0.45 - (Math.PI / 2.0);// .45;
-        public static final double kBackRightSteerOffset = -0.5 - (Math.PI / 2.0);// -.5;
+        public static final double kFrontLeftSteerOffset = -0.35 - Math.toRadians(15);// - (Math.PI / 2.0);// -.35;
+        public static final double kFrontRightSteerOffset = 0.4 - Math.toRadians(15);; //- (Math.PI / 2.0);// 0.40;
+        public static final double kBackLeftSteerOffset = 0.45 - Math.toRadians(15);; //- (Math.PI / 2.0);// .45;
+        public static final double kBackRightSteerOffset = -0.5 - Math.toRadians(15);; //- (Math.PI / 2.0);// -.5;
 
         private static final double kMk4L1DriveReduction = (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0);
         private static final double kMk4WheelDiameter = 0.10033;
@@ -92,6 +92,8 @@ public class Constants {
     public static class IntakeConstants {
         public static final double kIngestConeSpeed = 0.5;
         public static final double kIngestCubeSpeed = 0.5;
+        public static final double kIntakeWidth = 12.0;
+        //public static final int kIntakeLidarId = 0;
     }
 
     public static class ArmConstants {
@@ -107,9 +109,15 @@ public class Constants {
         public static final double kEpsilon = 0.0;
 
         public static final double kJogSpeed = 0.2;
+        public static final double kArmLidarOffset = -2.0;
 
         public static final double[][] kBarDistanceToArmExtension = {
-            {0,0}
+            {13, 48.5},
+            {13, 49},
+            {15, 42},
+            {16, 34.75},
+            {17, 29},
+            {18,17.25},
         };
         
 
@@ -142,12 +150,14 @@ public class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final double[] kPidGains = { 0.0, 0.0, 0.0 };
-        public static final double kMaxVelocityMeterPerSecond = 1.75;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 0.75;
-        public static final double kEpsilon = 0.0;
+        public static final double[] kPidGains = { 0.8, 0.0, 0.0 };
+        public static final double kMaxVelocityMeterPerSecond = 0.5;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 0.2;
+        public static final double kEpsilon = 5.0;
 
         public static final double kJogSpeed = 0.2;
+
+        public static final double kElevatorLidarOffset = 0.0;
     }
 
     /*

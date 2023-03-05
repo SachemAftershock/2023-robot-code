@@ -16,6 +16,7 @@ public class SetElevatorStateCommand extends CommandBase {
 
   @Override
   public void initialize() {
+    System.out.println("Elevator set to " + mDesiredState);
     mElevatorSubsystem.setDesiredState(mDesiredState); // if broken move to execute
   }
 

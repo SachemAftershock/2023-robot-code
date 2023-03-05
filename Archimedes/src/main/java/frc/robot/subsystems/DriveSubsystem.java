@@ -4,6 +4,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import frc.lib.AftershockSubsystem;
 import frc.lib.Limelight;
@@ -197,19 +198,25 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 		FluidicalPoseInfo poseInfo = mLimelight.getBotPose();
 
-		System.out.println(poseInfo);
+		//System.out.println(poseInfo);
 
 		if (poseInfo != null && poseInfo.isValidTarget()) {
 			mPoseEstimator.addVisionMeasurement(poseInfo.getPose(), poseInfo.getTimestamp());
 		}
 
 		// photonvision update pose
-		Optional<EstimatedRobotPose> result = pcw.getEstimatedGlobalPose(mPoseEstimator.getEstimatedPosition());
-		if (result.isPresent()) {
-			EstimatedRobotPose camPose = result.get();
-			mPoseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
-			System.out.println(camPose);
-		}
+
+		// if(pcw.getEstimatedGlobalPose(mPoseEstimator.getEstimatedPosition()) != null) {
+		// 	Optional<EstimatedRobotPose> result = pcw.getEstimatedGlobalPose(mPoseEstimator.getEstimatedPosition());
+		// } else {
+		// 	Optional<EstimatedRobotPose> result = //Set to a default value
+		// }
+
+		// if (result.isPresent()) {
+		// 	EstimatedRobotPose camPose = result.get();
+		// 	mPoseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+		// 	System.out.println(camPose);
+		// }
 
 		mPoseEstimator.update(getGyroscopeRotation(), getPositions());
 
@@ -255,12 +262,23 @@ public class DriveSubsystem extends AftershockSubsystem {
 	}
 
 	@Override
-	public boolean checkSystem() {
-		return true;
-	}
+    public boolean checkSystem() {
+
+        boolean isFunctional = false;
+		double navxHeading = mNavx.getFusedHeading();
+
+        if(navxHeading != 0.0) {
+            isFunctional = false;
+        } else {
+			isFunctional = true;
+        }
+        return isFunctional;
+    }
 
 	@Override
 	public void outputTelemetry() {
+
+		
 
 	}
 

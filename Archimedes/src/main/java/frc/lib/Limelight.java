@@ -243,12 +243,12 @@ public class Limelight {
 	}
 
 	public void outputTelemetry() {
-		SmartDashboard.putBoolean(mTableName + " is Target", isTarget());
-		SmartDashboard.putNumber(mTableName + " tx", getTx());
-		SmartDashboard.putNumber(mTableName + " ty", getTy());
-		SmartDashboard.putNumber(mTableName + " ta", getTa());
-		SmartDashboard.putNumber(mTableName + " ts", getTs());
-		SmartDashboard.putNumber(mTableName + " tl", getTl());
+		// SmartDashboard.putBoolean(mTableName + " is Target", isTarget());
+		// SmartDashboard.putNumber(mTableName + " tx", getTx());
+		// SmartDashboard.putNumber(mTableName + " ty", getTy());
+		// SmartDashboard.putNumber(mTableName + " ta", getTa());
+		// SmartDashboard.putNumber(mTableName + " ts", getTs());
+		// SmartDashboard.putNumber(mTableName + " tl", getTl());
 	}
 
 	public class FluidicalPoseInfo {

@@ -4,7 +4,8 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 
 public enum ArmState {
-    eStow(0, 0), eLow(0, 0), eMid(0, 0), eHigh(0, 0), ePlayerStation(0, 0);
+    eStow(0, 0), eLow(0, 0), 
+    eMid(0, 0), eHigh(0, 0), ePlayerStation(0, 0);
 
     private double mCubeLength;
     private double mConeLength;

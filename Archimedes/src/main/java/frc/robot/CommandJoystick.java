@@ -20,7 +20,7 @@ public class CommandJoystick extends CommandGenericHID {
     }
 
     public double getTwist() {
-        return getRawAxis(AxisType.kTwist.value);
+        return getRawAxis(AxisType.kZ.value);
     }
 
     public Trigger getTrigger() {

@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.SubsystemManager;
+import frc.robot.subsystems.ArmSubsystem;
 
 public class Robot extends TimedRobot {
     private Command mAutonomousCommand;
@@ -20,6 +22,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         mRobotContainer = new RobotContainer();
+        mRobotContainer.initialize();
     }
 
     /**
@@ -34,6 +37,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        mRobotContainer.periodic();
     }
 
     /** This function is called once each time the robot enters Disabled mode. */
@@ -43,6 +47,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+
+        
     }
 
     /**
@@ -75,6 +81,7 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
+
     }
 
     @Override
@@ -87,6 +94,13 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
 
+        SubsystemManager mSubsystemManager = mRobotContainer.getSubsystemManager();
+
+        if(!mSubsystemManager.checkSystems()) {
+            mSubsystemManager.checkSystems();
+        }
+
+        mRobotContainer.test();
     }
 
     /** This function is called once when the robot is first started up. */
