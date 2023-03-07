@@ -59,7 +59,7 @@ public class Ports {
     }
 
     public static final class IntakePorts {
-        public static final int kIntakeMotorId = CanAddresses.eCanAddress1.get();
+        public static final int kIntakeMotorId = CanAddresses.eCanAddress4.get();
         public static final int kIntakeLidarId = DioPorts.eDioPort1.get();
     }
 

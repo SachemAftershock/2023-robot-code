@@ -102,7 +102,7 @@ public class Constants {
         public static final double kMaxVelocityMeterPerSecond = 1.75;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.75;
         public static final double kArmOffsetRads = 0;
-        public static final double[] kGains = { 0.0, 0.0, 0.0 };
+        public static final double[] kGains = { 0.4, 0.0, 0.0 };
         public static final double kIntegralZone = 0.0;
         public static final double kDt = 0.02;
 
@@ -150,14 +150,19 @@ public class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final double[] kPidGains = { 0.8, 0.0, 0.0 };
+        public static final double[] kPidGains = { 0.9, 0.0, 0.0 };
         public static final double kMaxVelocityMeterPerSecond = 0.5;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 0.2;
-        public static final double kEpsilon = 5.0;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 0.25;
+        public static final double kEpsilon = 1.5;
 
         public static final double kJogSpeed = 0.2;
 
         public static final double kElevatorLidarOffset = 0.0;
+        public static final double kElevatorLidarHeightFromGround = 3.75;
+        public static final int kElevatorMedianFilterSampleSize = 10;
+        public static final double kElevatorMaxHeight = 64.0; 
+        public static final double kElevatorMinHeight = 4.0; 
+
     }
 
     /*

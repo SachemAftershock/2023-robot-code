@@ -25,6 +25,7 @@ import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.auto.AutoPathOne;
 import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
@@ -36,6 +37,7 @@ import frc.robot.commands.intake.EjectConeCommand;
 import frc.robot.commands.intake.EjectCubeCommand;
 import frc.robot.commands.intake.StopIntakeCommand;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
+import frc.robot.enums.ArmState;
 import frc.robot.enums.ElevatorState;
 import frc.robot.enums.SuperState;
 import frc.robot.subsystems.ArmSubsystem;
@@ -104,11 +106,20 @@ public class RobotContainer {
 
         if(mTestController.getBButtonPressed()) {
             System.out.println("B button pressed ");
-            mElevatorSubsystem.setBreakFalse();
             new SetElevatorStateCommand(ElevatorState.eMid, mElevatorSubsystem).schedule();
         } else if(mTestController.getBButtonReleased()) {
-            mElevatorSubsystem.setBreakTrue();
+            
         }
+
+        if(mTestController.getAButtonPressed()) {
+            System.out.print("B button pressed");
+            mArmSubsystem.mBreak = false; 
+            new SetArmStateCommand(ArmState.eMid, mArmSubsystem).schedule();
+        } else if(mTestController.getAButtonReleased()) {
+            mArmSubsystem.mBreak = true; 
+        }
+
+       
     }
 
     public void test() {
@@ -123,6 +134,20 @@ public class RobotContainer {
         } else {
             mArmSubsystem.setTestSpeed(0.0);
         }
+
+        if(mTestController.getXButton()) {
+            mIntakeSubsystem.ingestCone();
+        } else {
+            mIntakeSubsystem.stop();
+        }
+
+        if(mTestController.getYButton()) {
+            mIntakeSubsystem.ingestCube();
+        } else {
+            mIntakeSubsystem.stop();
+        }
+
+        
     }
 
     public void initializeSubsystems() {

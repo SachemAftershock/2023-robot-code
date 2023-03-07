@@ -4,15 +4,16 @@ import frc.lib.AftershockSubsystem;
 import frc.lib.Lidar;
 import frc.lib.PID;
 import frc.robot.enums.ElevatorState;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,57 +32,57 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     private ElevatorState mCurrentState;
     private ElevatorState mDesiredState;
+    private final MedianFilter mFilter;
 
     ShuffleboardTab ElevatorSubsystemTab = Shuffleboard.getTab("Elevator Subsystem");
     GenericEntry P = ElevatorSubsystemTab.add("Elevator P", 0).getEntry();
     GenericEntry I = ElevatorSubsystemTab.add("Elevator I", 0).getEntry();
     GenericEntry D = ElevatorSubsystemTab.add("Elevator D", 0).getEntry();
-    PID mPid = new PID();
 
-    public boolean breakThis = false;
+    private double setpoint; 
 
     private ElevatorSubsystem() {
+
         mLidar = new Lidar(new DigitalInput(kElevatorLidarId));
         mConstraints = new TrapezoidProfile.Constraints(kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared);
         mProfileController = new ProfiledPIDController(kPidGains[0], kPidGains[1], kPidGains[2], mConstraints);
         mMotor = new CANSparkMax(kElevatorMotorId, MotorType.kBrushless);
         mMotor.setIdleMode(IdleMode.kBrake);
 
-        mCurrentState = ElevatorState.eStow;
-        mDesiredState = ElevatorState.eStow;
+        mCurrentState = ElevatorState.eStowEmpty;
+        mDesiredState = ElevatorState.eStowEmpty;
 
-        mPid.start(kPidGains);
+        mFilter = new MedianFilter(kElevatorMedianFilterSampleSize);
     }
 
     @Override
     public void initialize() {
         mProfileController = new ProfiledPIDController(P.getDouble(0), I.getDouble(0), D.getDouble(0), mConstraints);
+        setpoint = mLidar.getDistanceIn(); //Temporary so Elevator doesnt move when enabled
     }
 
     @Override
     public void periodic() {
-        if (mCurrentState == mDesiredState) return;
-        //if (breakThis) return;
 
-        double setpoint = mDesiredState.getHeight();
-        double current = mLidar.getDistanceIn();
-        double output = mPid.update(current, setpoint);//mProfileController.calculate(current, setpoint);
+        //if (mCurrentState == mDesiredState) return;
 
-        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
-        setSpeed(-output);
+        setpoint = mDesiredState.getHeight();
+        if(setpoint > kElevatorMaxHeight || setpoint < kElevatorMinHeight) {
+            System.out.println("Elevator setpoint out of bounds");
+            return;
+        }
+
+        double current = mFilter.calculate(mLidar.getDistanceIn());
 
         if (Math.abs(current - setpoint) < kEpsilon) {
             stop();
-            mCurrentState = mDesiredState;
-        }
-    }
+            return;
+        } 
 
-    public void setBreakTrue() {
-        breakThis = true;
-    }
+        double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -1.0, 1.0);
+        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        setSpeed(output);
 
-    public void setBreakFalse() {
-        breakThis = false;
     }
 
     public void setDesiredState(ElevatorState desiredState) {
@@ -108,6 +109,14 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         return mLidar.getDistanceIn() + kElevatorLidarOffset;
     }
 
+    public double getFilteredDistance() {
+        return mFilter.calculate(mLidar.getDistanceIn()) + kElevatorLidarOffset;
+    }
+
+    public double getElevatorHeight() {
+        return getFilteredDistance() + kElevatorLidarHeightFromGround;
+    }
+
     public void setTestSpeed(double speed) {
         mMotor.set(speed);
     }
@@ -119,6 +128,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
         //SmartDashboard.putNumber("Raw Distance", mLidar.getDistanceIn());
         SmartDashboard.putNumber("Elevator Distance", getElevatorDistance());
+        SmartDashboard.putNumber("Filtered Elevator Distance", getFilteredDistance());
         SmartDashboard.putNumber("Elevator Motor Velocity", mMotor.getEncoder().getVelocity());
     }
 

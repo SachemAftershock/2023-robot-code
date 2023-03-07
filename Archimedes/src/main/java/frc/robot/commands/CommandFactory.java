@@ -38,7 +38,7 @@ public class CommandFactory {
 
         ButtonBoxPublisher.enableLed(position);
 
-        if (armSubsystem.getState() == ArmState.eStow) {
+        if (armSubsystem.getState() == ArmState.eStowEmpty) {
             return new SequentialCommandGroup(
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
                 new SetArmStateCommand(desiredState.getArmState(), armSubsystem)
@@ -46,7 +46,7 @@ public class CommandFactory {
         }
         else {
             return new SequentialCommandGroup(
-                new SetArmStateCommand(ArmState.eStow, armSubsystem),
+                new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
                 new SetArmStateCommand(desiredState.getArmState(), armSubsystem)
             );
