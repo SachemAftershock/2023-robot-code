@@ -176,6 +176,18 @@ public:
     }
   }
 
+  boolean hasLed(uint8_t ledId)
+  {
+    for (size_t i = 0; i < m_Count; i++)
+    {
+      if ((m_Leds + i)->getId() == ledId)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
 private:
   void disableOtherLeds(uint8_t ledId)
   {
@@ -226,6 +238,7 @@ int8_t stoi(char *string)
  */
 Command parseCommand(String command)
 {
+
   char *str = strupr((char *)command.c_str());
   char *split;
   Command cmd;

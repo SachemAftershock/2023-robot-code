@@ -93,7 +93,7 @@ def main():
                 serial_port = port.device
 
     try:
-        arduino = Serial(serial_port)
+        arduino = Serial(serial_port, 9600, timeout=5, dsrdtr=True, rtscts=True)
     except SerialException:
         print_exc()
         print()

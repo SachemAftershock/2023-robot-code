@@ -6,9 +6,42 @@
 
 LiquidCrystal_I2C lcd(0x27, 16, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
 
+LED DriveToCone1 = LED(5);
+LED DriveToCube2 = LED(21);
+LED DriveToCone3 = LED(7);
+LED DriveToCone4 = LED(4);
+LED DriveToCube5 = LED(17);
+LED DriveToCone6 = LED(15);
+LED DriveToCone7 = LED(6);
+LED DriveToCube8 = LED(18);
+LED DriveToCone9 = LED(3);
+LED HumanLeft = LED(14);
+LED HumanRight = LED(23);
+LED Cancel = LED(16);
+
+LED DriveToLeds[] = {
+    DriveToCone1,
+    DriveToCube2,
+    DriveToCone3,
+    DriveToCone4,
+    DriveToCube5,
+    DriveToCone7,
+    DriveToCube8,
+    DriveToCone9,
+    HumanLeft,
+    HumanRight,
+    Cancel,
+};
+
+LedGroup driveToLedGroup(DriveToLeds, sizeof(DriveToLeds) / sizeof(DriveToLeds[0]));
+
+LedGroup ledGroups[] = {
+    driveToLedGroup,
+};
+size_t ledGroupsSize = sizeof(ledGroups) / sizeof(ledGroups[0]);
+
 void setDisplay(String message)
 {
-
   lcd.clear();
 
   if (message.length() > 32)
@@ -30,30 +63,94 @@ void setDisplay(String message)
   }
 }
 
+void enableLed(uint8_t ledId)
+{
+  for (size_t i = 0; i < ledGroupsSize; i++)
+  {
+    if (ledGroups[i].hasLed(ledId))
+    {
+      ledGroups[i].enableLed(ledId);
+      return;
+    }
+  }
+}
+
+void disableLed(uint8_t ledId)
+{
+  for (size_t i = 0; i < ledGroupsSize; i++)
+  {
+    if (ledGroups[i].hasLed(ledId))
+    {
+      ledGroups[i].disableLed(ledId);
+      return;
+    }
+  }
+}
+
+void blinkLed(uint8_t ledId)
+{
+  for (size_t i = 0; i < ledGroupsSize; i++)
+  {
+    if (ledGroups[i].hasLed(ledId))
+    {
+      ledGroups[i].setLedStatus(ledId, LED_BLINKING);
+      return;
+    }
+  }
+}
+
+void enableAllLeds()
+{
+  for (size_t i = 0; i < ledGroupsSize; i++)
+  {
+    ledGroups[i].enableAll();
+  }
+}
+
+void disableAllLeds()
+{
+  for (size_t i = 0; i < ledGroupsSize; i++)
+  {
+    ledGroups[i].disableAll();
+  }
+}
+
+void blinkAllLeds()
+{
+  for (size_t i = 0; i < ledGroupsSize; i++)
+  {
+    ledGroups[i].blinkAll();
+  }
+}
+
 void processCommand(Command command)
 {
+
+  setDisplay(String(command.commandType));
+
   if (command.commandType == NO_TYPE)
     return;
+
+  setDisplay("Switching");
 
   switch (command.commandType)
   {
   case COMMAND_ONE_LED:
-    uint8_t ledId = command.ledId;
-
+    setDisplay("Commanding LED");
     if (command.status == LED_ON)
-      ledGroup.enableLed(ledId);
+      enableLed(command.ledId);
     else if (command.status == LED_OFF)
-      ledGroup.disableLed(ledId);
+      disableLed(command.ledId);
     else if (command.status == LED_BLINKING)
-      ledGroup.setLedStatus(ledId, LED_BLINKING);
+      blinkLed(command.ledId);
     break;
   case COMMAND_ALL_LEDS:
     if (command.status == LED_ON)
-      ledGroup.enableAll();
+      enableAllLeds();
     else if (command.status == LED_OFF)
-      ledGroup.disableAll();
+      disableAllLeds();
     else if (command.status == LED_BLINKING)
-      ledGroup.blinkAll();
+      blinkAllLeds();
     break;
   case MESSAGE_COMMAND:
     setDisplay(command.message);
@@ -64,13 +161,6 @@ void processCommand(Command command)
 }
 
 Command cmd;
-
-LED leds[] = {
-    LED(0),
-    LED(1),
-};
-
-LedGroup ledGroup(leds, sizeof(leds) / sizeof(leds[0]));
 
 void setup()
 {
@@ -87,7 +177,18 @@ void setup()
 
 void loop()
 {
+
   String command = Serial.readStringUntil('\n');
-  cmd = parseCommand(command);
-  ledGroup.blinkLeds();
+
+  if (!command.equals(""))
+  {
+    cmd = parseCommand(command);
+    // setDisplay(String(cmd.status));
+    processCommand(cmd);
+  }
+
+  for (size_t i = 0; i < ledGroupsSize; i++)
+  {
+    ledGroups[i].blinkLeds();
+  }
 }
