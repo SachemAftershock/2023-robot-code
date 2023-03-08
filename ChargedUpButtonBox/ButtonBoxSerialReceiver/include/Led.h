@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-constexpr size_t kLedBlinkDelay = 500;
+constexpr size_t kLedBlinkDelay = 50;
 
 enum CommandType
 {
@@ -104,6 +104,7 @@ public:
     for (size_t i = 0; i < m_Count; i++)
     {
       (m_Leds + i)->enable();
+      (m_Leds + i)->setDesiredState(LED_ON);
     }
   }
 
@@ -112,6 +113,7 @@ public:
     for (size_t i = 0; i < m_Count; i++)
     {
       (m_Leds + i)->disable();
+      (m_Leds + i)->setDesiredState(LED_OFF);
     }
   }
 
@@ -130,6 +132,7 @@ public:
       if ((m_Leds + i)->getId() == ledId)
       {
         (m_Leds + i)->enable();
+        (m_Leds + i)->setDesiredState(LED_ON);
       }
     }
     disableOtherLeds(ledId);
@@ -142,17 +145,19 @@ public:
       if ((m_Leds + i)->getId() == ledId)
       {
         (m_Leds + i)->disable();
+        (m_Leds + i)->setDesiredState(LED_OFF);
       }
     }
   }
 
-  void setLedStatus(uint8_t ledId, LedStatus status)
+  void blinkLed(uint8_t ledId)
   {
     for (size_t i = 0; i < m_Count; i++)
     {
-      LED led = *(m_Leds + i);
-      if (led.getId() == ledId)
-        led.setDesiredState(status);
+      if ((m_Leds + i)->getId() == ledId)
+      {
+        (m_Leds + i)->setDesiredState(LED_BLINKING);
+      }
     }
   }
 
@@ -160,19 +165,19 @@ public:
   {
     for (size_t i = 0; i < m_Count; i++)
     {
-      LED led = *(m_Leds + i);
-      if (led.getDesiredState() != LED_BLINKING)
+      // LED led = *(m_Leds + i);
+
+      if ((m_Leds + i)->getDesiredState() != LED_BLINKING)
+        continue;
+      if ((millis() - (m_Leds + i)->getPrevTime()) < kLedBlinkDelay)
         continue;
 
-      if (millis() - led.getPrevTime() < kLedBlinkDelay)
-        continue;
-
-      if (led.getCurrentState() == LED_ON)
-        led.disable();
+      if ((m_Leds + i)->getCurrentState() == LED_ON)
+        (m_Leds + i)->disable();
       else
-        led.enable();
+        (m_Leds + i)->enable();
 
-      led.setTime(millis());
+      (m_Leds + i)->setTime(millis());
     }
   }
 
@@ -219,11 +224,12 @@ int8_t stoi(char *string)
 
   for (size_t i = 0; i < length; i++)
   {
+    c = *(string + i);
     if (c < '0' || c > '9')
     {
       return -1;
     }
-    sum += pow(10, length - 1) * (c - '0');
+    sum += pow(10, length - 1 - i) * (c - '0');
   }
 
   return sum;

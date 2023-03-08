@@ -7,7 +7,7 @@
 LiquidCrystal_I2C lcd(0x27, 16, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
 
 LED DriveToCone1 = LED(5);
-LED DriveToCube2 = LED(21);
+LED DriveToCube2 = LED(23);
 LED DriveToCone3 = LED(7);
 LED DriveToCone4 = LED(4);
 LED DriveToCube5 = LED(17);
@@ -16,7 +16,7 @@ LED DriveToCone7 = LED(6);
 LED DriveToCube8 = LED(18);
 LED DriveToCone9 = LED(3);
 LED HumanLeft = LED(14);
-LED HumanRight = LED(23);
+LED HumanRight = LED(25);
 LED Cancel = LED(16);
 
 LED DriveToLeds[] = {
@@ -25,6 +25,7 @@ LED DriveToLeds[] = {
     DriveToCone3,
     DriveToCone4,
     DriveToCube5,
+    DriveToCone6,
     DriveToCone7,
     DriveToCube8,
     DriveToCone9,
@@ -32,11 +33,54 @@ LED DriveToLeds[] = {
     HumanRight,
     Cancel,
 };
-
 LedGroup driveToLedGroup(DriveToLeds, sizeof(DriveToLeds) / sizeof(DriveToLeds[0]));
+
+LED elevatorStow(11);
+LED elevatorHuman(10);
+LED elevatorLow(22);
+LED elevatorMid(24);
+LED elevatorHigh(12);
+
+LED elevatorLeds[] = {
+    elevatorStow,
+    elevatorHuman,
+    elevatorLow,
+    elevatorMid,
+    elevatorHigh,
+};
+LedGroup elevatorLedGroup(elevatorLeds, sizeof(elevatorLeds) / sizeof(elevatorLeds[0]));
+
+LED injest(19);
+LED eject(13);
+
+LED intakeLeds[] = {
+    injest,
+    eject,
+};
+LedGroup intakeLedGroup(intakeLeds, sizeof(intakeLeds) / sizeof(intakeLeds[0]));
+
+LED cubeToggle(2);
+LED coneToggle(9);
+
+LED toggleLeds[] = {
+    cubeToggle,
+    coneToggle,
+};
+LedGroup toggleLedGroup(toggleLeds, sizeof(toggleLeds) / sizeof(toggleLeds[0]));
+
+LED joystickEnabledLed(8);
+
+LED joystickLeds[] = {
+    joystickEnabledLed,
+};
+LedGroup joystickLedGroup(joystickLeds, sizeof(joystickLeds) / sizeof(joystickLeds[0]));
 
 LedGroup ledGroups[] = {
     driveToLedGroup,
+    elevatorLedGroup,
+    intakeLedGroup,
+    toggleLedGroup,
+    joystickLedGroup,
 };
 size_t ledGroupsSize = sizeof(ledGroups) / sizeof(ledGroups[0]);
 
@@ -93,7 +137,7 @@ void blinkLed(uint8_t ledId)
   {
     if (ledGroups[i].hasLed(ledId))
     {
-      ledGroups[i].setLedStatus(ledId, LED_BLINKING);
+      ledGroups[i].blinkLed(ledId);
       return;
     }
   }
@@ -126,23 +170,24 @@ void blinkAllLeds()
 void processCommand(Command command)
 {
 
-  setDisplay(String(command.commandType));
+  // setDisplay(String(command.commandType));
 
   if (command.commandType == NO_TYPE)
     return;
 
-  setDisplay("Switching");
-
   switch (command.commandType)
   {
   case COMMAND_ONE_LED:
-    setDisplay("Commanding LED");
     if (command.status == LED_ON)
+    {
       enableLed(command.ledId);
+    }
     else if (command.status == LED_OFF)
       disableLed(command.ledId);
     else if (command.status == LED_BLINKING)
+    {
       blinkLed(command.ledId);
+    }
     break;
   case COMMAND_ALL_LEDS:
     if (command.status == LED_ON)
@@ -165,6 +210,7 @@ Command cmd;
 void setup()
 {
   Serial.begin(9600);
+  Serial.setTimeout(50);
 
   lcd.init(); // initialize the lcd
   lcd.backlight();
@@ -178,17 +224,31 @@ void setup()
 void loop()
 {
 
-  String command = Serial.readStringUntil('\n');
+  static char buffer[80];
+  static size_t currentIndex = 0;
 
-  if (!command.equals(""))
+  if (Serial.available())
   {
-    cmd = parseCommand(command);
-    // setDisplay(String(cmd.status));
-    processCommand(cmd);
+    char input = Serial.read();
+    buffer[currentIndex++] = input;
   }
 
-  for (size_t i = 0; i < ledGroupsSize; i++)
+  if (currentIndex > 0)
   {
-    ledGroups[i].blinkLeds();
+    if (buffer[currentIndex - 1] == '\0' || buffer[currentIndex - 1] == '\n')
+    {
+      if (buffer[currentIndex - 1] == '\n')
+      {
+        buffer[currentIndex - 2] = '\0';
+      }
+      String command = buffer;
+      cmd = parseCommand(command);
+      setDisplay(String(cmd.ledId));
+      processCommand(cmd);
+      memset(buffer, 0, sizeof(buffer));
+      currentIndex = 0;
+    }
   }
+
+  driveToLedGroup.blinkLeds();
 }

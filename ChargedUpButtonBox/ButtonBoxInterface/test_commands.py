@@ -115,7 +115,7 @@ def main():
         print("Soemthing went wrong while trying to open serial")
         return
 
-    send_serial(arduino, "led set 4 on") #expects on or off
+    send_serial(arduino, "led setall blink\0")  # expects on or off
 
     # while True:
     #     for sub in subList:

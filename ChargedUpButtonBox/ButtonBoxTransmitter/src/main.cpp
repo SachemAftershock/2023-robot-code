@@ -28,9 +28,7 @@ Button driveToButtons[] = {
     Button(HumanPlayerLeftButtonInfo),
     Button(HumanPlayerRightButtonInfo),
 };
-
 size_t driveToButtonArraySize = sizeof(driveToButtons) / sizeof(driveToButtons[0]);
-
 ToggleButtonGroup DriveToToggleGroup = ToggleButtonGroup(driveToButtons, driveToButtonArraySize, driveToButtons[9]);
 
 Button CargoShipButtonRight = Button(12, 4);
@@ -45,12 +43,12 @@ size_t HeldButtonArraySize = sizeof(HeldButtonArray) / sizeof(HeldButtonArray[0]
 // ToggleButtonGroup CenterToggleGroup = ToggleButtonGroup(ToggleButtonArray, ToggleButtonArraySize, CenterTopButton);
 HeldButtonGroup CargoHeldGroup = HeldButtonGroup(HeldButtonArray, HeldButtonArraySize);
 
-ToggleButton MohidToggleButton(14, 6, 7);
+ToggleButton ConeToggleButton(14, 6, 7);
 int x = 0;
 void setup()
 {
   // CenterToggleGroup.ActiveDefaultButton();
-  MohidToggleButton.Enable();
+  ConeToggleButton.Enable();
 }
 
 void loop()
@@ -59,7 +57,8 @@ void loop()
   // Serial.println(x);
   // usb_rawhid_recv(0, &x, 1, 1);
   // CenterToggleGroup.PollButtons();
+  DriveToToggleGroup.PollButtons();
   CargoHeldGroup.PollButtons();
-  MohidToggleButton.PollButton();
+  ConeToggleButton.PollButton();
   delay(50);
 }
