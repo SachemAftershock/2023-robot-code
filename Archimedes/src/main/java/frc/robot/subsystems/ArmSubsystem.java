@@ -5,10 +5,12 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,6 +18,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.enums.ArmState;
 import frc.lib.AftershockSubsystem;
 import frc.lib.Lidar;
+import frc.lib.PID;
 
 import static frc.robot.Constants.ArmConstants.*;
 import static frc.robot.Ports.ArmPorts.*;
@@ -28,6 +31,8 @@ public class ArmSubsystem extends AftershockSubsystem {
     private final Lidar mLidar;
     private ProfiledPIDController mProfileController; //Add final back
     private final TrapezoidProfile.Constraints mConstraints;
+    private MedianFilter mFilter;
+    private PID mPID;
 
     private ArmState mCurrentState;
     private ArmState mDesiredState;
@@ -46,6 +51,10 @@ public class ArmSubsystem extends AftershockSubsystem {
 
         mConstraints = new TrapezoidProfile.Constraints(kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared);
         mProfileController = new ProfiledPIDController(kGains[0], kGains[1], kGains[2], mConstraints);
+        mFilter = new MedianFilter(10);
+        mPID = new PID();
+        
+
 
         mCurrentState = ArmState.eStowEmpty;
         mDesiredState = ArmState.eStowEmpty;
@@ -53,21 +62,33 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     @Override
     public void initialize() {
-        mProfileController = new ProfiledPIDController(P.getDouble(0), I.getDouble(0), D.getDouble(0), mConstraints);
+        //mProfileController = new ProfiledPIDController(P.getDouble(0), I.getDouble(0), D.getDouble(0), mConstraints);
+        setSpeed(0);
+        mCurrentState = ArmState.eStowEmpty;
+        mDesiredState = ArmState.eStowEmpty;
+        mPID.start(kGains);
+
     }
 
     @Override
     public void periodic() {
+        //System.out.println(mCurrentState + " " + mDesiredState);
         if (mCurrentState == mDesiredState) return;
-        if(mBreak) return;  
+        //if(mBreak || true) return;  
 
-        double current = mLidar.getDistanceIn();
-        double setpoint = mDesiredState.getLength();
-        double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -1.0, 1.0);
-        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
-        setSpeed(-output);
+        double current = mFilter.calculate(mLidar.getDistanceIn());
+        double setpoint = ArmConstants.getBarDistance(mDesiredState.getLength());
+        if (setpoint == -1) {
+            DriverStation.reportError("[INTAKE]: SETPOINT IS INVALID", false);
+            return;
+        }
+        double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -0.5, 0.5);
+        //double output = mPID.update(current, setpoint);
+        //output = MathUtil.clamp(output, -0.5, 0.5);
+        //System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        setSpeed(output);
 
-        if (Math.abs(current - setpoint) < kEpsilon) {
+        if (Math.abs(mPID.getError()) < kEpsilon) {
             stop();
             mCurrentState = mDesiredState;
         }
@@ -108,19 +129,24 @@ public class ArmSubsystem extends AftershockSubsystem {
     @Override
     public boolean checkSystem() {
 
-        boolean isFunctional = false;
+        boolean isFunctional = true;
         double lidarDistance = mLidar.getDistanceIn();
 
         //Value should be lidar distance when arm is fully retractred
         if(lidarDistance < 0) {
-            isFunctional = true;
-        } else {
             System.out.println("ERROR : Arm Lidar not functional or misaligned. Lidar distance = " + lidarDistance);
+            isFunctional = false;
         }
+          
         return isFunctional;
     }
 
+    public void TESTSPEED(){
+        setSpeed(-1.0);
+    }
+
     private void setSpeed(double speed) {
+        System.out.println(speed);
         mArmMotor.set(speed);
     }
 

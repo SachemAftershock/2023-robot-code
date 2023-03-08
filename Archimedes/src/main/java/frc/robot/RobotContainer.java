@@ -66,7 +66,7 @@ public class RobotContainer {
     private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
     private final ArmSubsystem mArmSubsystem = ArmSubsystem.getInstance();
 
-    private final SubsystemManager mSubsystemManager = new SubsystemManager(mElevatorSubsystem, mIntakeSubsystem);
+    private final SubsystemManager mSubsystemManager = new SubsystemManager(mElevatorSubsystem, mIntakeSubsystem, mArmSubsystem, mDriveSubsystem);
 
     private final CommandJoystick mPrimaryThrottleController = new CommandJoystick(ControllerConstants.kPrimaryThrottleControllerPort);
     private final CommandJoystick mPrimaryTwistController = new CommandJoystick(ControllerConstants.kPrimaryTwistControllerPort);
@@ -93,10 +93,15 @@ public class RobotContainer {
     }
 
     public void initialize() {
+        mSubsystemManager.initialize();
         // mArmSubsystem.outputTelemetry();
         // mElevatorSubsystem.outputTelemetry();
         // mIntakeSubsystem.outputTelemetry();
 
+    }
+
+    public void testPeriodic() {
+        mElevatorSubsystem.periodic();
     }
 
     public void periodic() {
@@ -104,19 +109,18 @@ public class RobotContainer {
         mElevatorSubsystem.outputTelemetry();
         mIntakeSubsystem.outputTelemetry();
 
-        if(mTestController.getBButtonPressed()) {
-            System.out.println("B button pressed ");
-            new SetElevatorStateCommand(ElevatorState.eMid, mElevatorSubsystem).schedule();
-        } else if(mTestController.getBButtonReleased()) {
+        // if(mTestController.getBButtonPressed()) {
+        //     System.out.println("B button pressed ");
+        //     new SetElevatorStateCommand(ElevatorState.eMid, mElevatorSubsystem).schedule();
+        // } else if(mTestController.getBButtonReleased()) {
             
-        }
+        // }
 
         if(mTestController.getAButtonPressed()) {
-            System.out.print("B button pressed");
-            mArmSubsystem.mBreak = false; 
+            //mArmSubsystem.TESTSPEED();
+            //System.out.print("A button pressed");
+            //mArmSubsystem.mBreak = false; 
             new SetArmStateCommand(ArmState.eMid, mArmSubsystem).schedule();
-        } else if(mTestController.getAButtonReleased()) {
-            mArmSubsystem.mBreak = true; 
         }
 
        
@@ -135,10 +139,11 @@ public class RobotContainer {
             mArmSubsystem.setTestSpeed(0.0);
         }
 
-        if(mTestController.getXButton()) {
-            mIntakeSubsystem.ingestCone();
-        } else {
-            mIntakeSubsystem.stop();
+        if(mTestController.getBButtonPressed()) {
+            System.out.println("B button pressed ");
+            new SetElevatorStateCommand(ElevatorState.eMid, mElevatorSubsystem).schedule();
+        } else if(mTestController.getBButtonReleased()) {
+            
         }
 
         if(mTestController.getYButton()) {
@@ -218,10 +223,10 @@ public class RobotContainer {
             if (mButtonBox.isJoystickEnabled()) mArmSubsystem.jogArm(isOut);
         });
 
-        mButtonBox.upJoystickButton().onTrue(jogElevatorCommand.apply(true)).onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
-        mButtonBox.downJoystickButton().onTrue(jogElevatorCommand.apply(false)).onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
-        mButtonBox.rightJoystickButton().onTrue(jogArmCommand.apply(true)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
-        mButtonBox.leftJoystickButton().onTrue(jogArmCommand.apply(false)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
+        //mButtonBox.upJoystickButton().onTrue(jogElevatorCommand.apply(true)).onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+        //mButtonBox.downJoystickButton().onTrue(jogElevatorCommand.apply(false)).onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+        //mButtonBox.rightJoystickButton().onTrue(jogArmCommand.apply(true)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
+        //mButtonBox.leftJoystickButton().onTrue(jogArmCommand.apply(false)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
 
         mButtonBox.enableJoystick().onTrue(new InstantCommand(() -> mButtonBox.toggleJoystick()));
     }

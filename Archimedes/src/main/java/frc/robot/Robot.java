@@ -73,6 +73,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        CommandScheduler.getInstance().cancelAll();
+        mRobotContainer.initialize();
         if (mAutonomousCommand != null) {
             mAutonomousCommand.cancel();
         }
@@ -88,6 +90,7 @@ public class Robot extends TimedRobot {
     public void testInit() {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
+        mRobotContainer.initialize();
     }
 
     /** This function is called periodically during test mode. */
@@ -101,6 +104,7 @@ public class Robot extends TimedRobot {
         }
 
         mRobotContainer.test();
+        mRobotContainer.testPeriodic();
     }
 
     /** This function is called once when the robot is first started up. */

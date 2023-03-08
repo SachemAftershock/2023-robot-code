@@ -191,6 +191,8 @@ public class DriveSubsystem extends AftershockSubsystem {
 		catch (IOException e) {
 			pcw = null;
 		}
+
+		drive(new ChassisSpeeds());
 	}
 
 	@Override

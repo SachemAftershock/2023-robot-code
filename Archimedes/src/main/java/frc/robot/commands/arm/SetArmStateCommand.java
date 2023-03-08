@@ -17,11 +17,11 @@ public class SetArmStateCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        mArmSubsystem.setDesiredState(mDesiredState); // if broken move to execute
     }
 
     @Override
     public void execute() {
+        mArmSubsystem.setDesiredState(mDesiredState); // if broken move to execute
     }
 
     @Override

@@ -7,7 +7,7 @@ public enum ArmState {
     eStowEmpty(18, 18), 
     eStowLoaded(0,0),
     eLow(0, 0), 
-    eMid(13, 13), 
+    eMid(40.0, 40.0), 
     eHigh(0, 0), 
     ePlayerStation(0, 0);
 

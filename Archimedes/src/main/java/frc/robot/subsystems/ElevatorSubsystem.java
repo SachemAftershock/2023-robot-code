@@ -28,6 +28,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private ProfiledPIDController mProfileController;
     private final TrapezoidProfile.Constraints mConstraints;
 
+    PID mPid;
+
     private CANSparkMax mMotor;
 
     private ElevatorState mCurrentState;
@@ -41,13 +43,18 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     private double setpoint; 
 
+    double i =0;
+
     private ElevatorSubsystem() {
 
         mLidar = new Lidar(new DigitalInput(kElevatorLidarId));
+        mPid = new PID();
+        mPid.start(kPidGains);
         mConstraints = new TrapezoidProfile.Constraints(kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared);
         mProfileController = new ProfiledPIDController(kPidGains[0], kPidGains[1], kPidGains[2], mConstraints);
         mMotor = new CANSparkMax(kElevatorMotorId, MotorType.kBrushless);
         mMotor.setIdleMode(IdleMode.kBrake);
+        //mMotor.setInverted(true);
 
         mCurrentState = ElevatorState.eStowEmpty;
         mDesiredState = ElevatorState.eStowEmpty;
@@ -57,14 +64,17 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     @Override
     public void initialize() {
-        mProfileController = new ProfiledPIDController(P.getDouble(0), I.getDouble(0), D.getDouble(0), mConstraints);
+        mCurrentState = ElevatorState.eStowEmpty;
+        mDesiredState = ElevatorState.eStowEmpty;
         setpoint = mLidar.getDistanceIn(); //Temporary so Elevator doesnt move when enabled
+        mProfileController = new ProfiledPIDController(kPidGains[0], kPidGains[1], kPidGains[2], mConstraints);
+        setSpeed(0);
     }
 
     @Override
     public void periodic() {
 
-        //if (mCurrentState == mDesiredState) return;
+        if (mCurrentState == mDesiredState) return;
 
         setpoint = mDesiredState.getHeight();
         if(setpoint > kElevatorMaxHeight || setpoint < kElevatorMinHeight) {
@@ -73,15 +83,19 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         }
 
         double current = mFilter.calculate(mLidar.getDistanceIn());
+        double output = mPid.update(current, setpoint);
+        //double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -1.0, 1.0);
+        //if (i % 100 == 0) {
+        //System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        //}
 
-        if (Math.abs(current - setpoint) < kEpsilon) {
+        if (Math.abs(mPid.getError()) < kEpsilon) {
             stop();
             return;
         } 
 
-        double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -1.0, 1.0);
-        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
         setSpeed(output);
+        i++;
 
     }
 
