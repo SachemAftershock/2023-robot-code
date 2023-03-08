@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.XboxController;
 
 // import java.util.List;
 
@@ -24,16 +25,20 @@ import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.auto.AutoPathOne;
 import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.commands.drive.SetWaypointCommand;
+import frc.robot.commands.elevator.SetElevatorStateCommand;
 import frc.robot.commands.intake.IngestConeCommand;
 import frc.robot.commands.intake.IngestCubeCommand;
 import frc.robot.commands.intake.EjectConeCommand;
 import frc.robot.commands.intake.EjectCubeCommand;
 import frc.robot.commands.intake.StopIntakeCommand;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
+import frc.robot.enums.ArmState;
+import frc.robot.enums.ElevatorState;
 import frc.robot.enums.SuperState;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -66,6 +71,7 @@ public class RobotContainer {
     private final CommandJoystick mPrimaryThrottleController = new CommandJoystick(ControllerConstants.kPrimaryThrottleControllerPort);
     private final CommandJoystick mPrimaryTwistController = new CommandJoystick(ControllerConstants.kPrimaryTwistControllerPort);
     private final ButtonBox mButtonBox = new ButtonBox(ControllerConstants.kButtonBoxPort);
+    private final XboxController mTestController = new XboxController(3);
 
 
     private DriveToWaypointCommand mDriveToCoordinateCommand;
@@ -84,6 +90,64 @@ public class RobotContainer {
                 () -> -modifyAxis(mPrimaryTwistController.getTwist()) * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant
             )
         );
+    }
+
+    public void initialize() {
+        // mArmSubsystem.outputTelemetry();
+        // mElevatorSubsystem.outputTelemetry();
+        // mIntakeSubsystem.outputTelemetry();
+
+    }
+
+    public void periodic() {
+        mArmSubsystem.outputTelemetry();
+        mElevatorSubsystem.outputTelemetry();
+        mIntakeSubsystem.outputTelemetry();
+
+        if(mTestController.getBButtonPressed()) {
+            System.out.println("B button pressed ");
+            new SetElevatorStateCommand(ElevatorState.eMid, mElevatorSubsystem).schedule();
+        } else if(mTestController.getBButtonReleased()) {
+            
+        }
+
+        if(mTestController.getAButtonPressed()) {
+            System.out.print("B button pressed");
+            mArmSubsystem.mBreak = false; 
+            new SetArmStateCommand(ArmState.eMid, mArmSubsystem).schedule();
+        } else if(mTestController.getAButtonReleased()) {
+            mArmSubsystem.mBreak = true; 
+        }
+
+       
+    }
+
+    public void test() {
+        if(mTestController.getAButton() && (mTestController.getLeftY() > 0.05 || mTestController.getLeftY() < -0.05)) {
+            mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
+        } else {
+            mElevatorSubsystem.setTestSpeed(0.0);
+        }
+
+        if(mTestController.getAButton() && (mTestController.getLeftX() > 0.05 || mTestController.getLeftX() < -0.05)) {
+            mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
+        } else {
+            mArmSubsystem.setTestSpeed(0.0);
+        }
+
+        if(mTestController.getXButton()) {
+            mIntakeSubsystem.ingestCone();
+        } else {
+            mIntakeSubsystem.stop();
+        }
+
+        if(mTestController.getYButton()) {
+            mIntakeSubsystem.ingestCube();
+        } else {
+            mIntakeSubsystem.stop();
+        }
+
+        
     }
 
     public void initializeSubsystems() {
@@ -206,5 +270,9 @@ public class RobotContainer {
         }
 
         return value;
+    }
+
+    public SubsystemManager getSubsystemManager() {
+        return mSubsystemManager;
     }
 }

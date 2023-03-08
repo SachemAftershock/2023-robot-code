@@ -59,16 +59,17 @@ public class Ports {
     }
 
     public static final class IntakePorts {
-        public static final int kIntakeMotorId = CanAddresses.eCanAddress15.get();
+        public static final int kIntakeMotorId = CanAddresses.eCanAddress4.get();
+        public static final int kIntakeLidarId = DioPorts.eDioPort1.get();
     }
 
     public static final class ElevatorPorts {
-        public static final int kElevatorMotorId = CanAddresses.eCanAddress16.get();
-        public static final int kElevatorLidarId = DioPorts.eDioPort1.get();
+        public static final int kElevatorMotorId = CanAddresses.eCanAddress9.get();
+        public static final int kElevatorLidarId = DioPorts.eDioPort0.get();
     }
 
     public static final class ArmPorts {
-        public static final int kArmMotorId = CanAddresses.eCanAddress17.get();
-        public static final int kArmLidarId = DioPorts.eDioPort0.get();
+        public static final int kArmMotorId = CanAddresses.eCanAddress3.get();
+        public static final int kArmLidarId = DioPorts.eDioPort2.get();
     }
 }

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
@@ -10,6 +11,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.enums.ArmState;
 import frc.lib.AftershockSubsystem;
@@ -29,6 +31,7 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     private ArmState mCurrentState;
     private ArmState mDesiredState;
+    public boolean mBreak = false; 
 
     ShuffleboardTab ArmSubsystemTab = Shuffleboard.getTab("Arm Subsystem");
     GenericEntry P = ArmSubsystemTab.add("Arm P", 0).getEntry();
@@ -44,8 +47,8 @@ public class ArmSubsystem extends AftershockSubsystem {
         mConstraints = new TrapezoidProfile.Constraints(kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared);
         mProfileController = new ProfiledPIDController(kGains[0], kGains[1], kGains[2], mConstraints);
 
-        mCurrentState = ArmState.eStow;
-        mDesiredState = ArmState.eStow;
+        mCurrentState = ArmState.eStowEmpty;
+        mDesiredState = ArmState.eStowEmpty;
     }
 
     @Override
@@ -56,11 +59,13 @@ public class ArmSubsystem extends AftershockSubsystem {
     @Override
     public void periodic() {
         if (mCurrentState == mDesiredState) return;
+        if(mBreak) return;  
 
-        double current = mLidar.getDistanceCm() / 100;
+        double current = mLidar.getDistanceIn();
         double setpoint = mDesiredState.getLength();
-
-        setSpeed(mProfileController.calculate(current, setpoint));
+        double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -1.0, 1.0);
+        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        setSpeed(-output);
 
         if (Math.abs(current - setpoint) < kEpsilon) {
             stop();
@@ -84,16 +89,42 @@ public class ArmSubsystem extends AftershockSubsystem {
         mDesiredState = desiredState;
     }
 
+    public double getBarDistance() {
+        return mLidar.getDistanceIn() + kArmLidarOffset;
+    }
+
     @Override
     public void outputTelemetry() {
 
-        ArmSubsystemTab.add("Raw Lidar Distance Inches", mLidar.getDistanceCm());
-        ArmSubsystemTab.add("Real Bar Distance", ArmConstants.getBarDistance(kArmLidarId));
-        ArmSubsystemTab.add("Motor Velocity", mArmMotor.getEncoder().getVelocity());
+        // ArmSubsystemTab.add("A Lidar Distance Inches", mLidar.getDistanceCm());
+        // ArmSubsystemTab.add("A Real Bar Distance", ArmConstants.getBarDistance(kArmLidarId));
+        // ArmSubsystemTab.add("A Motor Velocity", mArmMotor.getEncoder().getVelocity());
 
+        //SmartDashboard.putNumber("Raw Bar Distance", mLidar.getDistanceIn());
+        SmartDashboard.putNumber("Bar Distance", getBarDistance());
+        SmartDashboard.putNumber("Arm Motor Velocity", mArmMotor.getEncoder().getVelocity());
+    }
+
+    @Override
+    public boolean checkSystem() {
+
+        boolean isFunctional = false;
+        double lidarDistance = mLidar.getDistanceIn();
+
+        //Value should be lidar distance when arm is fully retractred
+        if(lidarDistance < 0) {
+            isFunctional = true;
+        } else {
+            System.out.println("ERROR : Arm Lidar not functional or misaligned. Lidar distance = " + lidarDistance);
+        }
+        return isFunctional;
     }
 
     private void setSpeed(double speed) {
+        mArmMotor.set(speed);
+    }
+
+    public void setTestSpeed(double speed) {
         mArmMotor.set(speed);
     }
 

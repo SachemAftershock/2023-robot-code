@@ -1,7 +1,7 @@
 package frc.robot.enums;
 
 public enum SuperState {
-    eStow(ElevatorState.eStow, ArmState.eStow),
+    eStow(ElevatorState.eStowEmpty, ArmState.eStowEmpty),
     eLow(ElevatorState.eLow, ArmState.eLow),
     eMid(ElevatorState.eMid, ArmState.eMid), 
     eHigh(ElevatorState.eHigh, ArmState.eHigh),

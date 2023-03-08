@@ -41,7 +41,7 @@ public class ManualDriveCommand extends CommandBase {
 
         double rotSpeed = m_rotationSupplier.getAsDouble();
 
-        if (mArmStateSupplier.get() != ArmState.eStow) {
+        if (mArmStateSupplier.get() != ArmState.eStowEmpty) {
             xSpeed *= kDriveSpeedScaleFactor;
             ySpeed *= kDriveSpeedScaleFactor;
         }
