@@ -1,7 +1,9 @@
 #include <Arduino.h>
 #include <Buttonbox.h>
 
-ButtonInfo DriveToCone1ButtonInfo = {0, 1};
+LED TeensyPowerLed(42);
+
+ButtonInfo DriveToCone1ButtonInfo = {0, 1}; // button id on teensy, driverstation joystick id
 ButtonInfo DriveToCube2ButtonInfo = {1, 2};
 ButtonInfo DriveToCone3ButtonInfo = {2, 3};
 ButtonInfo DriveToCone4ButtonInfo = {3, 4};
@@ -28,37 +30,60 @@ Button driveToButtons[] = {
     Button(HumanPlayerLeftButtonInfo),
     Button(HumanPlayerRightButtonInfo),
 };
+
 size_t driveToButtonArraySize = sizeof(driveToButtons) / sizeof(driveToButtons[0]);
 ToggleButtonGroup DriveToToggleGroup = ToggleButtonGroup(driveToButtons, driveToButtonArraySize, driveToButtons[9]);
 
-Button CargoShipButtonRight = Button(12, 4);
-Button CargoShipButtonBottom = Button(11, 5);
+ToggleButton ConeToggleButton(12, 13, 14);
+
+ButtonInfo InjestButtonInfo = {15, 15};
+ButtonInfo EjectButtonInfo = {16, 16};
 
 Button HeldButtonArray[] = {
-    CargoShipButtonRight,
-    CargoShipButtonBottom,
+    Button(InjestButtonInfo),
+    Button(EjectButtonInfo),
 };
 size_t HeldButtonArraySize = sizeof(HeldButtonArray) / sizeof(HeldButtonArray[0]);
+HeldButtonGroup IntakeHeldGroup = HeldButtonGroup(HeldButtonArray, HeldButtonArraySize);
 
-// ToggleButtonGroup CenterToggleGroup = ToggleButtonGroup(ToggleButtonArray, ToggleButtonArraySize, CenterTopButton);
-HeldButtonGroup CargoHeldGroup = HeldButtonGroup(HeldButtonArray, HeldButtonArraySize);
+ButtonInfo ElevatorStowButtonInfo = {13, 17};
+ButtonInfo ElevatorHumanButtonInfo = {14, 18};
+ButtonInfo ElevatorLowButtonInfo = {18, 19};
+ButtonInfo ElevatorMiddleButtonInfo = {38, 20};
+ButtonInfo ElevatorHighButtonInfo = {20, 21};
 
-ToggleButton ConeToggleButton(14, 6, 7);
-int x = 0;
+Button ElevatorButtonArray[] = {
+    Button(ElevatorStowButtonInfo),
+    Button(ElevatorHumanButtonInfo),
+    Button(ElevatorLowButtonInfo),
+    Button(ElevatorMiddleButtonInfo),
+    Button(ElevatorHighButtonInfo),
+};
+size_t ElevatorButtonArraySize = sizeof(ElevatorButtonArray) / sizeof(ElevatorButtonArray[0]);
+ToggleButtonGroup ElevatorButtonGroup(ElevatorButtonArray, ElevatorButtonArraySize, ElevatorButtonArray[0]);
+
+SingleToggleButton JoystickEnableToggle(17, 22);
+
+PovInfo povInfo = {21, 24, 23, 22};
+POV pov = POV(povInfo);
+
 void setup()
 {
-  // CenterToggleGroup.ActiveDefaultButton();
+  DriveToToggleGroup.ActiveDefaultButton();
+  ElevatorButtonGroup.ActiveDefaultButton();
   ConeToggleButton.Enable();
+
+  Serial.println("starting");
+  TeensyPowerLed.enable();
 }
 
 void loop()
 {
-  // x = Serial.parseInt();
-  // Serial.println(x);
-  // usb_rawhid_recv(0, &x, 1, 1);
-  // CenterToggleGroup.PollButtons();
   DriveToToggleGroup.PollButtons();
-  CargoHeldGroup.PollButtons();
   ConeToggleButton.PollButton();
-  delay(50);
+  IntakeHeldGroup.PollButtons();
+  JoystickEnableToggle.PollButton();
+  ElevatorButtonGroup.PollButtons();
+  pov.Poll();
+  delay(20);
 }

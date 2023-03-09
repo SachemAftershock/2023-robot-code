@@ -8,12 +8,78 @@ constexpr uint16_t INVALID_BUTTON_ID = 9999;
 constexpr uint8_t JOYSTICK_BUTTON_PRESSED = 1;
 constexpr uint8_t JOYSTICK_BUTTON_RELEASED = 0;
 
+enum LedStatus
+{
+  LED_OFF,
+  LED_ON,
+  LED_BLINKING,
+};
+
 struct ButtonInfo
 {
   uint8_t buttonId;
   uint8_t joyStickId;
 
   uint8_t secondaryJoystickId;
+};
+
+class LED
+{
+  uint8_t m_Id;
+  LedStatus m_DesiredState;
+  LedStatus m_CurrentState;
+  size_t m_PrevTime;
+
+public:
+  LED(uint8_t ledId, LedStatus status = LED_OFF)
+  {
+    m_Id = ledId;
+    m_DesiredState = status;
+    m_CurrentState = status;
+    pinMode(m_Id, OUTPUT);
+  }
+
+  void enable()
+  {
+    digitalWrite(m_Id, HIGH);
+    m_CurrentState = LED_ON;
+  }
+
+  void disable()
+  {
+    digitalWrite(m_Id, LOW);
+    m_CurrentState = LED_OFF;
+  }
+
+  uint8_t getId()
+  {
+    return m_Id;
+  }
+
+  void setDesiredState(LedStatus status)
+  {
+    m_DesiredState = status;
+  }
+
+  LedStatus getDesiredState()
+  {
+    return m_DesiredState;
+  }
+
+  LedStatus getCurrentState()
+  {
+    return m_CurrentState;
+  }
+
+  void setTime(size_t time)
+  {
+    m_PrevTime = time;
+  }
+
+  size_t getPrevTime()
+  {
+    return m_PrevTime;
+  }
 };
 
 class Button
@@ -105,6 +171,44 @@ private:
   }
 };
 
+class SingleToggleButton : public Button
+{
+  bool IsActive = true;
+  bool isHeld = false;
+
+public:
+  SingleToggleButton(ButtonInfo buttonInfo) : SingleToggleButton(buttonInfo.buttonId, buttonInfo.joyStickId) {}
+  SingleToggleButton(uint8_t buttonId, uint8_t JoystickId) : Button(buttonId, JoystickId) {}
+
+  void PollButton()
+  {
+    if (IsEnabled() && !isHeld)
+    {
+      Toggle();
+      isHeld = true;
+    }
+    else if (!IsEnabled())
+    {
+      isHeld = false;
+    }
+  }
+
+private:
+  void Toggle()
+  {
+    if (IsActive)
+    {
+      Disable();
+      IsActive = false;
+    }
+    else
+    {
+      Enable();
+      IsActive = true;
+    }
+  }
+};
+
 class ButtonGroup
 {
 protected:
@@ -153,6 +257,8 @@ public:
 
   void PollButtons()
   {
+
+    Serial.println("polling");
     if (m_Active.IsEnabled())
       return;
 
@@ -160,6 +266,7 @@ public:
     {
       if ((m_Buttons + i)->IsEnabled())
       {
+        Serial.println("Button Pressed");
         if (*(m_Buttons + i) == m_Active)
           continue;
         DisableAll();
@@ -200,6 +307,56 @@ public:
           m_Active = INVALID_BUTTON_ID;
       }
     }
+  }
+};
+
+struct PovInfo
+{
+  uint8_t topButtonId;
+  uint8_t rightButtonId;
+  uint8_t bottomButtonId;
+  uint8_t leftButtonId;
+};
+
+class POV
+{
+  uint8_t m_ButtonIds[4];
+  size_t m_Count = 4;
+
+public:
+  POV(PovInfo buttonInfo)
+  {
+    m_ButtonIds[0] = buttonInfo.topButtonId;
+    m_ButtonIds[1] = buttonInfo.rightButtonId;
+    m_ButtonIds[2] = buttonInfo.bottomButtonId;
+    m_ButtonIds[3] = buttonInfo.leftButtonId;
+
+    for (size_t i = 0; i < m_Count; i++)
+    {
+      pinMode(m_ButtonIds[i], INPUT_PULLUP);
+    }
+  }
+
+  void Poll()
+  {
+    size_t position = 0;
+    size_t count = 0;
+
+    for (size_t i = 0; i < m_Count; i++)
+    {
+      if (digitalRead(m_ButtonIds[i]) == ARCADE_BUTTON_PRESSED)
+      {
+        position += i * 90;
+        count++;
+      }
+    }
+
+    if (position == 270 && count == 2 && digitalRead(m_ButtonIds[0]) == ARCADE_BUTTON_PRESSED)
+    {
+      position += 360;
+    }
+
+    Joystick.hat(count == 0 ? -1 : position / count);
   }
 };
 

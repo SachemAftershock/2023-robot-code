@@ -314,7 +314,7 @@ Command parseCommand(String command)
       cmd.commandType = NO_TYPE;
     }
   }
-  else if (strcmp(split, "MSG"))
+  else if (strcmp(split, "MSG") == 0)
   {
     cmd.commandType = MESSAGE_COMMAND;
 
@@ -326,6 +326,11 @@ Command parseCommand(String command)
     }
 
     cmd.message = split;
+  }
+  else
+  {
+    cmd.commandType = NO_TYPE;
+    cmd.message = "Invalid command";
   }
 
   return cmd;
