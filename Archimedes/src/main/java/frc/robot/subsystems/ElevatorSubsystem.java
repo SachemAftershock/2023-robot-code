@@ -28,7 +28,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private ProfiledPIDController mProfileController;
     private final TrapezoidProfile.Constraints mConstraints;
 
-    PID mPid;
+    private PID mPid;
 
     private CANSparkMax mMotor;
 
@@ -42,8 +42,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     GenericEntry D = ElevatorSubsystemTab.add("Elevator D", 0).getEntry();
 
     private double setpoint; 
-
-    double i =0;
+    private boolean mBreakLoop;
 
     private ElevatorSubsystem() {
 
@@ -51,7 +50,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         mPid = new PID();
         mPid.start(kPidGains);
         mConstraints = new TrapezoidProfile.Constraints(kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared);
-        mProfileController = new ProfiledPIDController(kPidGains[0], kPidGains[1], kPidGains[2], mConstraints);
+        mProfileController = new ProfiledPIDController(kTrapezoidalPidGains[0], kTrapezoidalPidGains[1], kTrapezoidalPidGains[2], mConstraints);
         mMotor = new CANSparkMax(kElevatorMotorId, MotorType.kBrushless);
         mMotor.setIdleMode(IdleMode.kBrake);
         //mMotor.setInverted(true);
@@ -67,35 +66,46 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         mCurrentState = ElevatorState.eStowEmpty;
         mDesiredState = ElevatorState.eStowEmpty;
         setpoint = mLidar.getDistanceIn(); //Temporary so Elevator doesnt move when enabled
-        mProfileController = new ProfiledPIDController(kPidGains[0], kPidGains[1], kPidGains[2], mConstraints);
+        //mProfileController = new ProfiledPIDController(kPidGains[0], kPidGains[1], kPidGains[2], mConstraints);
         setSpeed(0);
+        mBreakLoop = false;
     }
 
     @Override
     public void periodic() {
 
-        if (mCurrentState == mDesiredState) return;
+        if(mBreakLoop) {
+            if (mCurrentState == mDesiredState) return;
+        }
 
         setpoint = mDesiredState.getHeight();
         if(setpoint > kElevatorMaxHeight || setpoint < kElevatorMinHeight) {
-            System.out.println("Elevator setpoint out of bounds");
+            System.out.println("Elevator setpoint out of bounds" + setpoint);
             return;
         }
 
-        double current = mFilter.calculate(mLidar.getDistanceIn());
+        double current = mFilter.calculate(getElevatorHeight());
         double output = mPid.update(current, setpoint);
         //double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -1.0, 1.0);
         //if (i % 100 == 0) {
         //System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
         //}
 
+        // if((current - setpoint) > 0) {
+        //     output = -output;
+        // }
+
         if (Math.abs(mPid.getError()) < kEpsilon) {
+            mCurrentState = mDesiredState;
+            mBreakLoop = true;
             stop();
             return;
-        } 
+        } else {
+            mBreakLoop = false;
+        }
 
+        System.out.println("Output " + output);
         setSpeed(output);
-        i++;
 
     }
 

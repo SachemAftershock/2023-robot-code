@@ -72,20 +72,29 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
-        //System.out.println(mCurrentState + " " + mDesiredState);
+        System.out.println(mCurrentState + " " + mDesiredState);
         if (mCurrentState == mDesiredState) return;
         //if(mBreak || true) return;  
 
         double current = mFilter.calculate(mLidar.getDistanceIn());
         double setpoint = ArmConstants.getBarDistance(mDesiredState.getLength());
         if (setpoint == -1) {
-            DriverStation.reportError("[INTAKE]: SETPOINT IS INVALID", false);
+            System.out.println("ERROR : Arm setpoint invalid");
+            //DriverStation.reportError("[INTAKE]: SETPOINT IS INVALID", false);
             return;
         }
-        double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -0.5, 0.5);
-        //double output = mPID.update(current, setpoint);
+
+        // if(current < ArmConstants.getBarDistance(66.0)) {
+        //     stop();
+        //     return;
+        // }
+
+        //double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -0.5, 0.5);
+        double output = mPID.update(current, setpoint);
         //output = MathUtil.clamp(output, -0.5, 0.5);
-        //System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        output = output*0.5;
+
+        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
         setSpeed(output);
 
         if (Math.abs(mPID.getError()) < kEpsilon) {
@@ -146,7 +155,7 @@ public class ArmSubsystem extends AftershockSubsystem {
     }
 
     private void setSpeed(double speed) {
-        System.out.println(speed);
+        //System.out.println("Motor Controller speed" + speed);
         mArmMotor.set(speed);
     }
 

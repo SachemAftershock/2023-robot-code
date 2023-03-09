@@ -47,10 +47,10 @@ public class Constants {
 
         // angles in radians.
         // to convert from degrees to radians multiply by pi/180
-        public static final double kFrontLeftSteerOffset = -0.35; //- Math.toRadians(15);// - (Math.PI / 2.0);// -.35;
-        public static final double kFrontRightSteerOffset = 0.4; //- Math.toRadians(15);; //- (Math.PI / 2.0);// 0.40;
-        public static final double kBackLeftSteerOffset = 0.45; //- Math.toRadians(15);; //- (Math.PI / 2.0);// .45;
-        public static final double kBackRightSteerOffset = -0.5; //- Math.toRadians(15);; //- (Math.PI / 2.0);// -.5;
+        public static final double kFrontLeftSteerOffset = -0.35 -  (Math.PI / 2.0); //- Math.toRadians(15);// - (Math.PI / 2.0);// -.35;
+        public static final double kFrontRightSteerOffset = 0.4  - (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// 0.40;
+        public static final double kBackLeftSteerOffset = 0.45  - (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// .45;
+        public static final double kBackRightSteerOffset = -0.5  - (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// -.5;
 
         private static final double kMk4L1DriveReduction = (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0);
         private static final double kMk4WheelDiameter = 0.10033;
@@ -85,7 +85,7 @@ public class Constants {
     public static class ControllerConstants {
         public static final int kPrimaryThrottleControllerPort = 0;
         public static final int kPrimaryTwistControllerPort = 1;
-        public static final int kButtonBoxPort = 2;
+        public static final int kButtonBoxPort = 3;
 
     }
 
@@ -106,7 +106,7 @@ public class Constants {
         public static final double kIntegralZone = 0.0;
         public static final double kDt = 0.02;
 
-        public static final double kEpsilon = 5.0;
+        public static final double kEpsilon = 2.0;
 
         public static final double kJogSpeed = 0.2;
         public static final double kArmLidarOffset = -2.0;
@@ -150,10 +150,11 @@ public class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final double[] kPidGains = { 0.05, 0.0, 0.0 };
+        public static final double[] kPidGains = { 0.06, 0.0, 0.0 };
+        public static final double[] kTrapezoidalPidGains = { 0.05, 0.0, 0.0 };
         public static final double kMaxVelocityMeterPerSecond = 0.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.25;
-        public static final double kEpsilon = 1.5;
+        public static final double kEpsilon = 3.5;
 
         public static final double kJogSpeed = 0.2;
 
@@ -161,7 +162,7 @@ public class Constants {
         public static final double kElevatorLidarHeightFromGround = 3.75;
         public static final int kElevatorMedianFilterSampleSize = 10;
         public static final double kElevatorMaxHeight = 64.0; 
-        public static final double kElevatorMinHeight = 4.0; 
+        public static final double kElevatorMinHeight = 17.0; 
 
     }
 

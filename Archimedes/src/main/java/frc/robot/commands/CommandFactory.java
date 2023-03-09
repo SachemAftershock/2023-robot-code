@@ -39,12 +39,14 @@ public class CommandFactory {
         ButtonBoxPublisher.enableLed(position);
 
         if (armSubsystem.getState() == ArmState.eStowEmpty) {
+            System.out.println("Starting sequence");
             return new SequentialCommandGroup(
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
                 new SetArmStateCommand(desiredState.getArmState(), armSubsystem)
             );
         }
         else {
+            System.out.println("This should retract arm first");
             return new SequentialCommandGroup(
                 new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),

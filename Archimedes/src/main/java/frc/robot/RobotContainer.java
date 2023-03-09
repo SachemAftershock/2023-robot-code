@@ -71,7 +71,7 @@ public class RobotContainer {
     private final CommandJoystick mPrimaryThrottleController = new CommandJoystick(ControllerConstants.kPrimaryThrottleControllerPort);
     private final CommandJoystick mPrimaryTwistController = new CommandJoystick(ControllerConstants.kPrimaryTwistControllerPort);
     private final ButtonBox mButtonBox = new ButtonBox(ControllerConstants.kButtonBoxPort);
-    private final XboxController mTestController = new XboxController(3);
+    private final XboxController mTestController = new XboxController(2);
 
 
     private DriveToWaypointCommand mDriveToCoordinateCommand;
@@ -112,18 +112,28 @@ public class RobotContainer {
         // if(mTestController.getBButtonPressed()) {
         //     System.out.println("B button pressed ");
         //     new SetElevatorStateCommand(ElevatorState.eMid, mElevatorSubsystem).schedule();
-        // } else if(mTestController.getBButtonReleased()) {
-            
         // }
 
         if(mTestController.getAButtonPressed()) {
-            //mArmSubsystem.TESTSPEED();
-            //System.out.print("A button pressed");
-            //mArmSubsystem.mBreak = false; 
-            new SetArmStateCommand(ArmState.eMid, mArmSubsystem).schedule();
+            System.out.print("A button pressed");
+            new SetArmStateCommand(ArmState.eLow, mArmSubsystem).schedule();
         }
 
-       
+        if(mTestController.getBButtonPressed()) {
+            System.out.print("A button pressed");
+            new SetArmStateCommand(ArmState.eStowEmpty, mArmSubsystem).schedule();
+        }
+
+        // if(mTestController.getAButtonPressed()) {
+        //     System.out.println("A button pressed");
+        //     CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem).schedule();
+        // }
+
+        // if(mTestController.getBButtonPressed()) {
+        //     System.out.println("B Button pressed");
+        //     CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevatorSubsystem, mArmSubsystem).schedule();
+        // }
+
     }
 
     public void test() {

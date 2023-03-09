@@ -77,6 +77,7 @@ public class IntakeSubsystem extends AftershockSubsystem {
     }
 
     private void setSpeed(double speed) {
+        System.out.println("Intake motor being called");
         mIntakeMotor.set(speed);
     }
 
