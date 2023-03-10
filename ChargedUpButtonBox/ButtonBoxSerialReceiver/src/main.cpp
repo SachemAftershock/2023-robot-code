@@ -221,6 +221,10 @@ void setup()
   lcd.print("AFTERSHOCK 263"); // Print a message to the LCD
   lcd.setCursor(2, 1);         // set the cursor to column 2, line 1
   lcd.print("Charged Up !");   // Print a message to the LCD.
+
+  enableAllLeds();
+  delay(1000);
+  disableAllLeds();
 }
 
 void loop()
