@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: robotpy-wpiutil
+Version: 2023.3.2.1
+Summary: Binary wrapper for FRC WPIUtil library
+Home-page: https://github.com/robotpy/robotpy-wpiutil
+Author: RobotPy Development Team
+Author-email: robotpy@googlegroups.com
+License: BSD-3-Clause
+Requires-Python: >=3.6
+

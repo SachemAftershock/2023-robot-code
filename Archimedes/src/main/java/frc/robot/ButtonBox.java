@@ -9,36 +9,40 @@ public class ButtonBox extends CommandGenericHID {
         super(port);
     }
 
-    private static int ingestIntakeButtonId = 1;
-    private static int ejectIntakeButtonId = 2;
-    private static int highPositionButtonId = 20;
-    private static int mediumPostionButtonId = 21;
-    private static int floorPostionButtonId = 5;
-    private static int humanPlayerPostionId = 6;
-    private static int stowPostionId = 7;
-    private static int cone1Id = 8;
-    private static int cube2Id = 9;
-    private static int cone3Id = 10;
+    private static int cone1Id = 1;
+    private static int cube2Id = 2;
+    private static int cone3Id = 3;
 
-    private static int cone4Id = 11;
-    private static int cube5Id = 12;
-    private static int cone6Id = 13;
+    private static int cone4Id = 4;
+    private static int cube5Id = 5;
+    private static int cone6Id = 6;
 
-    private static int cone7Id = 14;
-    private static int cube8Id = 15;
-    private static int cone9Id = 16;
+    private static int cone7Id = 7;
+    private static int cube8Id = 8;
+    private static int cone9Id = 9;
 
-    private static int leftHumanStationId = 17;
-    private static int rightHumanStationId = 18;
-    private static int cancelId = 19;
-    private static int cubeToggleId = 3;
-    private static int coneToggleId = 4;
+    private static int cancelId = 10;
+    private static int leftHumanStationId = 11;
+    private static int rightHumanStationId = 12;
+
+    private static int cubeToggleId = 13;
+    private static int coneToggleId = 14;
+
+    private static int ingestIntakeButtonId = 15;
+    private static int ejectIntakeButtonId = 16;
+
+    private static int stowPostionId = 17;
+    private static int humanPlayerPostionId = 18;
+    private static int floorPostionButtonId = 19;
+    private static int mediumPostionButtonId = 20;
+    private static int highPositionButtonId = 21;
+
+    private static int enableJoystickId = 22;
 
     private static int leftJoystickButtonId = 22;
     private static int rightJoystickButtonId = 23;
     private static int upJoystickButtonId = 24;
     private static int downJoystickButtonId = 25;
-    private static int enableJoystickId = 26;
 
     private boolean mIsJoysticEnabled = false;
 
@@ -129,21 +133,21 @@ public class ButtonBox extends CommandGenericHID {
     // #endregion
 
     // Joystick buttons
-    public Trigger leftJoystickButton() {
-        return this.button(leftJoystickButtonId);
-    }
+    // public Trigger leftJoystickButton() {
+    // return this.button(leftJoystickButtonId);
+    // }
 
-    public Trigger rightJoystickButton() {
-        return this.button(rightJoystickButtonId);
-    }
+    // public Trigger rightJoystickButton() {
+    // return this.button(rightJoystickButtonId);
+    // }
 
-    public Trigger upJoystickButton() {
-        return this.button(upJoystickButtonId);
-    }
+    // public Trigger upJoystickButton() {
+    // return this.button(upJoystickButtonId);
+    // }
 
-    public Trigger downJoystickButton() {
-        return this.button(downJoystickButtonId);
-    }
+    // public Trigger downJoystickButton() {
+    // return this.button(downJoystickButtonId);
+    // }
 
     public Trigger enableJoystick() {
         return this.button(enableJoystickId);
