@@ -69,8 +69,8 @@ POV pov = POV(povInfo);
 
 void setup()
 {
-  DriveToToggleGroup.ActiveDefaultButton();
-  ElevatorButtonGroup.ActiveDefaultButton();
+  // DriveToToggleGroup.ActiveDefaultButton();
+  // ElevatorButtonGroup.ActiveDefaultButton();
   ConeToggleButton.Enable();
 
   Serial.println("starting");
