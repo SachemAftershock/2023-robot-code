@@ -73,18 +73,19 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
-
-        if(mBreakLoop) {
-            if (mCurrentState == mDesiredState) return;
-        }
-
+        double current = getElevatorHeight();
         setpoint = mDesiredState.getHeight();
+
+
+        //System.out.println(mCurrentState + " " + mDesiredState);
+        if (mCurrentState == mDesiredState) return;
+
+        
         if(setpoint > kElevatorMaxHeight || setpoint < kElevatorMinHeight) {
             System.out.println("Elevator setpoint out of bounds" + setpoint);
             return;
         }
 
-        double current = mFilter.calculate(getElevatorHeight());
         double output = mPid.update(current, setpoint);
         //double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -1.0, 1.0);
         //if (i % 100 == 0) {
@@ -103,8 +104,10 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         } else {
             mBreakLoop = false;
         }
+        
 
-        System.out.println("Output " + output);
+        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        if (Double.isNaN(output)) return;
         setSpeed(output);
 
     }

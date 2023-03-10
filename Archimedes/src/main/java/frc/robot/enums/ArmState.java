@@ -4,7 +4,7 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 
 public enum ArmState {
-    eStowEmpty(17.25, 17.25), 
+    eStowEmpty(20,20), 
     eStowLoaded(0,0),
     eLow(30.0, 30.0), 
     eMid(40.0, 40.0), 

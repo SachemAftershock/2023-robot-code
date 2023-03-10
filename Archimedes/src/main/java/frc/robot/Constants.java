@@ -106,18 +106,18 @@ public class Constants {
         public static final double kIntegralZone = 0.0;
         public static final double kDt = 0.02;
 
-        public static final double kEpsilon = 2.0;
+        public static final double kEpsilon = 0.15;
 
         public static final double kJogSpeed = 0.2;
         public static final double kArmLidarOffset = -2.0;
 
         public static final double[][] kBarDistanceToArmExtension = {
-            {13, 48.5},
-            {13, 49},
-            {15, 42},
-            {16, 34.75},
-            {17, 29},
             {18,17.25},
+            {17, 29},
+            {16, 34.75},
+            {15, 42},
+            {13, 49},
+            {13, 48.5},
         };
         
 
@@ -125,7 +125,7 @@ public class Constants {
         public static final int kArmDistanceIndex = 1;
 
         public static double getBarDistance(double desiredArmExtension) {
-            if (desiredArmExtension < kBarDistanceToArmExtension[0][kBarDistanceIndex]) {
+            if (desiredArmExtension < kBarDistanceToArmExtension[0][kArmDistanceIndex]) {
                 return -1;
             }
 
@@ -140,8 +140,9 @@ public class Constants {
                     double y0 = kBarDistanceToArmExtension[i - 1][kBarDistanceIndex];
 
                     double slope = (y1 - y0) / (x1 - x0);
+                    // System.out.println(slope + "    -----  " + slope * desiredArmExtension + y0);
 
-                    return slope * desiredArmExtension + y0; 
+                    return (y1 + y0)/2;//slope * desiredArmExtension + y0; 
                 }
             }
 

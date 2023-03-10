@@ -36,7 +36,9 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     private ArmState mCurrentState;
     private ArmState mDesiredState;
-    public boolean mBreak = false; 
+    public boolean mBreak = false;
+    
+    double i = 0;
 
     ShuffleboardTab ArmSubsystemTab = Shuffleboard.getTab("Arm Subsystem");
     GenericEntry P = ArmSubsystemTab.add("Arm P", 0).getEntry();
@@ -72,12 +74,19 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
-        System.out.println(mCurrentState + " " + mDesiredState);
-        if (mCurrentState == mDesiredState) return;
+
+        //System.out.println(mCurrentState + " " + mDesiredState);
+
+        if (mCurrentState == mDesiredState) {
+            //System.out.println("Desired state reached");
+            //System.out.println("----------PID ERROR------------" + mPID.getError());
+            return;
+        }
         //if(mBreak || true) return;  
 
         double current = mFilter.calculate(mLidar.getDistanceIn());
         double setpoint = ArmConstants.getBarDistance(mDesiredState.getLength());
+        //System.out.println(setpoint + ", " + mDesiredState.getLength());
         if (setpoint == -1) {
             System.out.println("ERROR : Arm setpoint invalid");
             //DriverStation.reportError("[INTAKE]: SETPOINT IS INVALID", false);
@@ -95,12 +104,14 @@ public class ArmSubsystem extends AftershockSubsystem {
         output = output*0.5;
 
         System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
-        setSpeed(output);
-
         if (Math.abs(mPID.getError()) < kEpsilon) {
+            System.out.println("-----EXITING PID-----" + mPID.getError());
             stop();
             mCurrentState = mDesiredState;
+            return;
         }
+        setSpeed(output);
+        i++;
     }
 
     public void stop() {

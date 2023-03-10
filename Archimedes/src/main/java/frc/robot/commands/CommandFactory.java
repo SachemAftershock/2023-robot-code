@@ -49,7 +49,7 @@ public class CommandFactory {
             System.out.println("This should retract arm first");
             return new SequentialCommandGroup(
                 new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
-                new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
+                //new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
                 new SetArmStateCommand(desiredState.getArmState(), armSubsystem)
             );
         }
