@@ -73,6 +73,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
+        
+        
         double current = getElevatorHeight();
         setpoint = mDesiredState.getHeight();
 

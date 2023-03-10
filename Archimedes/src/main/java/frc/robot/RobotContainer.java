@@ -142,7 +142,8 @@ public class RobotContainer {
 
         if(mTestController.getAButtonPressed()) {
             System.out.println("A button pressed");
-            CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem).schedule();
+            //CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem).schedule();\
+            new SetElevatorStateCommand(ElevatorState.eLow, mElevatorSubsystem).schedule();
         }
 
         if(mTestController.getBButtonPressed()) {

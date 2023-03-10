@@ -47,10 +47,10 @@ public class Constants {
 
         // angles in radians.
         // to convert from degrees to radians multiply by pi/180
-        public static final double kFrontLeftSteerOffset = -0.35 -  (Math.PI / 2.0); //- Math.toRadians(15);// - (Math.PI / 2.0);// -.35;
-        public static final double kFrontRightSteerOffset = 0.4  - (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// 0.40;
-        public static final double kBackLeftSteerOffset = 0.45  - (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// .45;
-        public static final double kBackRightSteerOffset = -0.5  - (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// -.5;
+        public static final double kFrontLeftSteerOffset = -0.35 +  (Math.PI / 2.0); //- Math.toRadians(15);// - (Math.PI / 2.0);// -.35;
+        public static final double kFrontRightSteerOffset = 0.4  + (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// 0.40;
+        public static final double kBackLeftSteerOffset = 0.45  + (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// .45;
+        public static final double kBackRightSteerOffset = -0.5  + (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// -.5;
 
         private static final double kMk4L1DriveReduction = (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0);
         private static final double kMk4WheelDiameter = 0.10033;
