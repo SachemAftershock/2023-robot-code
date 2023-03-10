@@ -12,22 +12,22 @@ public class ButtonBoxLedInfo {
 
     public enum LedPosition {
         // WAYPOINTS
-        eDriveTo1(0), eDriveTo2(1), eDriveTo3(2),
-        eDriveTo4(3), eDriveTo5(4), eDriveTo6(5),
-        eDriveTo7(6), eDriveTo8(7), eDriveTo9(8),
-        eHumanPlayerLeft(9), eHumanPlayerRight(10), eCancel(11),
+        eDriveTo1(5), eDriveTo2(23), eDriveTo3(7),
+        eDriveTo4(4), eDriveTo5(17), eDriveTo6(15),
+        eDriveTo7(6), eDriveTo8(18), eDriveTo9(3),
+        eHumanPlayerLeft(14), eHumanPlayerRight(25), eCancel(16),
 
         // INTAKE
-        eIngest(12), eEject(13),
-        
+        eIngest(19), eEject(13),
+
         // SUPERSTRUCTURE
-        eStow(14), eLow(15), eMid(16), eHigh(17), ePlayerStation(18),
-        
+        eStow(11), eLow(22), eMid(24), eHigh(12), ePlayerStation(10),
+
         // TOGGLE
-        eCubeActive(19), eConeActive(20),
-        
+        eCubeActive(2), eConeActive(9),
+
         // JOYSTICK
-        eJoystickEnable(21);
+        eJoystickEnable(8);
 
         private int mLedId;
 
