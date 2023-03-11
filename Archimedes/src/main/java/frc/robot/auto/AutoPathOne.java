@@ -97,7 +97,8 @@ public class AutoPathOne extends SequentialCommandGroup{
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm)
+            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm),
+            FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToChargeStation)
         );
     }
 

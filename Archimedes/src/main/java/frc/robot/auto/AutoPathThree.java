@@ -44,7 +44,7 @@ public class AutoPathThree extends SequentialCommandGroup{
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(),
+    Trajectory pathToCube = TrajectoryGenerator.generateTrajectory(new Pose2d(),
         List.of(new Translation2d(1.9, 4.4),
         new Translation2d(6.67, 4.6)
         ), new Pose2d(7.78, 4.61, new Rotation2d()), config);
@@ -78,7 +78,7 @@ public class AutoPathThree extends SequentialCommandGroup{
             
             //Robot moves to cone on field
             new RotateDriveCommand(mDrive, 180),
-            FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCone),
+            FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCube),
             
             
             //Sequence for picking up cone and stowing
