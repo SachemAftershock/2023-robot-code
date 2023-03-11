@@ -85,13 +85,14 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         
         if(setpoint > kElevatorMaxHeight || setpoint < kElevatorMinHeight) {
             System.out.println("Elevator setpoint out of bounds" + setpoint);
+            stop();
             return;
         }
 
         double output = mPid.update(current, setpoint);
         //double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -1.0, 1.0);
         //if (i % 100 == 0) {
-        //System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
         //}
 
         // if((current - setpoint) > 0) {
@@ -108,8 +109,9 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         }
         
 
-        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        //System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
         if (Double.isNaN(output)) return;
+        System.out.println("Output --> " + output);
         setSpeed(output);
 
     }
@@ -127,6 +129,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
 
     public void jogElevator(boolean moveUp) {
+        System.out.println("Jogging elevator -->" + moveUp);
         setSpeed(moveUp ? kJogSpeed : -kJogSpeed);
     }
 

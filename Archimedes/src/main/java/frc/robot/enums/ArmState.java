@@ -10,9 +10,9 @@ public enum ArmState {
     eStowLoaded(0,0),
     eFloor(15.8, 15.8),
     eLow(14.0, 14.0), 
-    eMid(40.0, 40.0), 
-    eHigh(0, 0), 
-    ePlayerStation(0, 0);
+    eMid(15.3, 15.3), 
+    eHigh(13.0, 13.0), 
+    ePlayerStation(16.0, 16.0);
 
     private double mCubeLength;
     private double mConeLength;

@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 
 public class ButtonBox extends CommandGenericHID {
 
@@ -163,5 +164,15 @@ public class ButtonBox extends CommandGenericHID {
 
     public void toggleJoystick() {
         mIsJoysticEnabled = !mIsJoysticEnabled;
+    }
+
+    public void setJoystickEnabled() {
+        mIsJoysticEnabled = true;
+        ButtonBoxPublisher.enableLed(LedPosition.eJoystickEnable);
+    }
+
+    public void setJoystickDisabled() {
+        mIsJoysticEnabled = false;
+        ButtonBoxPublisher.disableLed(LedPosition.eJoystickEnable);
     }
 }

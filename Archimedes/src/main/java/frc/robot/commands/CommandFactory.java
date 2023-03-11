@@ -24,7 +24,7 @@ public class CommandFactory {
             case eMid:
                 position = LedPosition.eMid;
                 break;
-            case eLow:
+            case eFloor:
                 position = LedPosition.eLow;
                 break;
             case ePlayerStation:
@@ -39,24 +39,26 @@ public class CommandFactory {
 
         ButtonBoxPublisher.enableLed(position);
 
-        if (armSubsystem.getState() == ArmState.eStowEmpty) {
-            System.out.println("Starting sequence");
+        if (desiredState.getArmState() == ArmState.eStowEmpty) {
+            System.out.println("-----------RETURNING TO STOW--------------");
             return new SequentialCommandGroup(
                 new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem)
             );
-        // } else if(desiredState == SuperState.eFloor) {
-        //     System.out.println("--------FLOOR SEQUENCE-----------");
-        //     return new SequentialCommandGroup(
-        //         new SetElevatorStateCommand(ElevatorState.eRaised, elevatorSubsystem),
-        //         new SetArmStateCommand(desiredState.getArmState(), armSubsystem),
-        //         new SetElevatorStateCommand(ElevatorState.eStowEmpty, elevatorSubsystem)
-        //     );
+        } else if(desiredState == SuperState.eFloor) {
+            System.out.println("--------FLOOR SEQUENCE-----------");
+            return new SequentialCommandGroup(
+                new SetElevatorStateCommand(ElevatorState.eRaised, elevatorSubsystem),
+                new SetArmStateCommand(ArmState.eLow, armSubsystem),
+                new SetElevatorStateCommand(ElevatorState.eStowEmpty, elevatorSubsystem)
+            );
 
         } else {
+            System.out.println("----------STARTING EXTENSION--------------");
             return new SequentialCommandGroup(
-                new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
                 new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
+                new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
+                //new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
                 new SetArmStateCommand(desiredState.getArmState(), armSubsystem)
             );
         }
