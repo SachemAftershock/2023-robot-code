@@ -41,7 +41,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     GenericEntry I = ElevatorSubsystemTab.add("Elevator I", 0).getEntry();
     GenericEntry D = ElevatorSubsystemTab.add("Elevator D", 0).getEntry();
 
-    private double setpoint; 
+    private double setpoint;
     private boolean mBreakLoop;
 
     private ElevatorSubsystem() {
@@ -53,7 +53,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         mProfileController = new ProfiledPIDController(kTrapezoidalPidGains[0], kTrapezoidalPidGains[1], kTrapezoidalPidGains[2], mConstraints);
         mMotor = new CANSparkMax(kElevatorMotorId, MotorType.kBrushless);
         mMotor.setIdleMode(IdleMode.kBrake);
-        //mMotor.setInverted(true);
+        // mMotor.setInverted(true);
 
         mCurrentState = ElevatorState.eStowEmpty;
         mDesiredState = ElevatorState.eStowEmpty;
@@ -63,40 +63,39 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     @Override
     public void initialize() {
-        mCurrentState = ElevatorState.eStowEmpty;
-        mDesiredState = ElevatorState.eStowEmpty;
-        setpoint = mLidar.getDistanceIn(); //Temporary so Elevator doesnt move when enabled
-        //mProfileController = new ProfiledPIDController(kPidGains[0], kPidGains[1], kPidGains[2], mConstraints);
+        mCurrentState = null;
+        mDesiredState = null;
+        setpoint = mLidar.getDistanceIn(); // Temporary so Elevator doesnt move when enabled
+        // mProfileController = new ProfiledPIDController(kPidGains[0], kPidGains[1],
+        // kPidGains[2], mConstraints);
         setSpeed(0);
         mBreakLoop = false;
     }
 
     @Override
     public void periodic() {
-        
-        
+
         double current = getElevatorHeight();
         setpoint = mDesiredState.getHeight();
 
-
-        //System.out.println(mCurrentState + " " + mDesiredState);
+        // System.out.println(mCurrentState + " " + mDesiredState);
         if (mCurrentState == mDesiredState) return;
 
-        
-        if(setpoint > kElevatorMaxHeight || setpoint < kElevatorMinHeight) {
+        if (setpoint > kElevatorMaxHeight || setpoint < kElevatorMinHeight) {
             System.out.println("Elevator setpoint out of bounds" + setpoint);
             stop();
             return;
         }
 
         double output = mPid.update(current, setpoint);
-        //double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -1.0, 1.0);
-        //if (i % 100 == 0) {
+        // double output = MathUtil.clamp(mProfileController.calculate(current,
+        // setpoint), -1.0, 1.0);
+        // if (i % 100 == 0) {
         System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
-        //}
+        // }
 
         // if((current - setpoint) > 0) {
-        //     output = -output;
+        // output = -output;
         // }
 
         if (Math.abs(mPid.getError()) < kEpsilon) {
@@ -104,12 +103,13 @@ public class ElevatorSubsystem extends AftershockSubsystem {
             mBreakLoop = true;
             stop();
             return;
-        } else {
+        }
+        else {
             mBreakLoop = false;
         }
-        
 
-        //System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        // System.out.println("Current " + current + " SetPoint " + setpoint + " Output
+        // " + output);
         if (Double.isNaN(output)) return;
         System.out.println("Output --> " + output);
         setSpeed(output);
@@ -156,9 +156,10 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     @Override
     public void outputTelemetry() {
         // ElevatorSubsystemTab.add("E Lidar Distance Inches", mLidar.getDistanceCm());
-        // ElevatorSubsystemTab.add("E Motor Velocity", mMotor.getEncoder().getVelocity());
+        // ElevatorSubsystemTab.add("E Motor Velocity",
+        // mMotor.getEncoder().getVelocity());
 
-        //SmartDashboard.putNumber("Raw Distance", mLidar.getDistanceIn());
+        // SmartDashboard.putNumber("Raw Distance", mLidar.getDistanceIn());
         SmartDashboard.putNumber("Elevator Distance", getElevatorDistance());
         SmartDashboard.putNumber("Filtered Elevator Distance", getFilteredDistance());
         SmartDashboard.putNumber("Elevator Motor Velocity", mMotor.getEncoder().getVelocity());

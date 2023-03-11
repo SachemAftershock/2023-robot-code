@@ -7,14 +7,23 @@ import frc.robot.enums.ButtonBoxLedInfo.LedState;
 
 public class ButtonBoxPublisher {
 
-    private static final StringPublisher sWaypointPub = NetworkTableInstance.getDefault().getStringTopic("/ButtonBox/Waypoint").publish();
-    private static final StringPublisher sIntakePub = NetworkTableInstance.getDefault().getStringTopic("/ButtonBox/Intake").publish();
-    private static final StringPublisher sSuperstructurePub = NetworkTableInstance.getDefault().getStringTopic("/ButtonBox/Superstructure").publish();
-    private static final StringPublisher sTogglePub = NetworkTableInstance.getDefault().getStringTopic("/ButtonBox/Toggle").publish();
-    private static final StringPublisher sJoystickEnablePub = NetworkTableInstance.getDefault().getStringTopic("/ButtonBox/Joystick").publish();
-    private static final StringPublisher sMessagePub = NetworkTableInstance.getDefault().getStringTopic("/ButtonBox/Message").publish();
+    private static final StringPublisher sWaypointPub = NetworkTableInstance.getDefault()
+        .getStringTopic("/ButtonBox/Waypoint").publish();
+    private static final StringPublisher sIntakePub = NetworkTableInstance.getDefault()
+        .getStringTopic("/ButtonBox/Intake").publish();
+    private static final StringPublisher sSuperstructurePub = NetworkTableInstance.getDefault()
+        .getStringTopic("/ButtonBox/Superstructure").publish();
+    private static final StringPublisher sTogglePub = NetworkTableInstance.getDefault()
+        .getStringTopic("/ButtonBox/Toggle").publish();
+    private static final StringPublisher sJoystickEnablePub = NetworkTableInstance.getDefault()
+        .getStringTopic("/ButtonBox/Joystick").publish();
+    private static final StringPublisher sMessagePub = NetworkTableInstance.getDefault()
+        .getStringTopic("/ButtonBox/Message").publish();
+    private static final StringPublisher sAllLedPub = NetworkTableInstance.getDefault()
+        .getStringTopic("/ButtonBox/AllLed").publish();
 
-    private ButtonBoxPublisher() {}
+    private ButtonBoxPublisher() {
+    }
 
     public static void enableLed(LedPosition ledPosition) {
         setLed(ledPosition, LedState.eOn);
@@ -28,14 +37,40 @@ public class ButtonBoxPublisher {
         setLed(ledPosition, LedState.eBlink);
     }
 
-    private static void setLed(LedPosition ledPosition, LedState ledState) {
-        if (ledPosition == null) return;
-        
-        getPublisher(ledPosition).set(String.format("led set %d %s\0", ledPosition.getId(), ledState.getState()));
+    public static void enableAllLeds() {
+        setAllLeds(LedState.eOn);
+    }
+
+    public static void disableAllLeds() {
+        setAllLeds(LedState.eOff);
+    }
+
+    public static void blinkAllLeds() {
+        setAllLeds(LedState.eBlink);
     }
 
     public static void sendMessage(String message) {
+
+        if (message == null) {
+            System.out.println("null message");
+            return;
+        }
+
         sMessagePub.set(String.format("msg %s\0", message));
+    }
+
+    private static void setLed(LedPosition ledPosition, LedState ledState) {
+        if (ledPosition == null) {
+            sendMessage("null led position");
+            System.out.println("null led position");
+            return;
+        }
+
+        getPublisher(ledPosition).set(String.format("led set %d %s\0", ledPosition.getId(), ledState.getState()));
+    }
+
+    private static void setAllLeds(LedState ledState) {
+        sAllLedPub.set(String.format("led set all %s\0", ledState.getState()));
     }
 
     private static StringPublisher getPublisher(LedPosition ledPosition) {

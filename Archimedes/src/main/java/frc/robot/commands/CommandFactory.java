@@ -17,24 +17,29 @@ public class CommandFactory {
         SuperState desiredState, ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem
     ) {
         LedPosition position;
+
         switch (desiredState) {
-            case eHigh:
-                position = LedPosition.eHigh;
-                break;
-            case eMid:
-                position = LedPosition.eMid;
-                break;
-            case eFloor:
-                position = LedPosition.eLow;
+            case eStow:
+                position = LedPosition.eStow;
                 break;
             case ePlayerStation:
                 position = LedPosition.ePlayerStation;
                 break;
-            case eStow:
-                position = LedPosition.eStow;
+            case eLow:
+                position = LedPosition.eLow;
+                break;
+            case eFloor:
+                position = LedPosition.eLow;
+                break;
+            case eMid:
+                position = LedPosition.eMid;
+                break;
+            case eHigh:
+                position = LedPosition.eHigh;
                 break;
             default:
                 position = null;
+                break;
         }
 
         ButtonBoxPublisher.enableLed(position);
@@ -45,7 +50,8 @@ public class CommandFactory {
                 new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem)
             );
-        } else if(desiredState == SuperState.eFloor) {
+        }
+        else if (desiredState == SuperState.eFloor) {
             System.out.println("--------FLOOR SEQUENCE-----------");
             return new SequentialCommandGroup(
                 new SetElevatorStateCommand(ElevatorState.eRaised, elevatorSubsystem),
@@ -53,12 +59,13 @@ public class CommandFactory {
                 new SetElevatorStateCommand(ElevatorState.eStowEmpty, elevatorSubsystem)
             );
 
-        } else {
+        }
+        else {
             System.out.println("----------STARTING EXTENSION--------------");
             return new SequentialCommandGroup(
                 new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
-                //new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
+                // new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
                 new SetArmStateCommand(desiredState.getArmState(), armSubsystem)
             );
         }
