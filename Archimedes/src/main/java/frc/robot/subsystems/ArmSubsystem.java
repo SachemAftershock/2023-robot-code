@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -27,6 +29,7 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     private static ArmSubsystem mInstance;
     private CANSparkMax mArmMotor;
+    private TalonSRX mHookMotor;
 
     private final Lidar mLidar;
     private ProfiledPIDController mProfileController; //Add final back
@@ -49,6 +52,9 @@ public class ArmSubsystem extends AftershockSubsystem {
         super();
 
         mArmMotor = new CANSparkMax(kArmMotorId, MotorType.kBrushless);
+        mHookMotor = new TalonSRX(kHookMotorId);
+        mHookMotor.setNeutralMode(NeutralMode.Brake);
+
         mLidar = new Lidar(new DigitalInput(kArmLidarId));
 
         mConstraints = new TrapezoidProfile.Constraints(kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared);
@@ -84,8 +90,8 @@ public class ArmSubsystem extends AftershockSubsystem {
         }
         //if(mBreak || true) return;  
 
-        double current = mFilter.calculate(mLidar.getDistanceIn());
-        double setpoint = ArmConstants.getBarDistance(mDesiredState.getLength());
+        double current = mFilter.calculate(getBarDistance());
+        double setpoint = mDesiredState.getLength();//ArmConstants.getBarDistance(mDesiredState.getLength());
         //System.out.println(setpoint + ", " + mDesiredState.getLength());
         if (setpoint == -1) {
             System.out.println("ERROR : Arm setpoint invalid");
@@ -101,7 +107,7 @@ public class ArmSubsystem extends AftershockSubsystem {
         //double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -0.5, 0.5);
         double output = mPID.update(current, setpoint);
         //output = MathUtil.clamp(output, -0.5, 0.5);
-        output = output*0.5;
+        output = output*0.4;
 
         System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
         if (Math.abs(mPID.getError()) < kEpsilon) {

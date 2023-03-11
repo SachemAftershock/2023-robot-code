@@ -26,7 +26,7 @@ public class Constants {
             eX, eY
         }
 
-        public static final double kDriveRateLimit = 1.0;
+        public static final double kDriveRateLimit = 0.25;
 
         public static final double kDriveControllerDeadband = 0.05;
         public static final boolean kSquareAxis = true;
@@ -85,7 +85,7 @@ public class Constants {
     public static class ControllerConstants {
         public static final int kPrimaryThrottleControllerPort = 0;
         public static final int kPrimaryTwistControllerPort = 1;
-        public static final int kButtonBoxPort = 3;
+        public static final int kButtonBoxPort = 2;
 
     }
 
@@ -109,15 +109,15 @@ public class Constants {
         public static final double kEpsilon = 0.15;
 
         public static final double kJogSpeed = 0.2;
-        public static final double kArmLidarOffset = -2.0;
+        public static final double kArmLidarOffset = -3.0;
 
         public static final double[][] kBarDistanceToArmExtension = {
             {18,17.25},
             {17, 29},
             {16, 34.75},
             {15, 42},
-            {13, 49},
-            {13, 48.5},
+            {13, 49}
+            //{13, 48.5},
         };
         
 

@@ -160,6 +160,10 @@ public class DriveSubsystem extends AftershockSubsystem {
 		mNavx.zeroYaw();
 	}
 
+	public double getAdjustedYaw() {
+		return (mNavx.getYaw() - 90.0);
+	}
+
 	public Rotation2d getGyroscopeRotation() {
 		if (mNavx.isMagnetometerCalibrated()) {
 			// We will only get valid fused headings if the magnetometer is calibrated
@@ -168,7 +172,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 		// We have to invert the angle of the NavX so that rotating the robot
 		// counter-clockwise makes the angle increase.
-		return Rotation2d.fromDegrees(360.0 - mNavx.getYaw());
+		return Rotation2d.fromDegrees(360.0 - (mNavx.getYaw() + 90)); //TODO: Add or subtract 90 here I think
 	}
 
 	public void drive(ChassisSpeeds chassisSpeeds) {

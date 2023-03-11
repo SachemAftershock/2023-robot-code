@@ -31,7 +31,7 @@ public class ButtonBoxPublisher {
     private static void setLed(LedPosition ledPosition, LedState ledState) {
         if (ledPosition == null) return;
         
-        getPublisher(ledPosition).set(String.format("led set %d %d", ledPosition.getId(), ledState.getState()));
+        getPublisher(ledPosition).set(String.format("led set %d %s", ledPosition.getId(), ledState.getState()));
     }
 
     public static void sendMessage(String message) {

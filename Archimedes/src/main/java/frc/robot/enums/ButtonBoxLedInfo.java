@@ -3,10 +3,16 @@ package frc.robot.enums;
 public class ButtonBoxLedInfo {
 
     public enum LedState {
-        eOff, eOn, eBlink;
+        eOff("off"), eOn("on"), eBlink("blink");
 
-        public int getState() {
-            return ordinal();
+        private String mState;
+
+        LedState(String state) {
+            mState = state;
+        }
+
+        public String getState() {
+            return mState;
         }
     }
 

@@ -3,7 +3,7 @@ from serial import Serial, SerialTimeoutException, SerialException
 from serial.tools import list_ports
 from traceback import print_exc
 
-SERIAL_PORT = ""  # Leave empty to try to find port automatically
+SERIAL_PORT = "COM7"  # Leave empty to try to find port automatically
 ARDUINO_NAME = "Arduino Mega 2560"  # The arduino to search for when scanning ports. Can leave blank if not scanning
 TEAM_NUMBER = 263
 NT_NAME = "DS Laptop"
@@ -58,12 +58,12 @@ def main():
 
     inst = NetworkTableInstance.getDefault()
 
-    waypointSub = inst.getStringTopic(NT_WAYPOINT_PATH).subscribe()
-    intakeSub = inst.getStringTopic(NT_INTAKE_PATH).subscribe()
-    superstructureSub = inst.getStringTopic(NT_SUPERSTRUCTURE_PATH)
-    toggleSub = inst.getStringTopic(NT_TOGGLE_PATH).subscribe()
-    joystickSub = inst.getStringTopic(NT_JOYSTICK_PATH).subscribe()
-    messageSub = inst.getStringTopic(NT_MESSAGE_PATH).subscribe()
+    waypointSub = inst.getStringTopic(NT_WAYPOINT_PATH).subscribe("")
+    intakeSub = inst.getStringTopic(NT_INTAKE_PATH).subscribe("")
+    superstructureSub = inst.getStringTopic(NT_SUPERSTRUCTURE_PATH).subscribe("")
+    toggleSub = inst.getStringTopic(NT_TOGGLE_PATH).subscribe("")
+    joystickSub = inst.getStringTopic(NT_JOYSTICK_PATH).subscribe("")
+    messageSub = inst.getStringTopic(NT_MESSAGE_PATH).subscribe("")
 
     subList: list[StringSubscriber] = [
         waypointSub,

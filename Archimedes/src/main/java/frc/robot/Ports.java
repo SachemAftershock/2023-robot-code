@@ -70,6 +70,7 @@ public class Ports {
 
     public static final class ArmPorts {
         public static final int kArmMotorId = CanAddresses.eCanAddress3.get();
+        public static final int kHookMotorId = CanAddresses.eCanAddress6.get();
         public static final int kArmLidarId = DioPorts.eDioPort2.get();
     }
 }

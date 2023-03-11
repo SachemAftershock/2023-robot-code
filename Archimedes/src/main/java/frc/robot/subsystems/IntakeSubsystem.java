@@ -31,10 +31,8 @@ public class IntakeSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
-        double lidarDistance = mLidar.getDistanceIn();
-        if(lidarDistance < IntakeConstants.kIntakeWidth) {
-            stop();
-        }
+        
+
     }
 
     @Override
@@ -48,6 +46,7 @@ public class IntakeSubsystem extends AftershockSubsystem {
      * Turn on the motor counter clockwise to intake the cone
      */
     public void ingestCone() {
+        System.out.println("Intake cone");
         setSpeed(-(IntakeConstants.kIngestConeSpeed));
     }
 
@@ -77,8 +76,7 @@ public class IntakeSubsystem extends AftershockSubsystem {
     }
 
     private void setSpeed(double speed) {
-        //System.out.println("Intake motor being called");
-        //mIntakeMotor.set(speed);
+        mIntakeMotor.set(speed);
     }
 
     @Override
@@ -90,7 +88,7 @@ public class IntakeSubsystem extends AftershockSubsystem {
         if(lidarDistance > 12 || lidarDistance == 0 || lidarDistance >= 999.0) {
             isFunctional = true;
         } else {
-            System.out.println("ERROR : Intake Lidar not functional or misaligned. Lidar distance = " + lidarDistance);
+            //System.out.println("ERROR : Intake Lidar not functional or misaligned. Lidar distance = " + lidarDistance);
         }
         return isFunctional;
     }

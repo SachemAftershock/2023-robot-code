@@ -74,7 +74,7 @@ public class RobotContainer {
     private final CommandJoystick mPrimaryTwistController = new CommandJoystick(
             ControllerConstants.kPrimaryTwistControllerPort);
     private final ButtonBox mButtonBox = new ButtonBox(ControllerConstants.kButtonBoxPort);
-    private final XboxController mTestController = new XboxController(2);
+    private final XboxController mTestController = new XboxController(3);
 
     private DriveToWaypointCommand mDriveToCoordinateCommand;
 
@@ -87,11 +87,11 @@ public class RobotContainer {
         mDriveSubsystem.setDefaultCommand(
                 new ManualDriveCommand(
                         mDriveSubsystem, mArmSubsystem::getState,
-                        () -> -modifyAxis(mPrimaryThrottleController.getX())
+                        () -> modifyAxis(mPrimaryThrottleController.getX())
                                 * DriveConstants.kMaxVelocityMetersPerSecond,
                         () -> -modifyAxis(mPrimaryThrottleController.getY())
                                 * DriveConstants.kMaxVelocityMetersPerSecond,
-                        () -> -modifyAxis(mPrimaryTwistController.getTwist())
+                        () -> modifyAxis(mPrimaryTwistController.getTwist())
                                 * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant));
     }
 
@@ -118,14 +118,25 @@ public class RobotContainer {
         // mElevatorSubsystem).schedule();
         // }
 
+        if (mTestController.getRightBumper()) {
+            mIntakeSubsystem.ingestCone();
+        } else if(mTestController.getLeftBumper()) {
+            mIntakeSubsystem.ingestCube();
+        } else {
+            mIntakeSubsystem.stop();
+        }
+
+
         if (mTestController.getAButtonPressed()) {
             System.out.print("A button pressed");
-            new SetArmStateCommand(ArmState.eLow, mArmSubsystem).schedule();
+            //new SetArmStateCommand(ArmState.eLow, mArmSubsystem).schedule();
+            CommandFactory.HandleSuperStructureSequence(SuperState.eFloor, mElevatorSubsystem, mArmSubsystem).schedule();
         }
 
         if (mTestController.getBButtonPressed()) {
             System.out.print("A button pressed");
-            new SetArmStateCommand(ArmState.eStowEmpty, mArmSubsystem).schedule();
+            //new SetArmStateCommand(ArmState.eStowEmpty, mArmSubsystem).schedule();
+            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevatorSubsystem, mArmSubsystem).schedule();
         }
 
         // if(mTestController.getAButtonPressed()) {
@@ -139,18 +150,6 @@ public class RobotContainer {
         // CommandFactory.HandleSuperStructureSequence(SuperState.eStow,
         // mElevatorSubsystem, mArmSubsystem).schedule();
         // }
-
-        if(mTestController.getAButtonPressed()) {
-            System.out.println("A button pressed");
-            //CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem).schedule();\
-            new SetElevatorStateCommand(ElevatorState.eLow, mElevatorSubsystem).schedule();
-        }
-
-        if(mTestController.getBButtonPressed()) {
-            System.out.println("B Button pressed");
-            new SetArmStateCommand(ArmState.eStowEmpty, mArmSubsystem).schedule();
-            //CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevatorSubsystem, mArmSubsystem).schedule();
-        }
 
     }
 
@@ -173,13 +172,6 @@ public class RobotContainer {
         } else if (mTestController.getBButtonReleased()) {
 
         }
-
-        if (mTestController.getYButton()) {
-            mIntakeSubsystem.ingestCube();
-        } else {
-            mIntakeSubsystem.stop();
-        }
-
     }
 
     public void initializeSubsystems() {
@@ -187,13 +179,13 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
-        // mPrimaryThrottleController.getTrigger().onTrue(new InstantCommand(() -> {
-        //     mDriveToCoordinateCommand = new DriveToWaypointCommand(mDriveSubsystem.getWaypoint(), mDriveSubsystem);
-        //     mDriveToCoordinateCommand.schedule();
-        // })).onFalse(new InstantCommand(() -> {
-        //     mDriveToCoordinateCommand.cancel();
-        //     ButtonBoxPublisher.enableLed(mDriveSubsystem.getLedPosition());
-        // }));
+        mPrimaryThrottleController.getTrigger().onTrue(new InstantCommand(() -> {
+            mDriveToCoordinateCommand = new DriveToWaypointCommand(mDriveSubsystem.getWaypoint(), mDriveSubsystem);
+            mDriveToCoordinateCommand.schedule();
+        })).onFalse(new InstantCommand(() -> {
+            mDriveToCoordinateCommand.cancel();
+            ButtonBoxPublisher.enableLed(mDriveSubsystem.getLedPosition());
+        }));
 
         mButtonBox.cubeToggle().onTrue(new InstantCommand(() -> RobotContainer.toggleIsCone()));
         mButtonBox.coneToggle().onTrue(new InstantCommand(() -> RobotContainer.toggleIsCone()));
