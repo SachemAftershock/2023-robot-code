@@ -109,7 +109,7 @@ public class ArmSubsystem extends AftershockSubsystem {
         //output = MathUtil.clamp(output, -0.5, 0.5);
         output = output*0.4;
 
-        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        //System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
         if (Math.abs(mPID.getError()) < kEpsilon) {
             System.out.println("-----EXITING PID-----" + mPID.getError());
             stop();
@@ -125,7 +125,7 @@ public class ArmSubsystem extends AftershockSubsystem {
     }
 
     public void jogArm(boolean isOut) {
-        setSpeed(isOut ? kJogSpeed : -kJogSpeed);
+        setSpeed(isOut ? -kJogSpeed : kJogSpeed);
     }
 
     public ArmState getState() {

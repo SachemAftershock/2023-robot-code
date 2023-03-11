@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PS4Controller.Button;
 
 // import java.util.List;
 
@@ -108,70 +109,48 @@ public class RobotContainer {
     }
 
     public void periodic() {
+
         mArmSubsystem.outputTelemetry();
         mElevatorSubsystem.outputTelemetry();
         mIntakeSubsystem.outputTelemetry();
 
-        // if(mTestController.getBButtonPressed()) {
-        // System.out.println("B button pressed ");
-        // new SetElevatorStateCommand(ElevatorState.eMid,
-        // mElevatorSubsystem).schedule();
+        //System.out.println("CONE----> " + RobotContainer.isCone());
+
+        // if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 || mTestController.getLeftY() < -0.05)) {
+        //     mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
+        // } else {
+        //     mElevatorSubsystem.setTestSpeed(0.0);
         // }
 
-        if (mTestController.getRightBumper()) {
-            mIntakeSubsystem.ingestCone();
-        } else if(mTestController.getLeftBumper()) {
-            mIntakeSubsystem.ingestCube();
-        } else {
-            mIntakeSubsystem.stop();
-        }
-
-
-        if (mTestController.getAButtonPressed()) {
-            System.out.print("A button pressed");
-            //new SetArmStateCommand(ArmState.eLow, mArmSubsystem).schedule();
-            CommandFactory.HandleSuperStructureSequence(SuperState.eFloor, mElevatorSubsystem, mArmSubsystem).schedule();
-        }
-
-        if (mTestController.getBButtonPressed()) {
-            System.out.print("A button pressed");
-            //new SetArmStateCommand(ArmState.eStowEmpty, mArmSubsystem).schedule();
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevatorSubsystem, mArmSubsystem).schedule();
-        }
-
-        // if(mTestController.getAButtonPressed()) {
-        // System.out.println("A button pressed");
-        // CommandFactory.HandleSuperStructureSequence(SuperState.eLow,
-        // mElevatorSubsystem, mArmSubsystem).schedule();
+        // if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 || mTestController.getLeftX() < -0.05)) {
+        //     mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
+        // } else {
+        //     mArmSubsystem.setTestSpeed(0.0);
         // }
 
-        // if(mTestController.getBButtonPressed()) {
-        // System.out.println("B Button pressed");
-        // CommandFactory.HandleSuperStructureSequence(SuperState.eStow,
-        // mElevatorSubsystem, mArmSubsystem).schedule();
+        // if (mTestController.getRightBumper()) {
+        //     mIntakeSubsystem.ingestCone();
+        // } else if(mTestController.getLeftBumper()) {
+        //     mIntakeSubsystem.ingestCube();
+        // } else {
+        //     mIntakeSubsystem.stop();
         // }
-
     }
 
     public void test() {
-        if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 || mTestController.getLeftY() < -0.05)) {
-            mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
-        } else {
-            mElevatorSubsystem.setTestSpeed(0.0);
-        }
 
-        if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 || mTestController.getLeftX() < -0.05)) {
-            mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
-        } else {
-            mArmSubsystem.setTestSpeed(0.0);
-        }
+        // if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 || mTestController.getLeftY() < -0.05)) {
+        //     mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
+        // } else {
+        //     mElevatorSubsystem.setTestSpeed(0.0);
+        // }
 
-        if (mTestController.getBButtonPressed()) {
-            System.out.println("B button pressed ");
-            new SetElevatorStateCommand(ElevatorState.eMid, mElevatorSubsystem).schedule();
-        } else if (mTestController.getBButtonReleased()) {
+        // if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 || mTestController.getLeftX() < -0.05)) {
+        //     mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
+        // } else {
+        //     mArmSubsystem.setTestSpeed(0.0);
+        // }
 
-        }
     }
 
     public void initializeSubsystems() {
@@ -187,20 +166,32 @@ public class RobotContainer {
             ButtonBoxPublisher.enableLed(mDriveSubsystem.getLedPosition());
         }));
 
-        mButtonBox.cubeToggle().onTrue(new InstantCommand(() -> RobotContainer.toggleIsCone()));
-        mButtonBox.coneToggle().onTrue(new InstantCommand(() -> RobotContainer.toggleIsCone()));
+        mButtonBox.cubeToggle().onTrue(new InstantCommand(() -> RobotContainer.setIsCube()));
+        mButtonBox.coneToggle().onTrue(new InstantCommand(() -> RobotContainer.setIsCone()));
 
         mButtonBox.ingestIntake()
-                .onTrue(RobotContainer.isCone() ? new IngestConeCommand(mIntakeSubsystem)
-                        : new IngestCubeCommand(mIntakeSubsystem))
+                .onTrue(new InstantCommand(() -> {
+                    if (RobotContainer.isCone()) {
+                        new IngestConeCommand(mIntakeSubsystem).schedule();
+                    }
+                    else {
+                        new IngestCubeCommand(mIntakeSubsystem).schedule();
+                    }
+                }))
                 .onFalse(new InstantCommand(() -> {
                     (new StopIntakeCommand(mIntakeSubsystem)).schedule();
                     ButtonBoxPublisher.disableLed(LedPosition.eIngest);
                 }));
 
         mButtonBox.ejectIntake()
-                .onTrue(RobotContainer.isCone() ? new EjectConeCommand(mIntakeSubsystem)
-                        : new EjectCubeCommand(mIntakeSubsystem))
+                .onTrue(new InstantCommand(() -> {
+                    if (RobotContainer.isCone()) {
+                        new EjectConeCommand(mIntakeSubsystem).schedule();
+                    }
+                    else {
+                        new EjectCubeCommand(mIntakeSubsystem).schedule();
+                    }
+                }))
                 .onFalse(new InstantCommand(() -> {
                     (new StopIntakeCommand(mIntakeSubsystem)).schedule();
                     ButtonBoxPublisher.disableLed(LedPosition.eEject);
@@ -251,7 +242,7 @@ public class RobotContainer {
         // mDriveSubsystem));
         Function<Boolean, InstantCommand> jogElevatorCommand = (isUp) -> new InstantCommand(() -> {
             if (mButtonBox.isJoystickEnabled())
-                mElevatorSubsystem.jogElevator(true);
+                mElevatorSubsystem.jogElevator(isUp);
         });
 
         Function<Boolean, InstantCommand> jogArmCommand = (isOut) -> new InstantCommand(() -> {
@@ -320,13 +311,32 @@ public class RobotContainer {
             mArmSubsystem.stop();
         }));
 
-        mButtonBox.enableJoystick().onTrue(new InstantCommand(() -> mButtonBox.toggleJoystick()));
+        mButtonBox.enableJoystick().onTrue(new InstantCommand(() -> mButtonBox.setJoystickEnabled()))
+                                   .onFalse(new InstantCommand(() -> mButtonBox.setJoystickDisabled()));
+    }
+
+    public static void setIsCone() {
+        mIsCone = true;
+        ButtonBoxPublisher.enableLed(LedPosition.eConeActive);
+    }
+
+    public static void setIsCube() {
+        mIsCone = false;
+        ButtonBoxPublisher.enableLed(LedPosition.eCubeActive);
     }
 
     public static void toggleIsCone() {
         mIsCone = !mIsCone;
 
-        ButtonBoxPublisher.enableLed(mIsCone ? LedPosition.eConeActive : LedPosition.eCubeActive);
+        LedPosition position;
+        if (mIsCone) {
+            position = LedPosition.eConeActive;
+        }
+        else {
+            position = LedPosition.eCubeActive;
+        }
+
+        ButtonBoxPublisher.enableLed(position);
     }
 
     public static boolean isCone() {

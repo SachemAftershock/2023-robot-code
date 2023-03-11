@@ -24,7 +24,7 @@ public class ButtonBoxLedInfo {
         eHumanPlayerLeft(14), eHumanPlayerRight(25), eCancel(16),
 
         // INTAKE
-        eIngest(19), eEject(13),
+        eIngest(13), eEject(19),
 
         // SUPERSTRUCTURE
         eStow(11), eLow(22), eMid(24), eHigh(12), ePlayerStation(10),

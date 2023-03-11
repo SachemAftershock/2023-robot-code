@@ -31,11 +31,11 @@ public class ButtonBoxPublisher {
     private static void setLed(LedPosition ledPosition, LedState ledState) {
         if (ledPosition == null) return;
         
-        getPublisher(ledPosition).set(String.format("led set %d %s", ledPosition.getId(), ledState.getState()));
+        getPublisher(ledPosition).set(String.format("led set %d %s\0", ledPosition.getId(), ledState.getState()));
     }
 
     public static void sendMessage(String message) {
-        sMessagePub.set(String.format("msg %s", message));
+        sMessagePub.set(String.format("msg %s\0", message));
     }
 
     private static StringPublisher getPublisher(LedPosition ledPosition) {

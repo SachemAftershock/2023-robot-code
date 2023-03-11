@@ -16,6 +16,7 @@ public class IngestCubeCommand extends InstantCommand {
 
   @Override
   public void execute() {
+    System.out.println("Ingesting a cube");
     mIntakeSubsystem.ingestCube();
     ButtonBoxPublisher.enableLed(LedPosition.eIngest);
   }
