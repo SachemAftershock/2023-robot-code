@@ -21,7 +21,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        mRobotContainer = new RobotContainer();
+        mRobotContainer = RobotContainer.getInstance();
         mRobotContainer.initialize();
     }
 
@@ -48,7 +48,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
 
-        
     }
 
     /**
@@ -84,8 +83,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-        
-
     }
 
     @Override
@@ -101,7 +98,7 @@ public class Robot extends TimedRobot {
 
         SubsystemManager mSubsystemManager = mRobotContainer.getSubsystemManager();
 
-        if(!mSubsystemManager.checkSystems()) {
+        if (!mSubsystemManager.checkSystems()) {
             mSubsystemManager.checkSystems();
         }
 

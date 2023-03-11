@@ -37,6 +37,7 @@ import frc.robot.commands.intake.IngestCubeCommand;
 import frc.robot.commands.intake.EjectConeCommand;
 import frc.robot.commands.intake.EjectCubeCommand;
 import frc.robot.commands.intake.StopIntakeCommand;
+import frc.robot.enums.ButtonBoxLedInfo.ButtonPosition;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import frc.robot.enums.ArmState;
 import frc.robot.enums.ElevatorState;
@@ -47,6 +48,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 import static frc.robot.Constants.FieldConstants.kPlacingPoses;
+import static frc.robot.Constants.ButtonBoxConstants.kButtonBoxButtonMap;
 
 import java.util.function.Function;
 
@@ -60,6 +62,9 @@ import static frc.robot.Constants.DriveConstants.kRotationScalingConstant;
  * commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+    private static RobotContainer mInstance;
+
     private static boolean mIsCone = true;
 
     private final ElevatorSubsystem mElevatorSubsystem = ElevatorSubsystem.getInstance();
@@ -67,13 +72,16 @@ public class RobotContainer {
     private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
     private final ArmSubsystem mArmSubsystem = ArmSubsystem.getInstance();
 
-    private final SubsystemManager mSubsystemManager = new SubsystemManager(mElevatorSubsystem, mIntakeSubsystem,
-            mArmSubsystem, mDriveSubsystem);
+    private final SubsystemManager mSubsystemManager = new SubsystemManager(
+        mElevatorSubsystem, mIntakeSubsystem, mArmSubsystem, mDriveSubsystem
+    );
 
     private final CommandJoystick mPrimaryThrottleController = new CommandJoystick(
-            ControllerConstants.kPrimaryThrottleControllerPort);
+        ControllerConstants.kPrimaryThrottleControllerPort
+    );
     private final CommandJoystick mPrimaryTwistController = new CommandJoystick(
-            ControllerConstants.kPrimaryTwistControllerPort);
+        ControllerConstants.kPrimaryTwistControllerPort
+    );
     private final ButtonBox mButtonBox = new ButtonBox(ControllerConstants.kButtonBoxPort);
     private final XboxController mTestController = new XboxController(3);
 
@@ -86,22 +94,22 @@ public class RobotContainer {
         // Configure the button bindings
         configureButtonBindings();
         mDriveSubsystem.setDefaultCommand(
-                new ManualDriveCommand(
-                        mDriveSubsystem, mArmSubsystem::getState,
-                        () -> modifyAxis(mPrimaryThrottleController.getX())
-                                * DriveConstants.kMaxVelocityMetersPerSecond,
-                        () -> -modifyAxis(mPrimaryThrottleController.getY())
-                                * DriveConstants.kMaxVelocityMetersPerSecond,
-                        () -> modifyAxis(mPrimaryTwistController.getTwist())
-                                * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant));
+            new ManualDriveCommand(
+                mDriveSubsystem, mArmSubsystem::getState,
+                () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kMaxVelocityMetersPerSecond,
+                () -> -modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kMaxVelocityMetersPerSecond,
+                () -> modifyAxis(mPrimaryTwistController.getTwist())
+                    * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant
+            )
+        );
     }
 
     public void initialize() {
         mSubsystemManager.initialize();
+        syncLeds();
         // mArmSubsystem.outputTelemetry();
         // mElevatorSubsystem.outputTelemetry();
         // mIntakeSubsystem.outputTelemetry();
-
     }
 
     public void testPeriodic() {
@@ -114,41 +122,45 @@ public class RobotContainer {
         mElevatorSubsystem.outputTelemetry();
         mIntakeSubsystem.outputTelemetry();
 
-        //System.out.println("CONE----> " + RobotContainer.isCone());
+        // System.out.println("CONE----> " + RobotContainer.isCone());
 
-        // if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 || mTestController.getLeftY() < -0.05)) {
-        //     mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
+        // if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 ||
+        // mTestController.getLeftY() < -0.05)) {
+        // mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
         // } else {
-        //     mElevatorSubsystem.setTestSpeed(0.0);
+        // mElevatorSubsystem.setTestSpeed(0.0);
         // }
 
-        // if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 || mTestController.getLeftX() < -0.05)) {
-        //     mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
+        // if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 ||
+        // mTestController.getLeftX() < -0.05)) {
+        // mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
         // } else {
-        //     mArmSubsystem.setTestSpeed(0.0);
+        // mArmSubsystem.setTestSpeed(0.0);
         // }
 
         // if (mTestController.getRightBumper()) {
-        //     mIntakeSubsystem.ingestCone();
+        // mIntakeSubsystem.ingestCone();
         // } else if(mTestController.getLeftBumper()) {
-        //     mIntakeSubsystem.ingestCube();
+        // mIntakeSubsystem.ingestCube();
         // } else {
-        //     mIntakeSubsystem.stop();
+        // mIntakeSubsystem.stop();
         // }
     }
 
     public void test() {
 
-        // if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 || mTestController.getLeftY() < -0.05)) {
-        //     mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
+        // if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 ||
+        // mTestController.getLeftY() < -0.05)) {
+        // mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
         // } else {
-        //     mElevatorSubsystem.setTestSpeed(0.0);
+        // mElevatorSubsystem.setTestSpeed(0.0);
         // }
 
-        // if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 || mTestController.getLeftX() < -0.05)) {
-        //     mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
+        // if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 ||
+        // mTestController.getLeftX() < -0.05)) {
+        // mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
         // } else {
-        //     mArmSubsystem.setTestSpeed(0.0);
+        // mArmSubsystem.setTestSpeed(0.0);
         // }
 
     }
@@ -169,45 +181,42 @@ public class RobotContainer {
         mButtonBox.cubeToggle().onTrue(new InstantCommand(() -> RobotContainer.setIsCube()));
         mButtonBox.coneToggle().onTrue(new InstantCommand(() -> RobotContainer.setIsCone()));
 
-        mButtonBox.ingestIntake()
-                .onTrue(new InstantCommand(() -> {
-                    if (RobotContainer.isCone()) {
-                        new IngestConeCommand(mIntakeSubsystem).schedule();
-                    }
-                    else {
-                        new IngestCubeCommand(mIntakeSubsystem).schedule();
-                    }
-                }))
-                .onFalse(new InstantCommand(() -> {
-                    (new StopIntakeCommand(mIntakeSubsystem)).schedule();
-                    ButtonBoxPublisher.disableLed(LedPosition.eIngest);
-                }));
+        mButtonBox.ingestIntake().onTrue(new InstantCommand(() -> {
+            if (RobotContainer.isCone()) {
+                new IngestConeCommand(mIntakeSubsystem).schedule();
+            }
+            else {
+                new IngestCubeCommand(mIntakeSubsystem).schedule();
+            }
+        })).onFalse(new InstantCommand(() -> {
+            (new StopIntakeCommand(mIntakeSubsystem)).schedule();
+            ButtonBoxPublisher.disableLed(LedPosition.eIngest);
+        }));
 
-        mButtonBox.ejectIntake()
-                .onTrue(new InstantCommand(() -> {
-                    if (RobotContainer.isCone()) {
-                        new EjectConeCommand(mIntakeSubsystem).schedule();
-                    }
-                    else {
-                        new EjectCubeCommand(mIntakeSubsystem).schedule();
-                    }
-                }))
-                .onFalse(new InstantCommand(() -> {
-                    (new StopIntakeCommand(mIntakeSubsystem)).schedule();
-                    ButtonBoxPublisher.disableLed(LedPosition.eEject);
-                }));
+        mButtonBox.ejectIntake().onTrue(new InstantCommand(() -> {
+            if (RobotContainer.isCone()) {
+                new EjectConeCommand(mIntakeSubsystem).schedule();
+            }
+            else {
+                new EjectCubeCommand(mIntakeSubsystem).schedule();
+            }
+        })).onFalse(new InstantCommand(() -> {
+            (new StopIntakeCommand(mIntakeSubsystem)).schedule();
+            ButtonBoxPublisher.disableLed(LedPosition.eEject);
+        }));
 
-        mButtonBox.highPosition().onTrue(
-                CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevatorSubsystem, mArmSubsystem));
-        mButtonBox.mediumPosition().onTrue(
-                CommandFactory.HandleSuperStructureSequence(SuperState.eMid, mElevatorSubsystem, mArmSubsystem));
-        mButtonBox.floorPosition().onTrue(
-                CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.highPosition()
+            .onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.mediumPosition()
+            .onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eMid, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.floorPosition()
+            .onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem));
 
-        mButtonBox.humanPlayerPostion().onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.ePlayerStation,
-                mElevatorSubsystem, mArmSubsystem));
-        mButtonBox.stowPostion().onTrue(
-                CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevatorSubsystem, mArmSubsystem));
+        mButtonBox.humanPlayerPostion().onTrue(
+            CommandFactory.HandleSuperStructureSequence(SuperState.ePlayerStation, mElevatorSubsystem, mArmSubsystem)
+        );
+        mButtonBox.stowPostion()
+            .onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevatorSubsystem, mArmSubsystem));
 
         mButtonBox.cancel().onTrue(new InstantCommand(() -> {
             CommandScheduler.getInstance().cancelAll();
@@ -215,39 +224,47 @@ public class RobotContainer {
         }));
 
         mButtonBox.cone1().onTrue(
-                new SetWaypointCommand(kPlacingPoses[0].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo1));
+            new SetWaypointCommand(kPlacingPoses[0].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo1)
+        );
         mButtonBox.cube2().onTrue(
-                new SetWaypointCommand(kPlacingPoses[1].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo2));
+            new SetWaypointCommand(kPlacingPoses[1].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo2)
+        );
         mButtonBox.cone3().onTrue(
-                new SetWaypointCommand(kPlacingPoses[2].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo3));
+            new SetWaypointCommand(kPlacingPoses[2].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo3)
+        );
 
         mButtonBox.cone4().onTrue(
-                new SetWaypointCommand(kPlacingPoses[3].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo4));
+            new SetWaypointCommand(kPlacingPoses[3].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo4)
+        );
         mButtonBox.cube5().onTrue(
-                new SetWaypointCommand(kPlacingPoses[4].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo5));
+            new SetWaypointCommand(kPlacingPoses[4].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo5)
+        );
         mButtonBox.cone6().onTrue(
-                new SetWaypointCommand(kPlacingPoses[5].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo6));
+            new SetWaypointCommand(kPlacingPoses[5].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo6)
+        );
 
         mButtonBox.cone7().onTrue(
-                new SetWaypointCommand(kPlacingPoses[6].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo7));
+            new SetWaypointCommand(kPlacingPoses[6].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo7)
+        );
         mButtonBox.cube8().onTrue(
-                new SetWaypointCommand(kPlacingPoses[7].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo8));
+            new SetWaypointCommand(kPlacingPoses[7].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo8)
+        );
         mButtonBox.cone9().onTrue(
-                new SetWaypointCommand(kPlacingPoses[8].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo9));
+            new SetWaypointCommand(kPlacingPoses[8].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo9)
+        );
 
         // TODO: Figure out stuff w human player coord left/right position
-        mButtonBox.leftHumanStation().onTrue(new SetWaypointCommand(LoadingZone.kDoubleSubstationPose, mDriveSubsystem,
-                LedPosition.eHumanPlayerLeft));
+        mButtonBox.leftHumanStation().onTrue(
+            new SetWaypointCommand(LoadingZone.kDoubleSubstationPose, mDriveSubsystem, LedPosition.eHumanPlayerLeft)
+        );
         // mButtonBox.rightHumanStation().onTrue(new SetWaypointCommand(,
         // mDriveSubsystem));
         Function<Boolean, InstantCommand> jogElevatorCommand = (isUp) -> new InstantCommand(() -> {
-            if (mButtonBox.isJoystickEnabled())
-                mElevatorSubsystem.jogElevator(isUp);
+            if (mButtonBox.isJoystickEnabled()) mElevatorSubsystem.jogElevator(isUp);
         });
 
         Function<Boolean, InstantCommand> jogArmCommand = (isOut) -> new InstantCommand(() -> {
-            if (mButtonBox.isJoystickEnabled())
-                mArmSubsystem.jogArm(isOut);
+            if (mButtonBox.isJoystickEnabled()) mArmSubsystem.jogArm(isOut);
         });
 
         // mButtonBox.upJoystickButton().onTrue(jogElevatorCommand.apply(true)).onFalse(new
@@ -260,16 +277,14 @@ public class RobotContainer {
         // InstantCommand(() -> mArmSubsystem.stop()));
 
         mButtonBox.povDown().onTrue(jogElevatorCommand.apply(false))
-                .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+            .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
 
         mButtonBox.povUp().onTrue(jogElevatorCommand.apply(true))
-                .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+            .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
 
-        mButtonBox.povLeft().onTrue(jogArmCommand.apply(false))
-                .onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
+        mButtonBox.povLeft().onTrue(jogArmCommand.apply(false)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
 
-        mButtonBox.povRight().onTrue(jogArmCommand.apply(true))
-                .onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
+        mButtonBox.povRight().onTrue(jogArmCommand.apply(true)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
 
         mButtonBox.povDownLeft().onTrue(new InstantCommand(() -> {
             if (mButtonBox.isJoystickEnabled()) {
@@ -312,7 +327,7 @@ public class RobotContainer {
         }));
 
         mButtonBox.enableJoystick().onTrue(new InstantCommand(() -> mButtonBox.setJoystickEnabled()))
-                                   .onFalse(new InstantCommand(() -> mButtonBox.setJoystickDisabled()));
+            .onFalse(new InstantCommand(() -> mButtonBox.setJoystickDisabled()));
     }
 
     public static void setIsCone() {
@@ -357,10 +372,12 @@ public class RobotContainer {
         if (Math.abs(value) > deadband) {
             if (value > 0.0) {
                 return (value - deadband) / (1.0 - deadband);
-            } else {
+            }
+            else {
                 return (value + deadband) / (1.0 - deadband);
             }
-        } else {
+        }
+        else {
             return 0.0;
         }
     }
@@ -377,7 +394,22 @@ public class RobotContainer {
         return value;
     }
 
+    private void syncLeds() {
+        int[] pressedButtons = mButtonBox.getPressedButtons();
+        ButtonBoxPublisher.disableAllLeds(); // TODO if leds don't work, try commenting this out
+        for (int button : pressedButtons) {
+            ButtonPosition position = ButtonPosition.getButtonPosition(button);
+            LedPosition led = kButtonBoxButtonMap.get(position);
+            ButtonBoxPublisher.enableLed(led);
+        }
+    }
+
     public SubsystemManager getSubsystemManager() {
         return mSubsystemManager;
+    }
+
+    public static RobotContainer getInstance() {
+        if (mInstance == null) mInstance = new RobotContainer();
+        return mInstance;
     }
 }

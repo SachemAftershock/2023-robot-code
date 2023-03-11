@@ -32,7 +32,7 @@ public class ArmSubsystem extends AftershockSubsystem {
     private TalonSRX mHookMotor;
 
     private final Lidar mLidar;
-    private ProfiledPIDController mProfileController; //Add final back
+    private ProfiledPIDController mProfileController; // Add final back
     private final TrapezoidProfile.Constraints mConstraints;
     private MedianFilter mFilter;
     private PID mPID;
@@ -40,7 +40,7 @@ public class ArmSubsystem extends AftershockSubsystem {
     private ArmState mCurrentState;
     private ArmState mDesiredState;
     public boolean mBreak = false;
-    
+
     double i = 0;
 
     ShuffleboardTab ArmSubsystemTab = Shuffleboard.getTab("Arm Subsystem");
@@ -61,8 +61,6 @@ public class ArmSubsystem extends AftershockSubsystem {
         mProfileController = new ProfiledPIDController(kGains[0], kGains[1], kGains[2], mConstraints);
         mFilter = new MedianFilter(10);
         mPID = new PID();
-        
-
 
         mCurrentState = ArmState.eStowEmpty;
         mDesiredState = ArmState.eStowEmpty;
@@ -70,10 +68,11 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     @Override
     public void initialize() {
-        //mProfileController = new ProfiledPIDController(P.getDouble(0), I.getDouble(0), D.getDouble(0), mConstraints);
+        // mProfileController = new ProfiledPIDController(P.getDouble(0),
+        // I.getDouble(0), D.getDouble(0), mConstraints);
         setSpeed(0);
-        mCurrentState = ArmState.eStowEmpty;
-        mDesiredState = ArmState.eStowEmpty;
+        mCurrentState = null;
+        mDesiredState = null;
         mPID.start(kGains);
 
     }
@@ -81,35 +80,37 @@ public class ArmSubsystem extends AftershockSubsystem {
     @Override
     public void periodic() {
 
-        //System.out.println(mCurrentState + " " + mDesiredState);
+        // System.out.println(mCurrentState + " " + mDesiredState);
 
         if (mCurrentState == mDesiredState) {
-            //System.out.println("Desired state reached");
-            //System.out.println("----------PID ERROR------------" + mPID.getError());
+            // System.out.println("Desired state reached");
+            // System.out.println("----------PID ERROR------------" + mPID.getError());
             return;
         }
-        //if(mBreak || true) return;  
+        // if(mBreak || true) return;
 
         double current = mFilter.calculate(getBarDistance());
-        double setpoint = mDesiredState.getLength();//ArmConstants.getBarDistance(mDesiredState.getLength());
-        //System.out.println(setpoint + ", " + mDesiredState.getLength());
+        double setpoint = mDesiredState.getLength();// ArmConstants.getBarDistance(mDesiredState.getLength());
+        // System.out.println(setpoint + ", " + mDesiredState.getLength());
         if (setpoint == -1) {
             System.out.println("ERROR : Arm setpoint invalid");
-            //DriverStation.reportError("[INTAKE]: SETPOINT IS INVALID", false);
+            // DriverStation.reportError("[INTAKE]: SETPOINT IS INVALID", false);
             return;
         }
 
         // if(current < ArmConstants.getBarDistance(66.0)) {
-        //     stop();
-        //     return;
+        // stop();
+        // return;
         // }
 
-        //double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -0.5, 0.5);
+        // double output = MathUtil.clamp(mProfileController.calculate(current,
+        // setpoint), -0.5, 0.5);
         double output = mPID.update(current, setpoint);
-        //output = MathUtil.clamp(output, -0.5, 0.5);
-        output = output*0.4;
+        // output = MathUtil.clamp(output, -0.5, 0.5);
+        output = output * 0.4;
 
-        //System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        // System.out.println("Current " + current + " SetPoint " + setpoint + " Output
+        // " + output);
         if (Math.abs(mPID.getError()) < kEpsilon) {
             System.out.println("-----EXITING PID-----" + mPID.getError());
             stop();
@@ -144,10 +145,12 @@ public class ArmSubsystem extends AftershockSubsystem {
     public void outputTelemetry() {
 
         // ArmSubsystemTab.add("A Lidar Distance Inches", mLidar.getDistanceCm());
-        // ArmSubsystemTab.add("A Real Bar Distance", ArmConstants.getBarDistance(kArmLidarId));
-        // ArmSubsystemTab.add("A Motor Velocity", mArmMotor.getEncoder().getVelocity());
+        // ArmSubsystemTab.add("A Real Bar Distance",
+        // ArmConstants.getBarDistance(kArmLidarId));
+        // ArmSubsystemTab.add("A Motor Velocity",
+        // mArmMotor.getEncoder().getVelocity());
 
-        //SmartDashboard.putNumber("Raw Bar Distance", mLidar.getDistanceIn());
+        // SmartDashboard.putNumber("Raw Bar Distance", mLidar.getDistanceIn());
         SmartDashboard.putNumber("Bar Distance", getBarDistance());
         SmartDashboard.putNumber("Arm Motor Velocity", mArmMotor.getEncoder().getVelocity());
     }
@@ -158,21 +161,21 @@ public class ArmSubsystem extends AftershockSubsystem {
         boolean isFunctional = true;
         double lidarDistance = mLidar.getDistanceIn();
 
-        //Value should be lidar distance when arm is fully retractred
-        if(lidarDistance < 0) {
+        // Value should be lidar distance when arm is fully retractred
+        if (lidarDistance < 0) {
             System.out.println("ERROR : Arm Lidar not functional or misaligned. Lidar distance = " + lidarDistance);
             isFunctional = false;
         }
-          
+
         return isFunctional;
     }
 
-    public void TESTSPEED(){
+    public void TESTSPEED() {
         setSpeed(-1.0);
     }
 
     private void setSpeed(double speed) {
-        //System.out.println("Motor Controller speed" + speed);
+        // System.out.println("Motor Controller speed" + speed);
         mArmMotor.set(speed);
     }
 
@@ -183,7 +186,7 @@ public class ArmSubsystem extends AftershockSubsystem {
     public static synchronized ArmSubsystem getInstance() {
         if (mInstance == null) {
             mInstance = new ArmSubsystem();
-        }    
+        }
         return mInstance;
     }
 }
