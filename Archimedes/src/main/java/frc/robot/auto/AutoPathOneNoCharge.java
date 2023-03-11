@@ -30,7 +30,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutoPathOne extends SequentialCommandGroup{
+public class AutoPathOneNoCharge extends SequentialCommandGroup{
 
     private final DriveSubsystem mDrive; 
     private final ElevatorSubsystem mElevator;
@@ -58,7 +58,7 @@ public class AutoPathOne extends SequentialCommandGroup{
         new Translation2d(2.39, 2.37)
         ), new Pose2d(3.92, 2.39, new Rotation2d()), config);
 
-    public AutoPathOne(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+    public AutoPathOneNoCharge(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
