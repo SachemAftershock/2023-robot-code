@@ -149,17 +149,18 @@ public class RobotContainer {
 
     public void test() {
 
-        // if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 ||
-        // mTestController.getLeftY() < -0.05)) {
-        // mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
-        // } else {
-        // mElevatorSubsystem.setTestSpeed(0.0);
-        // }
+        if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 || mTestController.getLeftY() < -0.05)) {
+            mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
+        }
+        else {
+            mElevatorSubsystem.setTestSpeed(0.0);
+        }
 
         // if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 ||
         // mTestController.getLeftX() < -0.05)) {
         // mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
-        // } else {
+        // }
+        // else {
         // mArmSubsystem.setTestSpeed(0.0);
         // }
 

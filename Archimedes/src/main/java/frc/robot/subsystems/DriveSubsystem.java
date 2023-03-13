@@ -74,7 +74,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 	// MAX_VELOCITY_METERS_PER_SECOND /
 	// Math.hypot(kDrivetrainTrackwidthMeters / 2.0, kDrivetrainWheelbaseMeters /
 	// 2.0);
-	
+
 	private final SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
 		// Front left
 		new Translation2d(kDrivetrainTrackwidthMeters / 2.0, kDrivetrainWheelbaseMeters / 2.0),
@@ -105,7 +105,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 	private final PID mAntiTiltPID;
 	private boolean mEnableBalance;
-    private double antiTiltSpeed;
+	private double antiTiltSpeed;
 
 	private DriveSubsystem() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
@@ -132,18 +132,21 @@ public class DriveSubsystem extends AftershockSubsystem {
 		);
 
 		mFrontRightModule = Mk4SwerveModuleHelper.createFalcon500Neo(
-			tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0), Mk4SwerveModuleHelper.GearRatio.L1,
-			kFrontRightDriveMotorId, kFrontRightSteerMotorId, kFrontRightSteerEncoderId, kFrontRightSteerOffset
+			tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
+			Mk4SwerveModuleHelper.GearRatio.L1, kFrontRightDriveMotorId, kFrontRightSteerMotorId,
+			kFrontRightSteerEncoderId, kFrontRightSteerOffset
 		);
 
 		mBackLeftModule = Mk4SwerveModuleHelper.createFalcon500Neo(
-			tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0), Mk4SwerveModuleHelper.GearRatio.L1,
-			kBackLeftDriveMotorId, kBackLeftSteerMotorId, kBackLeftSteerEncoderId, kBackLeftSteerOffset
+			tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
+			Mk4SwerveModuleHelper.GearRatio.L1, kBackLeftDriveMotorId, kBackLeftSteerMotorId, kBackLeftSteerEncoderId,
+			kBackLeftSteerOffset
 		);
 
 		mBackRightModule = Mk4SwerveModuleHelper.createFalcon500Neo(
-			tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0), Mk4SwerveModuleHelper.GearRatio.L1,
-			kBackRightDriveMotorId, kBackRightSteerMotorId, kBackRightSteerEncoderId, kBackRightSteerOffset
+			tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
+			Mk4SwerveModuleHelper.GearRatio.L1, kBackRightDriveMotorId, kBackRightSteerMotorId,
+			kBackRightSteerEncoderId, kBackRightSteerOffset
 		);
 
 		mFrontLeftModule.setCanStatusFramePeriodReductions();
@@ -157,7 +160,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 		mAntiTiltPID = new PID();
 		mEnableBalance = true;
-        antiTiltSpeed = 0.0;
+		antiTiltSpeed = 0.0;
 	}
 
 	/**
@@ -169,7 +172,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 	}
 
 	public double getAdjustedYaw() {
-		return (mNavx.getYaw() - 90.0);
+		return (mNavx.getYaw());
 	}
 
 	public Rotation2d getGyroscopeRotation() {
@@ -180,7 +183,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 		// We have to invert the angle of the NavX so that rotating the robot
 		// counter-clockwise makes the angle increase.
-		return Rotation2d.fromDegrees(360.0 - (mNavx.getYaw() + 90)); //TODO: Add or subtract 90 here I think
+		return Rotation2d.fromDegrees(360.0 - (mNavx.getYaw())); // TODO: Add 90 here I think
 	}
 
 	public void drive(ChassisSpeeds chassisSpeeds) {
@@ -195,7 +198,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 	@Override
 	public void initialize() {
-		//mPoseEstimator.resetPosition(new Pose2d() ,new Rotation2d());
+		// mPoseEstimator.resetPosition(new Pose2d() ,new Rotation2d());
 		zeroGyroscope();
 		try {
 			pcw = new PhotonCameraSubsystem();
@@ -212,7 +215,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 		FluidicalPoseInfo poseInfo = mLimelight.getBotPose();
 
-		//System.out.println(poseInfo);
+		// System.out.println(poseInfo);
 
 		if (poseInfo != null && poseInfo.isValidTarget()) {
 			mPoseEstimator.addVisionMeasurement(poseInfo.getPose(), poseInfo.getTimestamp());
@@ -220,16 +223,19 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 		// photonvision update pose
 
-		// if(pcw.getEstimatedGlobalPose(mPoseEstimator.getEstimatedPosition()) != null) {
-		// 	Optional<EstimatedRobotPose> result = pcw.getEstimatedGlobalPose(mPoseEstimator.getEstimatedPosition());
+		// if(pcw.getEstimatedGlobalPose(mPoseEstimator.getEstimatedPosition()) != null)
+		// {
+		// Optional<EstimatedRobotPose> result =
+		// pcw.getEstimatedGlobalPose(mPoseEstimator.getEstimatedPosition());
 		// } else {
-		// 	Optional<EstimatedRobotPose> result = //Set to a default value
+		// Optional<EstimatedRobotPose> result = //Set to a default value
 		// }
 
 		// if (result.isPresent()) {
-		// 	EstimatedRobotPose camPose = result.get();
-		// 	mPoseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
-		// 	System.out.println(camPose);
+		// EstimatedRobotPose camPose = result.get();
+		// mPoseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
+		// camPose.timestampSeconds);
+		// System.out.println(camPose);
 		// }
 
 		mPoseEstimator.update(getGyroscopeRotation(), getPositions());
@@ -237,10 +243,18 @@ public class DriveSubsystem extends AftershockSubsystem {
 		SwerveModuleState[] states = mKinematics.toSwerveModuleStates(mChassisSpeeds);
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxVelocityMetersPerSecond);
 
-		mFrontLeftModule.set(states[0].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[0].angle.getRadians());
-		mFrontRightModule.set(states[1].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[1].angle.getRadians());
-		mBackLeftModule.set(states[2].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[2].angle.getRadians());
-		mBackRightModule.set(states[3].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[3].angle.getRadians());
+		mFrontLeftModule.set(
+			states[0].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[0].angle.getRadians()
+		);
+		mFrontRightModule.set(
+			states[1].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[1].angle.getRadians()
+		);
+		mBackLeftModule.set(
+			states[2].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[2].angle.getRadians()
+		);
+		mBackRightModule.set(
+			states[3].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[3].angle.getRadians()
+		);
 
 	}
 
@@ -249,10 +263,15 @@ public class DriveSubsystem extends AftershockSubsystem {
 	}
 
 	public SwerveModulePosition[] getPositions() {
-		return new SwerveModulePosition[] { new SwerveModulePosition(mFrontLeftModule.getPosition(), new Rotation2d(mFrontLeftModule.getSteerAngle())),
-				new SwerveModulePosition(mFrontRightModule.getPosition(), new Rotation2d(mFrontRightModule.getSteerAngle())),
-				new SwerveModulePosition(mBackLeftModule.getPosition(), new Rotation2d(mBackLeftModule.getSteerAngle())),
-				new SwerveModulePosition(mBackRightModule.getPosition(), new Rotation2d(mBackRightModule.getSteerAngle())), };
+		return new SwerveModulePosition[] { new SwerveModulePosition(
+			mFrontLeftModule.getPosition(), new Rotation2d(mFrontLeftModule.getSteerAngle())
+		), new SwerveModulePosition(mFrontRightModule.getPosition(), new Rotation2d(mFrontRightModule.getSteerAngle())),
+				new SwerveModulePosition(
+					mBackLeftModule.getPosition(), new Rotation2d(mBackLeftModule.getSteerAngle())
+				),
+				new SwerveModulePosition(
+					mBackRightModule.getPosition(), new Rotation2d(mBackRightModule.getSteerAngle())
+				), };
 	}
 
 	public SwerveDriveKinematics getKinematics() {
@@ -282,43 +301,42 @@ public class DriveSubsystem extends AftershockSubsystem {
 	public double getRoll() {
 		return mNavx.getRoll();
 	}
-	
+
 	public double[] runBalanceControl(double pow, double rot) {
-        double robotPitch = mNavx.getPitch();
-        double NewPowRot[] = new double[2];
-        NewPowRot[0] = pow;
-        NewPowRot[1] = rot;
+		double robotPitch = mNavx.getPitch();
+		double NewPowRot[] = new double[2];
+		NewPowRot[0] = pow;
+		NewPowRot[1] = rot;
 
-        if ( (mEnableBalance) && (Math.abs(robotPitch) > kMinBalanceAngle) && (Math.abs(robotPitch) < kMaxBalanceAngle) ) {
-            double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
-            double correctionOffset = slope * (robotPitch - kMinBalanceAngle);
-            NewPowRot[0] = NewPowRot[0] + correctionOffset;
-            NewPowRot[1] = -rot;
-            // System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "
-            // Pitch :" + robotPitch);
-        }
-        return NewPowRot;
-    }
-
+		if ((mEnableBalance) && (Math.abs(robotPitch) > kMinBalanceAngle)
+			&& (Math.abs(robotPitch) < kMaxBalanceAngle)) {
+			double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
+			double correctionOffset = slope * (robotPitch - kMinBalanceAngle);
+			NewPowRot[0] = NewPowRot[0] + correctionOffset;
+			NewPowRot[1] = -rot;
+			// System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "
+			// Pitch :" + robotPitch);
+		}
+		return NewPowRot;
+	}
 
 	@Override
-    public boolean checkSystem() {
+	public boolean checkSystem() {
 
-        boolean isFunctional = false;
+		boolean isFunctional = false;
 		double navxHeading = mNavx.getFusedHeading();
 
-        if(navxHeading != 0.0) {
-            isFunctional = false;
-        } else {
+		if (navxHeading != 0.0) {
+			isFunctional = false;
+		}
+		else {
 			isFunctional = true;
-        }
-        return isFunctional;
-    }
+		}
+		return isFunctional;
+	}
 
 	@Override
 	public void outputTelemetry() {
-
-		
 
 	}
 

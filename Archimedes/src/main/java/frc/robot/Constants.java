@@ -51,15 +51,20 @@ public class Constants {
 
         // angles in radians.
         // to convert from degrees to radians multiply by pi/180
-        public static final double kFrontLeftSteerOffset = -0.35 + (Math.PI / 2.0); // - Math.toRadians(15);// - (Math.PI / 2.0);// -.35;
-        public static final double kFrontRightSteerOffset = 0.4 + (Math.PI / 2.0); // - Math.toRadians(15);; //- (Math.PI / 2.0);// 0.40;
-        public static final double kBackLeftSteerOffset = 0.45 + (Math.PI / 2.0); // - Math.toRadians(15);; //- (Math.PI / 2.0);// .45;
-        public static final double kBackRightSteerOffset = -0.5 + (Math.PI / 2.0); // - Math.toRadians(15);; //- (Math.PI / 2.0);// -.5;
+        public static final double kFrontLeftSteerOffset = -0.35 + (Math.PI / 2.0); // - Math.toRadians(15);// -
+                                                                                    // (Math.PI / 2.0);// -.35;
+        public static final double kFrontRightSteerOffset = 0.4 + (Math.PI / 2.0); // - Math.toRadians(15);; //-
+                                                                                   // (Math.PI / 2.0);// 0.40;
+        public static final double kBackLeftSteerOffset = 0.45 + (Math.PI / 2.0); // - Math.toRadians(15);; //- (Math.PI
+                                                                                  // / 2.0);// .45;
+        public static final double kBackRightSteerOffset = -0.5 + (Math.PI / 2.0); // - Math.toRadians(15);; //-
+                                                                                   // (Math.PI / 2.0);// -.5;
 
         private static final double kMk4L1DriveReduction = (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0);
         private static final double kMk4WheelDiameter = 0.10033;
 
-        public static final double kMaxVelocityMetersPerSecond = 6380.0 / 60.0 * kMk4L1DriveReduction * kMk4WheelDiameter * Math.PI;
+        public static final double kMaxVelocityMetersPerSecond = 6380.0 / 60.0 * kMk4L1DriveReduction
+            * kMk4WheelDiameter * Math.PI;
 
         // TODO: Change
         public static final double kMaxAccelerationMetersPerSecondSquared = kMaxVelocityMetersPerSecond * 0.25;
@@ -75,20 +80,20 @@ public class Constants {
         public static double kMinimumDistanceForAutoDrive = 0.0;
         public static double kDriveToTargetEpsilon = 0.1;
 
-        public static final double kMinBalanceAngle = 9.0;//In degrees
-        public static final double kMaxBalanceAngle = 16.0; 
+        public static final double kMinBalanceAngle = 9.0;// In degrees
+        public static final double kMaxBalanceAngle = 16.0;
 
-        public static final double[] kBalanceRobotGains = {0.0, 0.0, 0.0};
+        public static final double[] kBalanceRobotGains = { 0.0, 0.0, 0.0 };
         public static final double kBalanceRobotEpsilon = 1.0;
 
         public static final double kDriveSpeed = 0.5; // adjust as needed
         public static final double kBalanceThreshold = 2.5; // degrees
-        
+
         public static final double kChargeStationWidth = 247; // cm
         public static final double kChargeStationDepth = 193; // cm
         public static final double kChargeStationLevelHeight = 23; // cm
         public static final double kChargeStationMaxTilt = 15; // degrees
-        
+
         public static final double kRampLength = 39; // cm
         public static final double kRampLevelAngle = 34.25; // degrees
         public static final double kRampMaxTiltAngle = 71.5; // degrees
@@ -96,7 +101,9 @@ public class Constants {
     }
 
     public static class VisionConstants {
-        public static final Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
+        public static final Transform3d robotToCam = new Transform3d(
+            new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0)
+        );
         // Cam mounted facing forward, half
         // a meter forward of center, half
         // a meter up
@@ -127,7 +134,8 @@ public class Constants {
             kButtonBoxButtonMap.put(ButtonPosition.eDriveTo9, LedPosition.eDriveTo9); // drive to 9
             kButtonBoxButtonMap.put(ButtonPosition.eCancel, LedPosition.eCancel); // cancel
             kButtonBoxButtonMap.put(ButtonPosition.eHumanPlayerLeft, LedPosition.eHumanPlayerLeft); // human player left
-            kButtonBoxButtonMap.put(ButtonPosition.eHumanPlayerRight, LedPosition.eHumanPlayerRight); // human player right
+            kButtonBoxButtonMap.put(ButtonPosition.eHumanPlayerRight, LedPosition.eHumanPlayerRight); // human player
+                                                                                                      // right
             kButtonBoxButtonMap.put(ButtonPosition.eCubeActive, LedPosition.eCubeActive); // toggle cube
             kButtonBoxButtonMap.put(ButtonPosition.eConeActive, LedPosition.eConeActive); // toggle cone
             kButtonBoxButtonMap.put(ButtonPosition.eIngest, LedPosition.eIngest); // ingest
@@ -163,7 +171,8 @@ public class Constants {
         public static final double kJogSpeed = 0.2;
         public static final double kArmLidarOffset = -3.0;
 
-        public static final double[][] kBarDistanceToArmExtension = { { 18, 17.25 }, { 17, 29 }, { 16, 34.75 }, { 15, 42 }, { 13, 49 }
+        public static final double[][] kBarDistanceToArmExtension = { { 18, 17.25 }, { 17, 29 }, { 16, 34.75 },
+                { 15, 42 }, { 13, 49 }
                 // {13, 48.5},
         };
 
@@ -178,8 +187,9 @@ public class Constants {
             for (int i = 1; i < kBarDistanceToArmExtension.length; ++i) {
                 if (desiredArmExtension < kBarDistanceToArmExtension[i][kArmDistanceIndex]) {
                     // x and y are flipped of what you expect bc this is a "reverse" look up
-                    // We know the desired arm distance, and have to map it to a interpolated bar distance
-                    
+                    // We know the desired arm distance, and have to map it to a interpolated bar
+                    // distance
+
                     double x1 = kBarDistanceToArmExtension[i][kArmDistanceIndex];
                     double x0 = kBarDistanceToArmExtension[i - 1][kArmDistanceIndex];
 
@@ -187,11 +197,11 @@ public class Constants {
                     double y0 = kBarDistanceToArmExtension[i - 1][kBarDistanceIndex];
                     double a = y1 - y0;
                     double b = x1 - x0;
-                    double slope = a/b;
-                    double c = y1 - (slope*x1);
-                    // System.out.println(slope + "    -----  " + slope * desiredArmExtension + y0);
+                    double slope = a / b;
+                    double c = y1 - (slope * x1);
+                    // System.out.println(slope + " ----- " + slope * desiredArmExtension + y0);
 
-                    return (desiredArmExtension - c) / slope;//slope * desiredArmExtension + y0; 
+                    return (desiredArmExtension - c) / slope;// slope * desiredArmExtension + y0;
                 }
             }
 
@@ -204,15 +214,15 @@ public class Constants {
         public static final double[] kTrapezoidalPidGains = { 0.05, 0.0, 0.0 };
         public static final double kMaxVelocityMeterPerSecond = 0.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.25;
-        public static final double kEpsilon = 1.5;
+        public static final double kEpsilon = 1.0;
 
         public static final double kJogSpeed = 0.2;
 
         public static final double kElevatorLidarOffset = 0.0;
         public static final double kElevatorLidarHeightFromGround = 3.75;
         public static final int kElevatorMedianFilterSampleSize = 10;
-        public static final double kElevatorMaxHeight = 64.0; 
-        public static final double kElevatorMinHeight = 17.0; 
+        public static final double kElevatorMaxHeight = 68.0;
+        public static final double kElevatorMinHeight = 17.0;
         public static final double kCompensatingVoltage = 0.0;
 
     }
@@ -229,7 +239,8 @@ public class Constants {
 
         /* X Placement constants from 6328 */
         public static final double outerX = Units.inchesToMeters(54.25);
-        public static final double lowX = outerX - (Units.inchesToMeters(14.25) / 2.0); // Centered when under cube nodes
+        public static final double lowX = outerX - (Units.inchesToMeters(14.25) / 2.0); // Centered when under cube
+                                                                                        // nodes
         public static final double midX = outerX - Units.inchesToMeters(22.75);
         public static final double highX = outerX - Units.inchesToMeters(39.75);
 
@@ -245,7 +256,9 @@ public class Constants {
             public boolean isCone;
 
             public PlacementLocation(Pose2d poseAlignedWithEdge, double lengthOfRobotWithBumpers, boolean isCone) {
-                var transformHybridToRobot = new Transform2d(new Translation2d(lengthOfRobotWithBumpers / 2, 0), Rotation2d.fromDegrees(180));
+                var transformHybridToRobot = new Transform2d(
+                    new Translation2d(lengthOfRobotWithBumpers / 2, 0), Rotation2d.fromDegrees(180)
+                );
                 robotPlacementPose = poseAlignedWithEdge.transformBy(transformHybridToRobot);
                 this.isCone = isCone;
             }
@@ -267,7 +280,8 @@ public class Constants {
         public static final double separationBetweenNodeRows = Units.inchesToMeters(22.0);
         public static final Pose2d firstPlacingPose = new Pose2d(outerX, Units.inchesToMeters(20.19), new Rotation2d());
 
-        public static final boolean[] isCone = new boolean[] { true, false, true, true, false, true, true, false, true };
+        public static final boolean[] isCone = new boolean[] { true, false, true, true, false, true, true, false,
+                true };
 
         // Store the locations we will score from on the field (for automatic placement)
         public static final PlacementLocation[] kPlacingPoses = new PlacementLocation[numberOfNodeRows];
@@ -275,8 +289,10 @@ public class Constants {
         static {
             for (int i = 0; i < numberOfNodeRows; i++) {
                 kPlacingPoses[i] = new PlacementLocation(
-                    new Pose2d(firstPlacingPose.getX(), firstPlacingPose.getY() + i * separationBetweenNodeRows, new Rotation2d()), robotLengthWithBumpers,
-                    isCone[i]
+                    new Pose2d(
+                        firstPlacingPose.getX(), firstPlacingPose.getY() + i * separationBetweenNodeRows,
+                        new Rotation2d()
+                    ), robotLengthWithBumpers, isCone[i]
                 );
             }
         }
@@ -311,27 +327,72 @@ public class Constants {
 
         public static final List<AprilTag> kAprilTags = List.of(
             new AprilTag(
-                1, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(42.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))
+                1,
+                new Pose3d(
+                    Units.inchesToMeters(610.77), Units.inchesToMeters(42.19), Units.inchesToMeters(18.22),
+                    new Rotation3d(0.0, 0.0, Math.PI)
+                )
             ),
             new AprilTag(
-                2, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))
+                2,
+                new Pose3d(
+                    Units.inchesToMeters(610.77), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22),
+                    new Rotation3d(0.0, 0.0, Math.PI)
+                )
             ),
             new AprilTag(
-                3, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))
+                3,
+                new Pose3d(
+                    Units.inchesToMeters(610.77), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22),
+                    new Rotation3d(0.0, 0.0, Math.PI)
+                )
             ),
             new AprilTag(
-                4, new Pose3d(Units.inchesToMeters(636.96), Units.inchesToMeters(265.74), Units.inchesToMeters(27.38), new Rotation3d(0.0, 0.0, Math.PI))
-            ), new AprilTag(5, new Pose3d(Units.inchesToMeters(14.25), Units.inchesToMeters(265.74), Units.inchesToMeters(27.38), new Rotation3d())),
-            new AprilTag(6, new Pose3d(Units.inchesToMeters(40.45), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22), new Rotation3d())),
-            new AprilTag(7, new Pose3d(Units.inchesToMeters(40.45), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d())),
-            new AprilTag(8, new Pose3d(Units.inchesToMeters(40.45), Units.inchesToMeters(42.19), Units.inchesToMeters(18.22), new Rotation3d()))
+                4,
+                new Pose3d(
+                    Units.inchesToMeters(636.96), Units.inchesToMeters(265.74), Units.inchesToMeters(27.38),
+                    new Rotation3d(0.0, 0.0, Math.PI)
+                )
+            ),
+            new AprilTag(
+                5,
+                new Pose3d(
+                    Units.inchesToMeters(14.25), Units.inchesToMeters(265.74), Units.inchesToMeters(27.38),
+                    new Rotation3d()
+                )
+            ),
+            new AprilTag(
+                6,
+                new Pose3d(
+                    Units.inchesToMeters(40.45), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22),
+                    new Rotation3d()
+                )
+            ),
+            new AprilTag(
+                7,
+                new Pose3d(
+                    Units.inchesToMeters(40.45), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22),
+                    new Rotation3d()
+                )
+            ),
+            new AprilTag(
+                8,
+                new Pose3d(
+                    Units.inchesToMeters(40.45), Units.inchesToMeters(42.19), Units.inchesToMeters(18.22),
+                    new Rotation3d()
+                )
+            )
         );
 
-        public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = new AprilTagFieldLayout(kAprilTags, fieldLength, fieldWidth);
+        public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = new AprilTagFieldLayout(
+            kAprilTags, fieldLength, fieldWidth
+        );
 
         public static void setAprilTagOrigin() {
-            APRIL_TAG_FIELD_LAYOUT
-                .setOrigin(DriverStation.getAlliance() == Alliance.Red ? OriginPosition.kRedAllianceWallRightSide : OriginPosition.kBlueAllianceWallRightSide);
+            APRIL_TAG_FIELD_LAYOUT.setOrigin(
+                DriverStation.getAlliance() == Alliance.Red ? OriginPosition.kRedAllianceWallRightSide
+                    : OriginPosition.kBlueAllianceWallRightSide
+            );
         }
     }
 
@@ -344,25 +405,37 @@ public class Constants {
         public static final double leftY = FieldConstants.fieldWidth;
         public static final double midY = leftY - Units.inchesToMeters(50.5);
         public static final double rightY = leftY - width;
-        public static final Translation2d[] regionCorners = new Translation2d[] { new Translation2d(midX, rightY), // Start at lower left
-                                                                                                                   // next to border with
-                                                                                                                   // opponent community
-                new Translation2d(midX, midY), new Translation2d(outerX, midY), new Translation2d(outerX, leftY), new Translation2d(innerX, leftY),
-                new Translation2d(innerX, rightY), };
+        public static final Translation2d[] regionCorners = new Translation2d[] { new Translation2d(midX, rightY), // Start
+                                                                                                                   // at
+                                                                                                                   // lower
+                                                                                                                   // left
+                                                                                                                   // next
+                                                                                                                   // to
+                                                                                                                   // border
+                                                                                                                   // with
+                                                                                                                   // opponent
+                                                                                                                   // community
+                new Translation2d(midX, midY), new Translation2d(outerX, midY), new Translation2d(outerX, leftY),
+                new Translation2d(innerX, leftY), new Translation2d(innerX, rightY), };
 
         // Double substation dimensions
         public static final double doubleSubstationLength = Units.inchesToMeters(14.0);
         public static final double doubleSubstationX = innerX - doubleSubstationLength;
         public static final double doubleSubstationShelfZ = Units.inchesToMeters(37.375);
         public static final double doubleSubstationCenterY = Units.inchesToMeters(265.74);
-        public static final Pose2d kDoubleSubstationPose = new Pose2d(doubleSubstationX, doubleSubstationCenterY, Rotation2d.fromDegrees(0));
+        public static final Pose2d kDoubleSubstationPose = new Pose2d(
+            doubleSubstationX, doubleSubstationCenterY, Rotation2d.fromDegrees(0)
+        );
 
         // Single substation dimensions
         public static final double singleSubstationWidth = Units.inchesToMeters(22.75);
-        public static final double singleSubstationLeftX = FieldConstants.fieldLength - doubleSubstationLength - Units.inchesToMeters(88.77);
+        public static final double singleSubstationLeftX = FieldConstants.fieldLength - doubleSubstationLength
+            - Units.inchesToMeters(88.77);
         public static final double singleSubstationCenterX = singleSubstationLeftX + (singleSubstationWidth / 2.0);
         public static final double singleSubstationRightX = singleSubstationLeftX + singleSubstationWidth;
-        public static final Translation2d singleSubstationTranslation = new Translation2d(singleSubstationCenterX, leftY);
+        public static final Translation2d singleSubstationTranslation = new Translation2d(
+            singleSubstationCenterX, leftY
+        );
 
         public static final double singleSubstationHeight = Units.inchesToMeters(18.0);
         public static final double singleSubstationLowZ = Units.inchesToMeters(27.125);

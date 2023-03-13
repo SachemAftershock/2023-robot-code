@@ -37,7 +37,9 @@ public class LinearDriveCommand extends CommandBase {
         }
 
         mPid.start(DriveConstants.kDriveLinearGains); // TODO: tune pid values
-        System.out.println("Linear Drive Command started : Current Pose --> " + mDrive.getPose() + " Setpoint " + mLinearSetpoint);
+        System.out.println(
+            "Linear Drive Command started : Current Pose --> " + mDrive.getPose() + " Setpoint " + mLinearSetpoint
+        );
     }
 
     @Override
@@ -58,8 +60,6 @@ public class LinearDriveCommand extends CommandBase {
         }
 
         double speed = mPid.update(mCurrentPose, mLinearSetpoint) * DriveConstants.kMaxVelocityMetersPerSecond;
-
-        System.out.println(speed);
 
         if (direction) {
             mDrive.drive(new ChassisSpeeds(0, speed, 0));

@@ -4,6 +4,7 @@ import frc.lib.AftershockSubsystem;
 import frc.lib.Lidar;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -16,13 +17,13 @@ import frc.robot.Ports.IntakePorts;
 public class IntakeSubsystem extends AftershockSubsystem {
     private static IntakeSubsystem mInstance;
     private final Lidar mLidar;
-    
 
     private CANSparkMax mIntakeMotor = new CANSparkMax(kIntakeMotorId, MotorType.kBrushless);
 
     private IntakeSubsystem() {
         super();
         mLidar = new Lidar(new DigitalInput(IntakePorts.kIntakeLidarId));
+        mIntakeMotor.setIdleMode(IdleMode.kBrake);
     }
 
     @Override
@@ -31,7 +32,6 @@ public class IntakeSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
-        
 
     }
 
@@ -85,10 +85,12 @@ public class IntakeSubsystem extends AftershockSubsystem {
         boolean isFunctional = false;
         double lidarDistance = mLidar.getDistanceIn();
 
-        if(lidarDistance > 12 || lidarDistance == 0 || lidarDistance >= 999.0) {
+        if (lidarDistance > 12 || lidarDistance == 0 || lidarDistance >= 999.0) {
             isFunctional = true;
-        } else {
-            //System.out.println("ERROR : Intake Lidar not functional or misaligned. Lidar distance = " + lidarDistance);
+        }
+        else {
+            // System.out.println("ERROR : Intake Lidar not functional or misaligned. Lidar
+            // distance = " + lidarDistance);
         }
         return isFunctional;
     }
