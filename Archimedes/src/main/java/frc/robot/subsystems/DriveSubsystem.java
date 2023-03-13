@@ -275,6 +275,14 @@ public class DriveSubsystem extends AftershockSubsystem {
 		mLedPosition = position;
 	}
 
+	public double getPitch() {
+		return mNavx.getPitch();
+	}
+
+	public double getRoll() {
+		return mNavx.getRoll();
+	}
+	
 	public double[] runBalanceControl(double pow, double rot) {
         double robotPitch = mNavx.getPitch();
         double NewPowRot[] = new double[2];

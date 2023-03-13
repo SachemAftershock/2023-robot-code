@@ -30,12 +30,12 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutoPathFive extends SequentialCommandGroup{
+public class AutoPathFour extends SequentialCommandGroup{
 
-    private final DriveSubsystem mDrive; 
-    private final ElevatorSubsystem mElevator;
-    private final ArmSubsystem mArm;
-    private final IntakeSubsystem mIntake;
+    private DriveSubsystem mDrive; 
+    private ElevatorSubsystem mElevator;
+    private ArmSubsystem mArm;
+    private IntakeSubsystem mIntake;
 
     TrajectoryConfig config = new TrajectoryConfig(
         DriveConstants.kMaxVelocityMetersPerSecond * 0.3,
@@ -47,7 +47,7 @@ public class AutoPathFive extends SequentialCommandGroup{
         new Translation2d(2.15, 3.2)
         ), new Pose2d(3.9, 3.44, new Rotation2d()), config);
 
-    public AutoPathFive(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+    public AutoPathFour(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
