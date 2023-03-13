@@ -32,10 +32,10 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class AutoPathFour extends SequentialCommandGroup{
 
-    private DriveSubsystem mDrive; 
-    private ElevatorSubsystem mElevator;
-    private ArmSubsystem mArm;
-    private IntakeSubsystem mIntake;
+    private final DriveSubsystem mDrive; 
+    private final ElevatorSubsystem mElevator;
+    private final ArmSubsystem mArm;
+    private final IntakeSubsystem mIntake;
 
     TrajectoryConfig config = new TrajectoryConfig(
         DriveConstants.kMaxVelocityMetersPerSecond * 0.3,
