@@ -164,6 +164,7 @@ public class Constants {
         public static final int kElevatorMedianFilterSampleSize = 10;
         public static final double kElevatorMaxHeight = 64.0; 
         public static final double kElevatorMinHeight = 17.0; 
+        public static final double kCompensatingVoltage = 0.0;
 
     }
 

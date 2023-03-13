@@ -42,7 +42,9 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     GenericEntry D = ElevatorSubsystemTab.add("Elevator D", 0).getEntry();
 
     private double setpoint; 
-    private boolean mBreakLoop;
+    private int counter; 
+    private boolean enablePrints;
+    private double prevDelta;
 
     private ElevatorSubsystem() {
 
@@ -63,57 +65,69 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     @Override
     public void initialize() {
-        mCurrentState = ElevatorState.eStowEmpty;
-        mDesiredState = ElevatorState.eStowEmpty;
+
+        // mCurrentState = ElevatorState.eStowEmpty;
+        // mDesiredState = ElevatorState.eStowEmpty;
         setpoint = mLidar.getDistanceIn(); //Temporary so Elevator doesnt move when enabled
         //mProfileController = new ProfiledPIDController(kPidGains[0], kPidGains[1], kPidGains[2], mConstraints);
         setSpeed(0);
-        mBreakLoop = false;
+        counter = 0;
+        prevDelta = Double.MAX_VALUE;
     }
 
     @Override
     public void periodic() {
         
-        
         double current = getElevatorHeight();
         setpoint = mDesiredState.getHeight();
 
+        if (mCurrentState == mDesiredState && mCurrentState != ElevatorState.eStowEmpty) {
+            setVoltage(kCompensatingVoltage);
+        }
 
-        //System.out.println(mCurrentState + " " + mDesiredState);
         if (mCurrentState == mDesiredState) return;
-
         
-        if(setpoint > kElevatorMaxHeight || setpoint < kElevatorMinHeight) {
-            System.out.println("Elevator setpoint out of bounds" + setpoint);
+        if (setpoint > kElevatorMaxHeight || setpoint < kElevatorMinHeight) {
+            System.out.println("Elevator SETPOINT out of bounds" + setpoint);
             stop();
+            return;
+        }
+
+        if (current > kElevatorMaxHeight || current < kElevatorMinHeight) {
+            System.out.println("ERROR ---------- ELEVATOR OUT OF BOUNDS  ----------");
+            stop();
+            DriverStation.reportError("ELEVATOR OUT OF BOUNDS", false);
             return;
         }
 
         double output = mPid.update(current, setpoint);
         //double output = MathUtil.clamp(mProfileController.calculate(current, setpoint), -1.0, 1.0);
-        //if (i % 100 == 0) {
-        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
-        //}
-
-        // if((current - setpoint) > 0) {
-        //     output = -output;
-        // }
 
         if (Math.abs(mPid.getError()) < kEpsilon) {
             mCurrentState = mDesiredState;
-            mBreakLoop = true;
             stop();
             return;
-        } else {
-            mBreakLoop = false;
         }
-        
 
-        //System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
+        if(counter > 100) {
+            prevDelta = mPid.getError();
+            counter = 0;
+        }
+
+        if(mPid.getError() > prevDelta) {
+            System.out.println("ERROR ---------- ELEVATOR ROPE WOUND BACKWARDS ----------");
+            prevDelta = mPid.getError();
+        }
+
+        System.out.println("Current " + current + " SetPoint " + setpoint + " Output " + output);
         if (Double.isNaN(output)) return;
-        System.out.println("Output --> " + output);
         setSpeed(output);
+        counter++;
 
+    }
+
+    public void setVoltage(double voltage) {
+        mMotor.setVoltage(voltage);
     }
 
     public void setDesiredState(ElevatorState desiredState) {
@@ -129,12 +143,16 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
 
     public void jogElevator(boolean moveUp) {
-        System.out.println("Jogging elevator -->" + moveUp);
         setSpeed(moveUp ? kJogSpeed : -kJogSpeed);
     }
 
     private void setSpeed(double speed) {
-        mMotor.set(speed);
+        if(getElevatorHeight() > kElevatorMaxHeight || getElevatorHeight() < kElevatorMinHeight) {
+            DriverStation.reportError("ELEVATOR OUT OF BOUNDS", false);
+            return;
+        } else {
+            mMotor.set(speed);
+        }
     }
 
     public double getElevatorDistance() {
