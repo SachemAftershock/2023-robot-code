@@ -74,6 +74,25 @@ public class Constants {
         // TODO: Consider if we need this
         public static double kMinimumDistanceForAutoDrive = 0.0;
         public static double kDriveToTargetEpsilon = 0.1;
+
+        public static final double kMinBalanceAngle = 9.0;//In degrees
+        public static final double kMaxBalanceAngle = 16.0; 
+
+        public static final double[] kBalanceRobotGains = {0.0, 0.0, 0.0};
+        public static final double kBalanceRobotEpsilon = 1.0;
+
+        public static final double kDriveSpeed = 0.5; // adjust as needed
+        public static final double kBalanceThreshold = 2.5; // degrees
+        
+        public static final double kChargeStationWidth = 247; // cm
+        public static final double kChargeStationDepth = 193; // cm
+        public static final double kChargeStationLevelHeight = 23; // cm
+        public static final double kChargeStationMaxTilt = 15; // degrees
+        
+        public static final double kRampLength = 39; // cm
+        public static final double kRampLevelAngle = 34.25; // degrees
+        public static final double kRampMaxTiltAngle = 71.5; // degrees
+        public static final double kTargetBalanceAngle = 0;
     }
 
     public static class VisionConstants {
@@ -159,18 +178,20 @@ public class Constants {
             for (int i = 1; i < kBarDistanceToArmExtension.length; ++i) {
                 if (desiredArmExtension < kBarDistanceToArmExtension[i][kArmDistanceIndex]) {
                     // x and y are flipped of what you expect bc this is a "reverse" look up
-                    // We know the desired arm distance, and have to map it to a interpolated bar
-                    // distance
+                    // We know the desired arm distance, and have to map it to a interpolated bar distance
+                    
                     double x1 = kBarDistanceToArmExtension[i][kArmDistanceIndex];
                     double x0 = kBarDistanceToArmExtension[i - 1][kArmDistanceIndex];
 
                     double y1 = kBarDistanceToArmExtension[i][kBarDistanceIndex];
                     double y0 = kBarDistanceToArmExtension[i - 1][kBarDistanceIndex];
+                    double a = y1 - y0;
+                    double b = x1 - x0;
+                    double slope = a/b;
+                    double c = y1 - (slope*x1);
+                    // System.out.println(slope + "    -----  " + slope * desiredArmExtension + y0);
 
-                    double slope = (y1 - y0) / (x1 - x0);
-                    // System.out.println(slope + " ----- " + slope * desiredArmExtension + y0);
-
-                    return (y1 + y0) / 2;// slope * desiredArmExtension + y0;
+                    return (desiredArmExtension - c) / slope;//slope * desiredArmExtension + y0; 
                 }
             }
 
