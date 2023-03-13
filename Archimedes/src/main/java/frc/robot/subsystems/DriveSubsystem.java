@@ -285,6 +285,8 @@ public class DriveSubsystem extends AftershockSubsystem {
 	
 	public double[] runBalanceControl(double pow, double rot) {
         double robotPitch = mNavx.getPitch();
+		double robotRoll = mNavx.getRoll();
+
         double NewPowRot[] = new double[2];
         NewPowRot[0] = pow;
         NewPowRot[1] = rot;
@@ -292,13 +294,103 @@ public class DriveSubsystem extends AftershockSubsystem {
         if ( (mEnableBalance) && (Math.abs(robotPitch) > kMinBalanceAngle) && (Math.abs(robotPitch) < kMaxBalanceAngle) ) {
             double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
             double correctionOffset = slope * (robotPitch - kMinBalanceAngle);
-            NewPowRot[0] = NewPowRot[0] + correctionOffset;
-            NewPowRot[1] = -rot;
+            NewPowRot[0] = -(NewPowRot[0] + correctionOffset);
+            // System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "
+            // Pitch :" + robotPitch);
+        }
+		else if ( (mEnableBalance) && (Math.abs(robotRoll) > kMinBalanceAngle) && (Math.abs(robotRoll) < kMaxBalanceAngle) ) {
+            double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
+            double correctionOffset = slope * (robotRoll - kMinBalanceAngle);
+            NewPowRot[0] = -(NewPowRot[0] + correctionOffset);
             // System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "
             // Pitch :" + robotPitch);
         }
         return NewPowRot;
     }
+
+	public double balanceOnChargeStation() {
+        double currentTiltAngle = getChargeStationTiltAngle();
+        double tiltError = kTargetBalanceAngle - currentTiltAngle;
+        
+        if (Math.abs(tiltError) < kBalanceThreshold) {
+			return 0;
+		} else {
+            double tiltDirection = Math.signum(tiltError);
+            return (kDriveSpeed * tiltDirection);
+        }
+    }
+
+	public double getChargeStationTiltAngle() {
+        if(getRoll() > 3){
+			return getRoll();
+		}
+		else if (getPitch() > 3){
+			return getPitch();
+		}
+        return 0; // replace with actual measurement
+    }
+
+	public double holdPosition() {
+		double setpoint = 0; // get the current angle as the setpoint
+		
+		// PID constants
+		double kP = 0.01;
+		double kI = 0.0;
+		double kD = 0.0;
+		
+		// PID variables
+		double error, integral = 0, derivative;
+		double lastError = 0;
+		
+		// loop until interrupted or disabled
+			// calculate error and update PID variables
+			error = setpoint - getChargeStationTiltAngle();
+			integral += error;
+			derivative = error - lastError;
+			
+			// calculate output using PID equation
+			double output = kP * error + kI * integral + kD * derivative;
+			
+			// set the motor output to hold the position
+			
+			
+			// update last error
+			lastError = error;
+			
+			return output;
+	}
+
+	public double[] runAntiTilt(double pow) {
+        double robotPitch = mNavx.getPitch();
+		double robotRoll = mNavx.getRoll();
+        double NewPowRot[] = new double[2];
+        NewPowRot[0] = pow;
+
+        if ( (mEnableBalance) && (Math.abs(robotPitch) > kMinBalanceAngle) && (Math.abs(robotPitch) < kMaxBalanceAngle) ) {
+            double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
+            double correctionOffset = slope * (robotPitch - kMinBalanceAngle);
+            NewPowRot[0] = (NewPowRot[0] + correctionOffset);
+            // System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "
+            // Pitch :" + robotPitch);
+        }
+		else if ( (mEnableBalance) && (Math.abs(robotRoll) > kMinBalanceAngle) && (Math.abs(robotRoll) < kMaxBalanceAngle) ) {
+            double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
+            double correctionOffset = slope * (robotRoll - kMinBalanceAngle);
+            NewPowRot[0] = (NewPowRot[0] + correctionOffset);
+            // System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "
+            // Pitch :" + robotPitch);
+        }
+        return NewPowRot;
+    }
+
+
+	public double holdGround(){
+		double robotPitch = mNavx.getPitch();
+		double robotRoll = mNavx.getRoll();
+
+
+		return -1;
+	}
 
 
 	@Override

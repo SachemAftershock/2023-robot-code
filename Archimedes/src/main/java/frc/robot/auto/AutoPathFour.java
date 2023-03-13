@@ -43,7 +43,7 @@ public class AutoPathFour extends SequentialCommandGroup{
     );
 
     Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(1.9, 2.2),
+        List.of(new Translation2d(1.9, 2.74),
         new Translation2d(2.15, 3.2)
         ), new Pose2d(3.9, 3.44, new Rotation2d()), config);
 
@@ -56,7 +56,7 @@ public class AutoPathFour extends SequentialCommandGroup{
 
         addCommands(
             //Places cone preloaded in robot
-            // new InstantCommand(() -> RobotContainer.toggleIsCone()),
+            new InstantCommand(() -> RobotContainer.toggleIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
