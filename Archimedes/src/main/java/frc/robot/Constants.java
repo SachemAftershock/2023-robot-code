@@ -17,6 +17,10 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.enums.ButtonBoxLedInfo.ButtonPosition;
+import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
+
+import java.util.HashMap;
 
 public class Constants {
 
@@ -47,10 +51,10 @@ public class Constants {
 
         // angles in radians.
         // to convert from degrees to radians multiply by pi/180
-        public static final double kFrontLeftSteerOffset = -0.35 +  (Math.PI / 2.0); //- Math.toRadians(15);// - (Math.PI / 2.0);// -.35;
-        public static final double kFrontRightSteerOffset = 0.4  + (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// 0.40;
-        public static final double kBackLeftSteerOffset = 0.45  + (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// .45;
-        public static final double kBackRightSteerOffset = -0.5  + (Math.PI / 2.0); //- Math.toRadians(15);; //- (Math.PI / 2.0);// -.5;
+        public static final double kFrontLeftSteerOffset = -0.35 + (Math.PI / 2.0); // - Math.toRadians(15);// - (Math.PI / 2.0);// -.35;
+        public static final double kFrontRightSteerOffset = 0.4 + (Math.PI / 2.0); // - Math.toRadians(15);; //- (Math.PI / 2.0);// 0.40;
+        public static final double kBackLeftSteerOffset = 0.45 + (Math.PI / 2.0); // - Math.toRadians(15);; //- (Math.PI / 2.0);// .45;
+        public static final double kBackRightSteerOffset = -0.5 + (Math.PI / 2.0); // - Math.toRadians(15);; //- (Math.PI / 2.0);// -.5;
 
         private static final double kMk4L1DriveReduction = (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0);
         private static final double kMk4WheelDiameter = 0.10033;
@@ -89,11 +93,40 @@ public class Constants {
 
     }
 
+    public static final class ButtonBoxConstants {
+        public static final HashMap<ButtonPosition, LedPosition> kButtonBoxButtonMap = new HashMap<ButtonPosition, LedPosition>();
+
+        static {
+            kButtonBoxButtonMap.put(ButtonPosition.eDriveTo1, LedPosition.eDriveTo1); // drive to 1
+            kButtonBoxButtonMap.put(ButtonPosition.eDriveTo2, LedPosition.eDriveTo2); // drive to 2
+            kButtonBoxButtonMap.put(ButtonPosition.eDriveTo3, LedPosition.eDriveTo3); // drive to 3
+            kButtonBoxButtonMap.put(ButtonPosition.eDriveTo4, LedPosition.eDriveTo4); // drive to 4
+            kButtonBoxButtonMap.put(ButtonPosition.eDriveTo5, LedPosition.eDriveTo5); // drive to 5
+            kButtonBoxButtonMap.put(ButtonPosition.eDriveTo6, LedPosition.eDriveTo6); // drive to 6
+            kButtonBoxButtonMap.put(ButtonPosition.eDriveTo7, LedPosition.eDriveTo7); // drive to 7
+            kButtonBoxButtonMap.put(ButtonPosition.eDriveTo8, LedPosition.eDriveTo8); // drive to 8
+            kButtonBoxButtonMap.put(ButtonPosition.eDriveTo9, LedPosition.eDriveTo9); // drive to 9
+            kButtonBoxButtonMap.put(ButtonPosition.eCancel, LedPosition.eCancel); // cancel
+            kButtonBoxButtonMap.put(ButtonPosition.eHumanPlayerLeft, LedPosition.eHumanPlayerLeft); // human player left
+            kButtonBoxButtonMap.put(ButtonPosition.eHumanPlayerRight, LedPosition.eHumanPlayerRight); // human player right
+            kButtonBoxButtonMap.put(ButtonPosition.eCubeActive, LedPosition.eCubeActive); // toggle cube
+            kButtonBoxButtonMap.put(ButtonPosition.eConeActive, LedPosition.eConeActive); // toggle cone
+            kButtonBoxButtonMap.put(ButtonPosition.eIngest, LedPosition.eIngest); // ingest
+            kButtonBoxButtonMap.put(ButtonPosition.eEject, LedPosition.eEject); // eject
+            kButtonBoxButtonMap.put(ButtonPosition.eStow, LedPosition.eStow); // stow
+            kButtonBoxButtonMap.put(ButtonPosition.ePlayerStation, LedPosition.ePlayerStation); // human player
+            kButtonBoxButtonMap.put(ButtonPosition.eLow, LedPosition.eLow); // low
+            kButtonBoxButtonMap.put(ButtonPosition.eMid, LedPosition.eMid); // mid
+            kButtonBoxButtonMap.put(ButtonPosition.eHigh, LedPosition.eHigh); // high
+            kButtonBoxButtonMap.put(ButtonPosition.eJoystickEnable, LedPosition.eJoystickEnable); // enable joystick
+        }
+    }
+
     public static class IntakeConstants {
         public static final double kIngestConeSpeed = 0.5;
         public static final double kIngestCubeSpeed = 0.5;
         public static final double kIntakeWidth = 12.0;
-        //public static final int kIntakeLidarId = 0;
+        // public static final int kIntakeLidarId = 0;
     }
 
     public static class ArmConstants {
@@ -102,7 +135,7 @@ public class Constants {
         public static final double kMaxVelocityMeterPerSecond = 0.05;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.025;
         public static final double kArmOffsetRads = 0;
-        public static final double[] kGains = {2.0, 0.0, 0.0};//{ 1.2, 0.0, 0.0 };
+        public static final double[] kGains = { 2.0, 0.0, 0.0 };// { 1.2, 0.0, 0.0 };
         public static final double kIntegralZone = 0.0;
         public static final double kDt = 0.02;
 
@@ -111,15 +144,9 @@ public class Constants {
         public static final double kJogSpeed = 0.2;
         public static final double kArmLidarOffset = -3.0;
 
-        public static final double[][] kBarDistanceToArmExtension = {
-            {18,17.25},
-            {17, 29},
-            {16, 34.75},
-            {15, 42},
-            {13, 49}
-            //{13, 48.5},
+        public static final double[][] kBarDistanceToArmExtension = { { 18, 17.25 }, { 17, 29 }, { 16, 34.75 }, { 15, 42 }, { 13, 49 }
+                // {13, 48.5},
         };
-        
 
         public static final int kBarDistanceIndex = 0;
         public static final int kArmDistanceIndex = 1;
@@ -132,7 +159,8 @@ public class Constants {
             for (int i = 1; i < kBarDistanceToArmExtension.length; ++i) {
                 if (desiredArmExtension < kBarDistanceToArmExtension[i][kArmDistanceIndex]) {
                     // x and y are flipped of what you expect bc this is a "reverse" look up
-                    // We know the desired arm distance, and have to map it to a interpolated bar distance
+                    // We know the desired arm distance, and have to map it to a interpolated bar
+                    // distance
                     double x1 = kBarDistanceToArmExtension[i][kArmDistanceIndex];
                     double x0 = kBarDistanceToArmExtension[i - 1][kArmDistanceIndex];
 
@@ -140,9 +168,9 @@ public class Constants {
                     double y0 = kBarDistanceToArmExtension[i - 1][kBarDistanceIndex];
 
                     double slope = (y1 - y0) / (x1 - x0);
-                    // System.out.println(slope + "    -----  " + slope * desiredArmExtension + y0);
+                    // System.out.println(slope + " ----- " + slope * desiredArmExtension + y0);
 
-                    return (y1 + y0)/2;//slope * desiredArmExtension + y0; 
+                    return (y1 + y0) / 2;// slope * desiredArmExtension + y0;
                 }
             }
 
@@ -196,9 +224,7 @@ public class Constants {
             public boolean isCone;
 
             public PlacementLocation(Pose2d poseAlignedWithEdge, double lengthOfRobotWithBumpers, boolean isCone) {
-                var transformHybridToRobot = new Transform2d(
-                    new Translation2d(lengthOfRobotWithBumpers / 2, 0), Rotation2d.fromDegrees(180)
-                );
+                var transformHybridToRobot = new Transform2d(new Translation2d(lengthOfRobotWithBumpers / 2, 0), Rotation2d.fromDegrees(180));
                 robotPlacementPose = poseAlignedWithEdge.transformBy(transformHybridToRobot);
                 this.isCone = isCone;
             }
@@ -228,8 +254,8 @@ public class Constants {
         static {
             for (int i = 0; i < numberOfNodeRows; i++) {
                 kPlacingPoses[i] = new PlacementLocation(
-                    new Pose2d(firstPlacingPose.getX(), firstPlacingPose.getY() + i * separationBetweenNodeRows, new Rotation2d()),
-                    robotLengthWithBumpers, isCone[i]
+                    new Pose2d(firstPlacingPose.getX(), firstPlacingPose.getY() + i * separationBetweenNodeRows, new Rotation2d()), robotLengthWithBumpers,
+                    isCone[i]
                 );
             }
         }
@@ -264,54 +290,27 @@ public class Constants {
 
         public static final List<AprilTag> kAprilTags = List.of(
             new AprilTag(
-                1,
-                new Pose3d(
-                    Units.inchesToMeters(610.77), Units.inchesToMeters(42.19), Units.inchesToMeters(18.22),
-                    new Rotation3d(0.0, 0.0, Math.PI)
-                )
+                1, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(42.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))
             ),
             new AprilTag(
-                2,
-                new Pose3d(
-                    Units.inchesToMeters(610.77), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22),
-                    new Rotation3d(0.0, 0.0, Math.PI)
-                )
+                2, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))
             ),
             new AprilTag(
-                3,
-                new Pose3d(
-                    Units.inchesToMeters(610.77), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22),
-                    new Rotation3d(0.0, 0.0, Math.PI)
-                )
+                3, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))
             ),
             new AprilTag(
-                4,
-                new Pose3d(
-                    Units.inchesToMeters(636.96), Units.inchesToMeters(265.74), Units.inchesToMeters(27.38),
-                    new Rotation3d(0.0, 0.0, Math.PI)
-                )
-            ),
-            new AprilTag(
-                5, new Pose3d(Units.inchesToMeters(14.25), Units.inchesToMeters(265.74), Units.inchesToMeters(27.38), new Rotation3d())
-            ),
-            new AprilTag(
-                6, new Pose3d(Units.inchesToMeters(40.45), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22), new Rotation3d())
-            ),
-            new AprilTag(
-                7, new Pose3d(Units.inchesToMeters(40.45), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d())
-            ),
-            new AprilTag(
-                8, new Pose3d(Units.inchesToMeters(40.45), Units.inchesToMeters(42.19), Units.inchesToMeters(18.22), new Rotation3d())
-            )
+                4, new Pose3d(Units.inchesToMeters(636.96), Units.inchesToMeters(265.74), Units.inchesToMeters(27.38), new Rotation3d(0.0, 0.0, Math.PI))
+            ), new AprilTag(5, new Pose3d(Units.inchesToMeters(14.25), Units.inchesToMeters(265.74), Units.inchesToMeters(27.38), new Rotation3d())),
+            new AprilTag(6, new Pose3d(Units.inchesToMeters(40.45), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22), new Rotation3d())),
+            new AprilTag(7, new Pose3d(Units.inchesToMeters(40.45), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d())),
+            new AprilTag(8, new Pose3d(Units.inchesToMeters(40.45), Units.inchesToMeters(42.19), Units.inchesToMeters(18.22), new Rotation3d()))
         );
 
         public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = new AprilTagFieldLayout(kAprilTags, fieldLength, fieldWidth);
 
         public static void setAprilTagOrigin() {
-            APRIL_TAG_FIELD_LAYOUT.setOrigin(
-                DriverStation.getAlliance() == Alliance.Red ? OriginPosition.kRedAllianceWallRightSide
-                    : OriginPosition.kBlueAllianceWallRightSide
-            );
+            APRIL_TAG_FIELD_LAYOUT
+                .setOrigin(DriverStation.getAlliance() == Alliance.Red ? OriginPosition.kRedAllianceWallRightSide : OriginPosition.kBlueAllianceWallRightSide);
         }
     }
 
@@ -327,22 +326,19 @@ public class Constants {
         public static final Translation2d[] regionCorners = new Translation2d[] { new Translation2d(midX, rightY), // Start at lower left
                                                                                                                    // next to border with
                                                                                                                    // opponent community
-                new Translation2d(midX, midY), new Translation2d(outerX, midY), new Translation2d(outerX, leftY),
-                new Translation2d(innerX, leftY), new Translation2d(innerX, rightY), };
+                new Translation2d(midX, midY), new Translation2d(outerX, midY), new Translation2d(outerX, leftY), new Translation2d(innerX, leftY),
+                new Translation2d(innerX, rightY), };
 
         // Double substation dimensions
         public static final double doubleSubstationLength = Units.inchesToMeters(14.0);
         public static final double doubleSubstationX = innerX - doubleSubstationLength;
         public static final double doubleSubstationShelfZ = Units.inchesToMeters(37.375);
         public static final double doubleSubstationCenterY = Units.inchesToMeters(265.74);
-        public static final Pose2d kDoubleSubstationPose = new Pose2d(
-            doubleSubstationX, doubleSubstationCenterY, Rotation2d.fromDegrees(0)
-        );
+        public static final Pose2d kDoubleSubstationPose = new Pose2d(doubleSubstationX, doubleSubstationCenterY, Rotation2d.fromDegrees(0));
 
         // Single substation dimensions
         public static final double singleSubstationWidth = Units.inchesToMeters(22.75);
-        public static final double singleSubstationLeftX = FieldConstants.fieldLength - doubleSubstationLength
-            - Units.inchesToMeters(88.77);
+        public static final double singleSubstationLeftX = FieldConstants.fieldLength - doubleSubstationLength - Units.inchesToMeters(88.77);
         public static final double singleSubstationCenterX = singleSubstationLeftX + (singleSubstationWidth / 2.0);
         public static final double singleSubstationRightX = singleSubstationLeftX + singleSubstationWidth;
         public static final Translation2d singleSubstationTranslation = new Translation2d(singleSubstationCenterX, leftY);

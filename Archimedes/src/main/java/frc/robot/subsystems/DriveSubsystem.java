@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import frc.lib.AftershockSubsystem;
 import frc.lib.Limelight;
+import frc.lib.PID;
 import frc.lib.Limelight.FluidicalPoseInfo;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -102,6 +103,10 @@ public class DriveSubsystem extends AftershockSubsystem {
 	private Pose2d mWaypoint;
 	private LedPosition mLedPosition;
 
+	private final PID mAntiTiltPID;
+	private boolean mEnableBalance;
+    private double antiTiltSpeed;
+
 	private DriveSubsystem() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
@@ -150,6 +155,9 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 		mLimelight = new Limelight("limelight");
 
+		mAntiTiltPID = new PID();
+		mEnableBalance = true;
+        antiTiltSpeed = 0.0;
 	}
 
 	/**
@@ -266,6 +274,24 @@ public class DriveSubsystem extends AftershockSubsystem {
 	public void setLedPosition(LedPosition position) {
 		mLedPosition = position;
 	}
+
+	public double[] runBalanceControl(double pow, double rot) {
+        double robotPitch = mNavx.getPitch();
+        double NewPowRot[] = new double[2];
+        NewPowRot[0] = pow;
+        NewPowRot[1] = rot;
+
+        if ( (mEnableBalance) && (Math.abs(robotPitch) > kMinBalanceAngle) && (Math.abs(robotPitch) < kMaxBalanceAngle) ) {
+            double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
+            double correctionOffset = slope * (robotPitch - kMinBalanceAngle);
+            NewPowRot[0] = NewPowRot[0] + correctionOffset;
+            NewPowRot[1] = -rot;
+            // System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "
+            // Pitch :" + robotPitch);
+        }
+        return NewPowRot;
+    }
+
 
 	@Override
     public boolean checkSystem() {

@@ -41,9 +41,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     GenericEntry I = ElevatorSubsystemTab.add("Elevator I", 0).getEntry();
     GenericEntry D = ElevatorSubsystemTab.add("Elevator D", 0).getEntry();
 
-    private double setpoint; 
-    private int counter; 
-    private boolean enablePrints;
+    private double setpoint;
+    private int counter;
     private double prevDelta;
 
     private ElevatorSubsystem() {
@@ -55,7 +54,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         mProfileController = new ProfiledPIDController(kTrapezoidalPidGains[0], kTrapezoidalPidGains[1], kTrapezoidalPidGains[2], mConstraints);
         mMotor = new CANSparkMax(kElevatorMotorId, MotorType.kBrushless);
         mMotor.setIdleMode(IdleMode.kBrake);
-        //mMotor.setInverted(true);
+        // mMotor.setInverted(true);
 
         mCurrentState = ElevatorState.eStowEmpty;
         mDesiredState = ElevatorState.eStowEmpty;
@@ -174,9 +173,10 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     @Override
     public void outputTelemetry() {
         // ElevatorSubsystemTab.add("E Lidar Distance Inches", mLidar.getDistanceCm());
-        // ElevatorSubsystemTab.add("E Motor Velocity", mMotor.getEncoder().getVelocity());
+        // ElevatorSubsystemTab.add("E Motor Velocity",
+        // mMotor.getEncoder().getVelocity());
 
-        //SmartDashboard.putNumber("Raw Distance", mLidar.getDistanceIn());
+        // SmartDashboard.putNumber("Raw Distance", mLidar.getDistanceIn());
         SmartDashboard.putNumber("Elevator Distance", getElevatorDistance());
         SmartDashboard.putNumber("Filtered Elevator Distance", getFilteredDistance());
         SmartDashboard.putNumber("Elevator Motor Velocity", mMotor.getEncoder().getVelocity());

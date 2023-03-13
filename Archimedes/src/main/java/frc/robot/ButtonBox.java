@@ -3,6 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
+import java.util.ArrayList;
+import frc.robot.enums.ButtonBoxLedInfo.ButtonPosition;
 
 public class ButtonBox extends CommandGenericHID {
 
@@ -10,40 +12,35 @@ public class ButtonBox extends CommandGenericHID {
         super(port);
     }
 
-    private static int cone1Id = 1;
-    private static int cube2Id = 2;
-    private static int cone3Id = 3;
+    private static int cone1Id = ButtonPosition.eDriveTo1.getId();
+    private static int cube2Id = ButtonPosition.eDriveTo2.getId();
+    private static int cone3Id = ButtonPosition.eDriveTo3.getId();
 
-    private static int cone4Id = 4;
-    private static int cube5Id = 5;
-    private static int cone6Id = 6;
+    private static int cone4Id = ButtonPosition.eDriveTo4.getId();
+    private static int cube5Id = ButtonPosition.eDriveTo5.getId();
+    private static int cone6Id = ButtonPosition.eDriveTo6.getId();
 
-    private static int cone7Id = 7;
-    private static int cube8Id = 8;
-    private static int cone9Id = 9;
+    private static int cone7Id = ButtonPosition.eDriveTo7.getId();
+    private static int cube8Id = ButtonPosition.eDriveTo8.getId();
+    private static int cone9Id = ButtonPosition.eDriveTo9.getId();
 
-    private static int cancelId = 10;
-    private static int leftHumanStationId = 11;
-    private static int rightHumanStationId = 12;
+    private static int cancelId = ButtonPosition.eCancel.getId();
+    private static int leftHumanStationId = ButtonPosition.eHumanPlayerLeft.getId();
+    private static int rightHumanStationId = ButtonPosition.eHumanPlayerRight.getId();
 
-    private static int cubeToggleId = 13;
-    private static int coneToggleId = 14;
+    private static int cubeToggleId = ButtonPosition.eCubeActive.getId();
+    private static int coneToggleId = ButtonPosition.eConeActive.getId();
 
-    private static int ingestIntakeButtonId = 15;
-    private static int ejectIntakeButtonId = 16;
+    private static int ingestIntakeButtonId = ButtonPosition.eIngest.getId();
+    private static int ejectIntakeButtonId = ButtonPosition.eEject.getId();
 
-    private static int stowPostionId = 17;
-    private static int humanPlayerPostionId = 18;
-    private static int floorPostionButtonId = 19;
-    private static int mediumPostionButtonId = 20;
-    private static int highPositionButtonId = 21;
+    private static int stowPostionId = ButtonPosition.eStow.getId();
+    private static int humanPlayerPostionId = ButtonPosition.ePlayerStation.getId();
+    private static int floorPostionButtonId = ButtonPosition.eLow.getId();
+    private static int mediumPostionButtonId = ButtonPosition.eMid.getId();
+    private static int highPositionButtonId = ButtonPosition.eHigh.getId();
 
-    private static int enableJoystickId = 22;
-
-    private static int leftJoystickButtonId = 22;
-    private static int rightJoystickButtonId = 23;
-    private static int upJoystickButtonId = 24;
-    private static int downJoystickButtonId = 25;
+    private static int enableJoystickId = ButtonPosition.eJoystickEnable.getId();
 
     private boolean mIsJoysticEnabled = false;
 
@@ -174,5 +171,20 @@ public class ButtonBox extends CommandGenericHID {
     public void setJoystickDisabled() {
         mIsJoysticEnabled = false;
         ButtonBoxPublisher.disableLed(LedPosition.eJoystickEnable);
+    }
+
+    public int[] getPressedButtons() {
+        ArrayList<Integer> pressedButtons = new ArrayList<Integer>();
+        for (int i = 1; i <= 22; i++) {
+            if (this.getHID().getRawButton(i)) {
+                pressedButtons.add(i);
+            }
+        }
+
+        int[] pressedButtonsArray = new int[pressedButtons.size()];
+        for (int i = 0; i < pressedButtons.size(); i++) {
+            pressedButtonsArray[i] = pressedButtons.get(i);
+        }
+        return pressedButtonsArray;
     }
 }
