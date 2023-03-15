@@ -111,6 +111,23 @@ void setDisplay(String message)
   }
 }
 
+void setDisplay(String message, uint8_t line)
+{
+  lcd.clear();
+  lcd.setCursor(0, line);
+
+  if (message.length() > 16)
+  {
+    lcd.print("Message too long");
+  }
+  else
+  {
+    message.replace("_", " ");
+
+    lcd.print(message);
+  }
+}
+
 void enableLed(uint8_t ledId)
 {
   for (size_t i = 0; i < ledGroupsSize; i++)
@@ -200,7 +217,14 @@ void processCommand(Command command)
       blinkAllLeds();
     break;
   case MESSAGE_COMMAND:
-    setDisplay(command.message);
+    if (command.line == NO_LINE)
+    {
+      setDisplay(command.message);
+    }
+    else
+    {
+      setDisplay(command.message, command.line);
+    }
     break;
   default:
     break;

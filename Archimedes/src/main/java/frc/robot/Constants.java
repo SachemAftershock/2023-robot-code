@@ -35,7 +35,7 @@ public class Constants {
         public static final double kDriveControllerDeadband = 0.05;
         public static final boolean kSquareAxis = true;
 
-        public static final double kDriveSpeedScaleFactor = 0.5;
+        public static final double kDriveSpeedScaleFactor = 0.25;
 
         public static final double[] kDriveAngularGains = { 0.02, 0.0, 0.0 }; // dont use I it sucks - Shreyas
         public static final double[] kDriveLinearGains = { 0.4, 0.0, 0.0 };
@@ -51,8 +51,9 @@ public class Constants {
 
         // angles in radians.
         // to convert from degrees to radians multiply by pi/180
-        public static final double kFrontLeftSteerOffset = -0.35 - 0.05 + (Math.PI / 2.0);//-0.35 + (Math.PI / 2.0); // - Math.toRadians(15);// -
-                                                                                    // (Math.PI / 2.0);// -.35;
+        public static final double kFrontLeftSteerOffset = -0.35 - 0.05 + (Math.PI / 2.0);// -0.35 + (Math.PI / 2.0); //
+                                                                                          // - Math.toRadians(15);// -
+        // (Math.PI / 2.0);// -.35;
         public static final double kFrontRightSteerOffset = 0.4 + (Math.PI / 2.0); // - Math.toRadians(15);; //-
                                                                                    // (Math.PI / 2.0);// 0.40;
         public static final double kBackLeftSteerOffset = 0.45 + (Math.PI / 2.0); // - Math.toRadians(15);; //- (Math.PI
@@ -147,6 +148,8 @@ public class Constants {
             kButtonBoxButtonMap.put(ButtonPosition.eHigh, LedPosition.eHigh); // high
             kButtonBoxButtonMap.put(ButtonPosition.eJoystickEnable, LedPosition.eJoystickEnable); // enable joystick
         }
+
+        public static final double kErrorDelaySeconds = 1.0;
     }
 
     public static class IntakeConstants {

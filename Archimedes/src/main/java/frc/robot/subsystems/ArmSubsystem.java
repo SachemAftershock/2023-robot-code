@@ -5,18 +5,16 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.ErrorTracker;
+import frc.robot.ErrorTracker.ErrorType;
 import frc.robot.enums.ArmState;
 import frc.lib.AftershockSubsystem;
 import frc.lib.Lidar;
@@ -57,7 +55,9 @@ public class ArmSubsystem extends AftershockSubsystem {
 
         mLidar = new Lidar(new DigitalInput(kArmLidarId));
 
-        mConstraints = new TrapezoidProfile.Constraints(kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared);
+        mConstraints = new TrapezoidProfile.Constraints(
+            kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared
+        );
         mProfileController = new ProfiledPIDController(kGains[0], kGains[1], kGains[2], mConstraints);
         mFilter = new MedianFilter(10);
         mPID = new PID();
@@ -138,7 +138,13 @@ public class ArmSubsystem extends AftershockSubsystem {
     }
 
     public double getBarDistance() {
-        return mLidar.getDistanceIn() + kArmLidarOffset;
+        double distance = mLidar.getDistanceIn() + kArmLidarOffset;
+
+        ErrorTracker tracker = ErrorTracker.getInstance();
+        if (Double.isNaN(distance)) tracker.enableError(ErrorType.eArmLidarInfinity);
+        else if (tracker.isErrorEnabled(ErrorType.eArmLidarInfinity)) tracker.disableError(ErrorType.eArmLidarInfinity);
+
+        return distance;
     }
 
     @Override
