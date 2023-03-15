@@ -99,7 +99,7 @@ public class RobotContainer {
         configureButtonBindings();
         mDriveSubsystem.setDefaultCommand(
             new ManualDriveCommand(
-                mDriveSubsystem, mArmSubsystem::getState,
+                mDriveSubsystem, mArmSubsystem::getState, mElevatorSubsystem::getState,
                 () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kMaxVelocityMetersPerSecond,
                 () -> -modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kMaxVelocityMetersPerSecond,
                 () -> modifyAxis(mPrimaryTwistController.getTwist())
@@ -128,41 +128,45 @@ public class RobotContainer {
 
         // System.out.println("CONE----> " + RobotContainer.isCone());
 
-        if(mTestController.getAButton()) {
+        if (mTestController.getAButton()) {
             setBackUpControllState();
         }
 
-        if(mControllState == ControllState.eBackUpController) {
+        if (mControllState == ControllState.eBackUpController) {
 
-            if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 ||
-            mTestController.getLeftY() < -0.05)) {
-            mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
-            } else {
-            mElevatorSubsystem.setTestSpeed(0.0);
+            if (mTestController.getAButton()
+                && (mTestController.getLeftY() > 0.05 || mTestController.getLeftY() < -0.05)) {
+                mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
+            }
+            else {
+                mElevatorSubsystem.setTestSpeed(0.0);
             }
 
-            if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 ||
-            mTestController.getLeftX() < -0.05)) {
-            mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
-            } else {
-            mArmSubsystem.setTestSpeed(0.0);
+            if (mTestController.getAButton()
+                && (mTestController.getLeftX() > 0.05 || mTestController.getLeftX() < -0.05)) {
+                mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
+            }
+            else {
+                mArmSubsystem.setTestSpeed(0.0);
             }
 
             if (mTestController.getRightBumper()) {
-            mIntakeSubsystem.ingestCone();
-            } else if(mTestController.getLeftBumper()) {
-            mIntakeSubsystem.ingestCube();
-            } else {
-            mIntakeSubsystem.stop();
+                mIntakeSubsystem.ingestCone();
+            }
+            else if (mTestController.getLeftBumper()) {
+                mIntakeSubsystem.ingestCube();
+            }
+            else {
+                mIntakeSubsystem.stop();
             }
         }
 
-        if(mButtonBox.isJoystickEnabled()) {
+        if (mButtonBox.isJoystickEnabled()) {
             setManualControllState();
-        } else {
+        }
+        else {
             setAutomaticControllState();
-        } 
-        
+        }
 
     }
 
@@ -296,27 +300,31 @@ public class RobotContainer {
         // mButtonBox.leftJoystickButton().onTrue(jogArmCommand.apply(false)).onFalse(new
         // InstantCommand(() -> mArmSubsystem.stop()));
 
-        // mButtonBox.povUp().whileTrue(new JogElevatorCommand(mElevatorSubsystem, 0.5));
+        // mButtonBox.povUp().whileTrue(new JogElevatorCommand(mElevatorSubsystem,
+        // 0.5));
 
-        // mButtonBox.povDown().onTrue(new JogElevatorCommand(mElevatorSubsystem, -0.5));
+        // mButtonBox.povDown().onTrue(new JogElevatorCommand(mElevatorSubsystem,
+        // -0.5));
 
         // mButtonBox.povUp().onTrue(jogElevatorCommand.apply(true))
-        //     .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+        // .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
 
-        // mButtonBox.povLeft().onTrue(jogArmCommand.apply(false)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
+        // mButtonBox.povLeft().onTrue(jogArmCommand.apply(false)).onFalse(new
+        // InstantCommand(() -> mArmSubsystem.stop()));
 
-        // mButtonBox.povRight().onTrue(jogArmCommand.apply(true)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
+        // mButtonBox.povRight().onTrue(jogArmCommand.apply(true)).onFalse(new
+        // InstantCommand(() -> mArmSubsystem.stop()));
 
         mButtonBox.povDown().onTrue(jogElevatorCommand.apply(false))
-        .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+            .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
 
         mButtonBox.povUp().onTrue(jogElevatorCommand.apply(true))
-        .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+            .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
 
         mButtonBox.povLeft().onTrue(jogArmCommand.apply(false)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
 
         mButtonBox.povRight().onTrue(jogArmCommand.apply(true)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
-        
+
         mButtonBox.povDownLeft().onTrue(new InstantCommand(() -> {
             if (mButtonBox.isJoystickEnabled()) {
                 mElevatorSubsystem.jogElevator(false);
@@ -405,8 +413,6 @@ public class RobotContainer {
     public static ControllState getControllState() {
         return mControllState;
     }
-
-
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
