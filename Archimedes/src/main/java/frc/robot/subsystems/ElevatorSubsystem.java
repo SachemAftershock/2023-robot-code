@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import frc.lib.AftershockSubsystem;
 import frc.lib.Lidar;
 import frc.lib.PID;
+import frc.robot.RobotContainer;
+import frc.robot.enums.ControllState;
 import frc.robot.enums.ElevatorState;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -45,6 +47,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private double mSetpoint;
     private int counter;
     private double prevDelta;
+    private double prevDistance;
 
     private ElevatorSubsystem() {
 
@@ -78,14 +81,17 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         setSpeed(0);
         counter = 0;
         prevDelta = Double.MAX_VALUE;
+        prevDistance = 0.0;
     }
 
     @Override
     public void periodic() {
 
+        if(RobotContainer.getControllState() != ControllState.eAutomaticControl) return;
         if (DriverStation.isTest()) return;
 
         double current = getElevatorHeight();
+
 
         if (Math.abs(current - mSetpoint) < kEpsilon) {
             mCurrentState = mDesiredState;
@@ -119,18 +125,33 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         // setpoint), -1.0, 1.0);
 
         if (counter > 100) {
-            double currentDelta = Math.abs(mPid.getError());
-            if (currentDelta > prevDelta) {
+            double distance = getElevatorHeight();
+            double speed = mMotor.get();
+            // double currentDelta = Math.abs(mPid.getError());
+            // if (currentDelta > prevDelta) {
+            //     System.out.println(
+            //         "ERROR ---------- ELEVATOR ROPE WOUND BACKWARDS ----------" + mPid.getError() + "  " + prevDelta
+            //     );
+            //     // mCurrentState = null;
+            //     // mDesiredState = null;
+            //     stop();
+            //     return;
+            // }
+            // prevDelta = currentDelta;
+            // counter = 0;
+
+            if(Math.abs(speed) > 0.0 && Math.abs(distance - prevDistance) < kEpsilon) {
                 System.out.println(
-                    "ERROR ---------- ELEVATOR ROPE WOUND BACKWARDS ----------" + mPid.getError() + "  " + prevDelta
+                    "ERROR ---------- ELEVATOR ROPE WOUND BACKWARDS ---------- distance " + distance + "  " + prevDistance
                 );
                 // mCurrentState = null;
                 // mDesiredState = null;
-                // stop();
-                // return;
+                stop();
+                return;
             }
-            prevDelta = currentDelta;
             counter = 0;
+            prevDistance = distance;
+
         }
         counter++;
 
@@ -138,6 +159,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
             System.out.println("Output NaN");
             return;
         }
+
+        //System.out.println("Setpoint --> " + mSetpoint + " Current --> " + current + " Motor Speed --> " + output); 
 
         setSpeed(output);
     }
@@ -156,11 +179,12 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
 
     public void jogSetpoint(double jogValue) {
+        System.out.println("Jog value --> " + jogValue + "  Setpoint --> " + mSetpoint);
         mSetpoint += jogValue;
     }
 
     public void stop() {
-        System.out.println("Stopping elevator");
+        //System.out.println("Stopping elevator");
         setSpeed(0);
     }
 

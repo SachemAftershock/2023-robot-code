@@ -183,7 +183,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 		// We have to invert the angle of the NavX so that rotating the robot
 		// counter-clockwise makes the angle increase.
-		return Rotation2d.fromDegrees(360.0 - (mNavx.getYaw())); // TODO: Add 90 here I think
+		return Rotation2d.fromDegrees(360.0 - (mNavx.getYaw()) + 90); // TODO: Add 90 here I think
 	}
 
 	public void drive(ChassisSpeeds chassisSpeeds) {

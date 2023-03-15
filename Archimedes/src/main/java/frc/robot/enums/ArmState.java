@@ -12,17 +12,24 @@ public enum ArmState {
     eLow(14.0, 14.0), 
     eMid(15.3, 15.3), 
     eHigh(13.0, 13.0), 
-    ePlayerStation(16.0, 16.0);
+    ePlayerStation(16.0, 16.0);//(17.0, 15.5/*16.5*/);
 
     private double mCubeLength;
     private double mConeLength;
 
-    ArmState(double cubeLength, double coneLength) {
-        this.mCubeLength = cubeLength;
+    ArmState(double coneLength, double cubeLength) {
         this.mConeLength = coneLength;
+        this.mCubeLength = cubeLength;
     }
 
     public double getLength() {
-        return RobotContainer.isCone() ? mConeLength : mCubeLength + ArmConstants.kCubeOffset;
+        // System.out.println("Cone --> " + RobotContainer.isCone());
+        // return RobotContainer.isCone() ? mConeLength : mCubeLength + ArmConstants.kCubeOffset;
+
+        if(RobotContainer.isCone()) {
+            return mConeLength;
+        } else {
+            return mCubeLength;
+        }
     }
 }

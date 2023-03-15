@@ -31,6 +31,7 @@ import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.commands.drive.SetWaypointCommand;
+import frc.robot.commands.elevator.JogElevatorCommand;
 import frc.robot.commands.elevator.SetElevatorStateCommand;
 import frc.robot.commands.intake.IngestConeCommand;
 import frc.robot.commands.intake.IngestCubeCommand;
@@ -40,6 +41,7 @@ import frc.robot.commands.intake.StopIntakeCommand;
 import frc.robot.enums.ButtonBoxLedInfo.ButtonPosition;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import frc.robot.enums.ArmState;
+import frc.robot.enums.ControllState;
 import frc.robot.enums.ElevatorState;
 import frc.robot.enums.SuperState;
 import frc.robot.subsystems.ArmSubsystem;
@@ -50,6 +52,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import static frc.robot.Constants.FieldConstants.kPlacingPoses;
 import static frc.robot.Constants.ButtonBoxConstants.kButtonBoxButtonMap;
 
+import java.util.ResourceBundle.Control;
 import java.util.function.Function;
 
 import static frc.robot.Constants.DriveConstants.kRotationScalingConstant;
@@ -66,6 +69,7 @@ public class RobotContainer {
     private static RobotContainer mInstance;
 
     private static boolean mIsCone = true;
+    private static ControllState mControllState = ControllState.eAutomaticControl;
 
     private final ElevatorSubsystem mElevatorSubsystem = ElevatorSubsystem.getInstance();
     private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
@@ -124,27 +128,42 @@ public class RobotContainer {
 
         // System.out.println("CONE----> " + RobotContainer.isCone());
 
-        // if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 ||
-        // mTestController.getLeftY() < -0.05)) {
-        // mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
-        // } else {
-        // mElevatorSubsystem.setTestSpeed(0.0);
-        // }
+        if(mTestController.getAButton()) {
+            setBackUpControllState();
+        }
 
-        // if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 ||
-        // mTestController.getLeftX() < -0.05)) {
-        // mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
-        // } else {
-        // mArmSubsystem.setTestSpeed(0.0);
-        // }
+        if(mControllState == ControllState.eBackUpController) {
 
-        // if (mTestController.getRightBumper()) {
-        // mIntakeSubsystem.ingestCone();
-        // } else if(mTestController.getLeftBumper()) {
-        // mIntakeSubsystem.ingestCube();
-        // } else {
-        // mIntakeSubsystem.stop();
-        // }
+            if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 ||
+            mTestController.getLeftY() < -0.05)) {
+            mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
+            } else {
+            mElevatorSubsystem.setTestSpeed(0.0);
+            }
+
+            if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 ||
+            mTestController.getLeftX() < -0.05)) {
+            mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
+            } else {
+            mArmSubsystem.setTestSpeed(0.0);
+            }
+
+            if (mTestController.getRightBumper()) {
+            mIntakeSubsystem.ingestCone();
+            } else if(mTestController.getLeftBumper()) {
+            mIntakeSubsystem.ingestCube();
+            } else {
+            mIntakeSubsystem.stop();
+            }
+        }
+
+        if(mButtonBox.isJoystickEnabled()) {
+            setManualControllState();
+        } else {
+            setAutomaticControllState();
+        } 
+        
+
     }
 
     public void test() {
@@ -277,16 +296,27 @@ public class RobotContainer {
         // mButtonBox.leftJoystickButton().onTrue(jogArmCommand.apply(false)).onFalse(new
         // InstantCommand(() -> mArmSubsystem.stop()));
 
+        // mButtonBox.povUp().whileTrue(new JogElevatorCommand(mElevatorSubsystem, 0.5));
+
+        // mButtonBox.povDown().onTrue(new JogElevatorCommand(mElevatorSubsystem, -0.5));
+
+        // mButtonBox.povUp().onTrue(jogElevatorCommand.apply(true))
+        //     .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+
+        // mButtonBox.povLeft().onTrue(jogArmCommand.apply(false)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
+
+        // mButtonBox.povRight().onTrue(jogArmCommand.apply(true)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
+
         mButtonBox.povDown().onTrue(jogElevatorCommand.apply(false))
-            .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+        .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
 
         mButtonBox.povUp().onTrue(jogElevatorCommand.apply(true))
-            .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
+        .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
 
         mButtonBox.povLeft().onTrue(jogArmCommand.apply(false)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
 
         mButtonBox.povRight().onTrue(jogArmCommand.apply(true)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
-
+        
         mButtonBox.povDownLeft().onTrue(new InstantCommand(() -> {
             if (mButtonBox.isJoystickEnabled()) {
                 mElevatorSubsystem.jogElevator(false);
@@ -358,6 +388,25 @@ public class RobotContainer {
     public static boolean isCone() {
         return mIsCone;
     }
+
+    public static void setBackUpControllState() {
+        mControllState = ControllState.eBackUpController;
+
+    }
+
+    public static void setAutomaticControllState() {
+        mControllState = ControllState.eAutomaticControl;
+    }
+
+    public static void setManualControllState() {
+        mControllState = ControllState.eManualControl;
+    }
+
+    public static ControllState getControllState() {
+        return mControllState;
+    }
+
+
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

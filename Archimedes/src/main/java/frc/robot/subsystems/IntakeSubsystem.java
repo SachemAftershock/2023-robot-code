@@ -61,14 +61,14 @@ public class IntakeSubsystem extends AftershockSubsystem {
      * Turn on the motor clockwise to intacke the cube
      */
     public void ingestCube() {
-        setSpeed(IntakeConstants.kIngestCubeSpeed);
+        setSpeed(-(IntakeConstants.kIngestCubeSpeed));
     }
 
     /**
      * Turn on the motor counter clockwise to output the cube
      */
     public void outputCube() {
-        setSpeed(-(IntakeConstants.kIngestCubeSpeed));
+        setSpeed(IntakeConstants.kIngestCubeSpeed);
     }
 
     public void stop() {

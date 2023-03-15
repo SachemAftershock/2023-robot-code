@@ -51,7 +51,7 @@ public class Constants {
 
         // angles in radians.
         // to convert from degrees to radians multiply by pi/180
-        public static final double kFrontLeftSteerOffset = -0.35 + (Math.PI / 2.0); // - Math.toRadians(15);// -
+        public static final double kFrontLeftSteerOffset = -0.35 - 0.05 + (Math.PI / 2.0);//-0.35 + (Math.PI / 2.0); // - Math.toRadians(15);// -
                                                                                     // (Math.PI / 2.0);// -.35;
         public static final double kFrontRightSteerOffset = 0.4 + (Math.PI / 2.0); // - Math.toRadians(15);; //-
                                                                                    // (Math.PI / 2.0);// 0.40;
