@@ -20,12 +20,20 @@ enum LedStatus
   LED_BLINKING,
 };
 
+enum MessageLine
+{
+  NO_LINE,
+  FIRST_LINE,
+  SECOND_LINE,
+};
+
 struct Command
 {
   CommandType commandType;
   uint8_t ledId;
   LedStatus status;
   String message;
+  MessageLine line;
 };
 
 class LED
@@ -326,6 +334,26 @@ Command parseCommand(String command)
     }
 
     cmd.message = split;
+
+    split = strtok(NULL, " ");
+    if (split == NULL)
+    {
+      cmd.line = NO_LINE;
+      return cmd;
+    }
+
+    if (strcmp(split, "1") == 0)
+    {
+      cmd.line = FIRST_LINE;
+    }
+    else if (strcmp(split, "2") == 0)
+    {
+      cmd.line = SECOND_LINE;
+    }
+    else
+    {
+      cmd.commandType = NO_TYPE;
+    }
   }
   else
   {

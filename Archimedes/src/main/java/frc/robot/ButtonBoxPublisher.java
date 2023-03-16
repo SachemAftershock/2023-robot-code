@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
+import frc.robot.ErrorTracker.ErrorType;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import frc.robot.enums.ButtonBoxLedInfo.LedState;
 
@@ -57,6 +58,48 @@ public class ButtonBoxPublisher {
         }
 
         sMessagePub.set(String.format("msg %s\0", message));
+    }
+
+    public static void sendMessage(String message, int line) {
+        if (line > 2 || line < 0) {
+            System.out.println("invalid line number");
+            return;
+        }
+
+        if (message == null) {
+            System.out.println("null message");
+            return;
+        }
+
+        sMessagePub.set(String.format("msg %s %d\0", message, line));
+    }
+
+    public static void sendError(ErrorType errorType) {
+        if (errorType == null) {
+            System.out.println("null error type");
+            return;
+        }
+
+        switch (errorType) {
+            case eArmLidarInfinity:
+                sendMessage("Arm Lidar Inf", 2);
+                break;
+            case eElevatorLidarInfinity:
+                sendMessage("Elev Lidar Inf", 2);
+                break;
+            case eIntakeLidarInfinity:
+                sendMessage("Intake Lidar Inf", 2);
+                break;
+            case eElevatorMoveFailure:
+                sendMessage("Elev Move Fail", 2);
+                break;
+            case eNavXZero:
+                sendMessage("NavX Zero", 2);
+                break;
+            default:
+                break;
+        }
+
     }
 
     private static void setLed(LedPosition ledPosition, LedState ledState) {

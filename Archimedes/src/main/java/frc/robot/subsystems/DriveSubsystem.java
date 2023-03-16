@@ -10,6 +10,8 @@ import frc.lib.AftershockSubsystem;
 import frc.lib.Limelight;
 import frc.lib.PID;
 import frc.lib.Limelight.FluidicalPoseInfo;
+import frc.robot.ErrorTracker;
+import frc.robot.ErrorTracker.ErrorType;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
@@ -171,8 +173,18 @@ public class DriveSubsystem extends AftershockSubsystem {
 		mNavx.zeroYaw();
 	}
 
+	public double getYaw() {
+		double yaw = mNavx.getYaw();
+
+		ErrorTracker tracker = ErrorTracker.getInstance();
+		if (yaw < 0.0001 && yaw > -0.0001) tracker.enableError(ErrorType.eNavXZero);
+		else if (tracker.isErrorEnabled(ErrorType.eNavXZero)) tracker.disableError(ErrorType.eNavXZero);
+
+		return yaw;
+	}
+
 	public double getAdjustedYaw() {
-		return (mNavx.getYaw());
+		return (getYaw());
 	}
 
 	public Rotation2d getGyroscopeRotation() {
@@ -183,7 +195,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 		// We have to invert the angle of the NavX so that rotating the robot
 		// counter-clockwise makes the angle increase.
-		return Rotation2d.fromDegrees(360.0 - (mNavx.getYaw()) + 90); // TODO: Add 90 here I think
+		return Rotation2d.fromDegrees(360.0 - (getYaw()) + 90); // TODO: Add 90 here I think
 	}
 
 	public void drive(ChassisSpeeds chassisSpeeds) {

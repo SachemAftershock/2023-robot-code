@@ -5,6 +5,8 @@ import frc.lib.Lidar;
 import frc.lib.PID;
 import frc.robot.RobotContainer;
 import frc.robot.enums.ControllState;
+import frc.robot.ErrorTracker;
+import frc.robot.ErrorTracker.ErrorType;
 import frc.robot.enums.ElevatorState;
 
 import com.ctre.phoenixpro.Timestamp;
@@ -249,7 +251,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
 
     public void stop() {
-        //System.out.println("Stopping elevator");
+        // System.out.println("Stopping elevator");
         setSpeed(0);
     }
 
@@ -278,7 +280,15 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
 
     public double getElevatorDistance() {
-        return mLidar.getDistanceIn() + kElevatorLidarOffset;
+        double distance = mLidar.getDistanceIn() + kElevatorLidarOffset;
+
+        ErrorTracker tracker = ErrorTracker.getInstance();
+        if (Double.isNaN(distance)) tracker.enableError(ErrorType.eElevatorLidarInfinity);
+        else if (tracker.isErrorEnabled(ErrorType.eElevatorLidarInfinity)) {
+            tracker.disableError(ErrorType.eElevatorLidarInfinity);
+        }
+
+        return distance;
     }
 
     public double getFilteredDistance() {

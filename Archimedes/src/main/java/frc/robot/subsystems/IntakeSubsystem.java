@@ -11,7 +11,10 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.Ports.IntakePorts.*;
+
+import frc.robot.ErrorTracker;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.ErrorTracker.ErrorType;
 import frc.robot.Ports.IntakePorts;
 
 public class IntakeSubsystem extends AftershockSubsystem {
@@ -85,6 +88,18 @@ public class IntakeSubsystem extends AftershockSubsystem {
 
     private void setSpeed(double speed) {
         mIntakeMotor.set(speed);
+    }
+
+    public double getIntakeDistance() {
+        double distance = mLidar.getDistanceIn();
+
+        ErrorTracker tracker = ErrorTracker.getInstance();
+        if (Double.isNaN(distance)) tracker.enableError(ErrorType.eIntakeLidarInfinity);
+        else if (tracker.isErrorEnabled(ErrorType.eIntakeLidarInfinity)) {
+            tracker.disableError(ErrorType.eIntakeLidarInfinity);
+        }
+
+        return distance;
     }
 
     @Override
