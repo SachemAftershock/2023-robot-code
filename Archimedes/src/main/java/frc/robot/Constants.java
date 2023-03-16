@@ -167,6 +167,9 @@ public class Constants {
         public static final double kDt = 0.02;
 
         public static final double kEpsilon = 0.15;
+        public static final double kMinArmBarDistance = 13.0;
+        public static final double kMaxArmBarDistance = 18.0;
+        public static final double kArmSpeedScalingFactor = 0.4;
 
         public static final double kJogSpeed = 0.2;
         public static final double kArmLidarOffset = -3.0;
