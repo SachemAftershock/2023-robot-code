@@ -21,13 +21,14 @@ public class SetArmStateCommand extends CommandBase {
 
     @Override
     public void execute() {
-        //System.out.println("Arm state set to " + mDesiredState);
+        // System.out.println("Arm state set to " + mDesiredState);
         mArmSubsystem.setDesiredState(mDesiredState); // if broken move to execute
     }
 
     @Override
     public void end(boolean interrupted) {
         mArmSubsystem.stop();
+        mArmSubsystem.overrideCurrentState();
     }
 
     @Override

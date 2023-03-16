@@ -120,7 +120,6 @@ public class ArmSubsystem extends AftershockSubsystem {
 
         setSpeed(output);
 
-       
     }
 
     public void setSetpoint(double setpoint) {
@@ -190,6 +189,10 @@ public class ArmSubsystem extends AftershockSubsystem {
         }
 
         return isFunctional;
+    }
+
+    public void overrideCurrentState() {
+        mCurrentState = ArmState.eUnknown;
     }
 
     public void TESTSPEED() {
