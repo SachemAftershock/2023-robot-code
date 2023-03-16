@@ -57,11 +57,11 @@ public class AutoPathFiveNoCharge extends SequentialCommandGroup{
         addCommands(
             //Places cone preloaded in robot
             // new InstantCommand(() -> RobotContainer.toggleIsCone()),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm),
+            CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm)
+            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)
             
             //Robot moves to cone on field
             // new RotateDriveCommand(mDrive, 180)

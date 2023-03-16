@@ -5,16 +5,19 @@ import frc.robot.ButtonBoxPublisher;
 import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.elevator.SetElevatorLedCommand;
 import frc.robot.commands.elevator.SetElevatorStateCommand;
+import frc.robot.commands.intake.SmartIntakeCommand;
+import frc.robot.commands.intake.StopIntakeCommand;
 import frc.robot.enums.ArmState;
 import frc.robot.enums.ElevatorState;
 import frc.robot.enums.SuperState;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class CommandFactory {
 
     public static SequentialCommandGroup HandleSuperStructureSequence(
-        SuperState desiredState, ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem
+        SuperState desiredState, ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem mIntakeSubsystem
     ) {
 
         // return new SequentialCommandGroup(
@@ -28,6 +31,7 @@ public class CommandFactory {
         if (desiredState.getArmState() == ArmState.eStowEmpty) {
             System.out.println("-----------RETURNING TO STOW--------------");
             return new SequentialCommandGroup(
+                new StopIntakeCommand(mIntakeSubsystem),
                 new SetElevatorLedCommand(desiredState), new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem)
             );
@@ -41,6 +45,14 @@ public class CommandFactory {
                 new SetElevatorStateCommand(ElevatorState.eStowEmpty, elevatorSubsystem)
             );
 
+        }
+        else if (desiredState == SuperState.ePlayerStation) {
+            return new SequentialCommandGroup(
+                new SetElevatorLedCommand(desiredState), new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
+                new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
+                new SmartIntakeCommand(mIntakeSubsystem),
+                new SetArmStateCommand(desiredState.getArmState(), armSubsystem)
+            );
         }
         else {
             System.out.println("----------STARTING EXTENSION--------------");

@@ -6,6 +6,8 @@ import frc.lib.PID;
 import frc.robot.RobotContainer;
 import frc.robot.enums.ControllState;
 import frc.robot.enums.ElevatorState;
+
+import com.ctre.phoenixpro.Timestamp;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -21,6 +23,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.Ports.ElevatorPorts.*;
+
+import javax.swing.border.EmptyBorder;
 
 import static frc.robot.Constants.ElevatorConstants.*;
 
@@ -47,7 +51,14 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private double mSetpoint;
     private int counter;
     private double prevDelta;
-    private double prevDistance;
+    private double prevTestDistance;
+    private double mSystemTimer;
+
+    private ElevatorMode mElevatorMode;
+
+    public enum ElevatorMode {
+        eStowedEmpty, eIdle, ePIDControl, eManualControl, eRewinding, eBadState
+    }
 
     private ElevatorSubsystem() {
 
@@ -66,6 +77,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
         mCurrentState = ElevatorState.eStowEmpty;
         mDesiredState = ElevatorState.eStowEmpty;
+        mElevatorMode = ElevatorMode.eStowedEmpty;
 
         mFilter = new MedianFilter(kElevatorMedianFilterSampleSize);
     }
@@ -73,30 +85,38 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     @Override
     public void initialize() {
 
-        // mCurrentState = ElevatorState.eStowEmpty;
-        // mDesiredState = ElevatorState.eStowEmpty;
+        mCurrentState = ElevatorState.eStowEmpty;
+        mDesiredState = ElevatorState.eStowEmpty;
         mSetpoint = getElevatorHeight(); // Temporary so Elevator doesnt move when enabled
         // mProfileController = new ProfiledPIDController(kPidGains[0], kPidGains[1],
         // kPidGains[2], mConstraints);
         setSpeed(0);
         counter = 0;
         prevDelta = Double.MAX_VALUE;
-        prevDistance = 0.0;
+        prevTestDistance = getElevatorHeight();
     }
 
     @Override
     public void periodic() {
 
-        if(RobotContainer.getControllState() != ControllState.eAutomaticControl) return;
-        if (DriverStation.isTest()) return;
-
+        ControllState controlState = RobotContainer.getControllState();
         double current = getElevatorHeight();
+        double speed = mMotor.get();
 
+        if(mSetpoint != current) {
+            mElevatorMode = ElevatorMode.eIdle;
+        }
 
-        if (Math.abs(current - mSetpoint) < kEpsilon) {
-            mCurrentState = mDesiredState;
-            stop();
-            return;
+        //System.out.println("Desired state --> " + mDesiredState.toString() + " Current state --> " + mCurrentState.toString());
+
+        if(mDesiredState != mCurrentState) {
+            mElevatorMode = ElevatorMode.ePIDControl;
+        } else {
+            mElevatorMode = ElevatorMode.eIdle;
+        }
+
+        if(controlState == ControllState.eBackUpController || controlState == ControllState.eManualControl) {
+            mElevatorMode = ElevatorMode.eManualControl;
         }
 
         if (mSetpoint > kElevatorMaxHeight || mSetpoint < kElevatorMinHeight || Double.isNaN(mSetpoint)) {
@@ -105,73 +125,118 @@ public class ElevatorSubsystem extends AftershockSubsystem {
             return;
         }
 
+        System.out.println("Current mode --> " + mElevatorMode);
+        
+        //Setpoint should get set by this state machine
+        //eIdle and ePIDControl is seperate in case to lock in setpoint
+        //Elevator state machine sets the setpoint and starts the PID
+        switch(mElevatorMode) {
+            case eStowedEmpty:
+                break;
+
+            case eIdle:
+                //Runs the pid but only to hold it in place
+                if(mPid.isPaused()) mPid.resumePID();
+                checkBounds(current);
+                double idleOutput = mPid.update(current, mSetpoint);
+                setSpeed(idleOutput);
+                break;
+
+            case ePIDControl:
+                //Only be in this state if the elevator is moving
+                if(mPid.isPaused()) mPid.resumePID();
+                checkBounds(current);
+                mSystemTimer = System.currentTimeMillis();
+                //This time is in miliseconds
+                //Was 1000 before
+                // if(mSystemTimer > 100) {
+                //     double currentTestDistance = getElevatorHeight();
+                //     if(Math.abs(speed) > 0.0 && Math.abs(currentTestDistance - prevTestDistance) > kEpsilon) {
+                //         System.out.println("ERROR : ---- Elevator Wound Backwards ----" + " speed (in RPM) --> " + 
+                //         speed + " Distance delta --> " + Math.abs(currentTestDistance - prevTestDistance));
+                //         stop();
+                //         mElevatorMode = ElevatorMode.eRewinding;
+                //     }
+                // }
+
+                double output = mPid.update(current, mSetpoint);
+
+                if (Double.isNaN(output)) {
+                    System.out.println("Output NaN");
+                    return;
+                }
+
+                if (Math.abs(mPid.getError()) < kEpsilon) {
+                    mCurrentState = mDesiredState;
+                    mElevatorMode = ElevatorMode.eIdle;
+                    return;
+                }
+
+                System.out.println("Setpoint --> " + mSetpoint + " Current --> " + current + " speed --> " + output);
+                output = output*0.8;
+                setSpeed(output);
+
+                break;
+
+            case eManualControl:
+                //Pauses the PID and re-engages it once manual control is released
+                if(!(mPid.isPaused())) mPid.pausePID();
+                // Use this check if driver is stupid and unwinds the rope
+                // if(mSystemTimer > 200) {
+                //     double currentTestDistance = getElevatorHeight();
+                //     if(Math.abs(speed) > 0.0 &&  Math.abs(currentTestDistance - prevTestDistance) < kEpsilon) {
+                //         System.out.println("ERROR : ---- Elevator Wound Backwards ----" + " speed --> " + 
+                //         speed + " Distance delta --> " + Math.abs(currentTestDistance - prevTestDistance));
+                //         stop();
+                //         mElevatorMode = ElevatorMode.eRewinding;
+                //     }
+                //     prevTestDistance = currentTestDistance;
+                // }
+                
+                setSetpoint(getElevatorHeight());
+
+                break;
+
+            case eRewinding:
+                //If an unwind has been detected elevator will automatically go into this state 
+                //and attempt to rewind the rope
+                mPid.pausePID();
+                mSystemTimer = System.currentTimeMillis();
+                if(mSystemTimer > 100) {
+                    double currentTestDistance = getElevatorHeight();
+                    if(Math.abs(speed) > 0.0 &&  Math.abs(currentTestDistance - prevTestDistance) < kEpsilon) {
+                        setSpeed(-0.2);
+                    } else {
+                        stop();
+                    }
+                    prevTestDistance = currentTestDistance;
+                }
+                stop();
+                mElevatorMode = ElevatorMode.eRewinding;
+            break;
+                
+            default:
+                System.out.println("------ Elevator in erraneous state ------");
+                break;
+        }
+
+    }
+
+    public void checkBounds(double current) {
         if (current > kElevatorMaxHeight || current < kElevatorMinHeight) {
             System.out.println("ERROR ---------- ELEVATOR OUT OF BOUNDS  ----------");
             stop();
-            DriverStation.reportError("ELEVATOR OUT OF BOUNDS", false);
             return;
         }
-
-        double output = mPid.update(current, mSetpoint);
-
-        // if (mCurrentState == mDesiredState && mCurrentState !=
-        // ElevatorState.eStowEmpty) {
-        // setVoltage(kCompensatingVoltage);
-        // }
-
-        // if (mCurrentState == mDesiredState) return;
-
-        // double output = MathUtil.clamp(mProfileController.calculate(current,
-        // setpoint), -1.0, 1.0);
-
-        if (counter > 100) {
-            double distance = getElevatorHeight();
-            double speed = mMotor.get();
-            // double currentDelta = Math.abs(mPid.getError());
-            // if (currentDelta > prevDelta) {
-            //     System.out.println(
-            //         "ERROR ---------- ELEVATOR ROPE WOUND BACKWARDS ----------" + mPid.getError() + "  " + prevDelta
-            //     );
-            //     // mCurrentState = null;
-            //     // mDesiredState = null;
-            //     stop();
-            //     return;
-            // }
-            // prevDelta = currentDelta;
-            // counter = 0;
-
-            if(Math.abs(speed) > 0.0 && Math.abs(distance - prevDistance) < kEpsilon) {
-                System.out.println(
-                    "ERROR ---------- ELEVATOR ROPE WOUND BACKWARDS ---------- distance " + distance + "  " + prevDistance
-                );
-                // mCurrentState = null;
-                // mDesiredState = null;
-                stop();
-                return;
-            }
-            counter = 0;
-            prevDistance = distance;
-
-        }
-        counter++;
-
-        if (Double.isNaN(output)) {
-            System.out.println("Output NaN");
-            return;
-        }
-
-        //System.out.println("Setpoint --> " + mSetpoint + " Current --> " + current + " Motor Speed --> " + output); 
-
-        setSpeed(output);
     }
 
-    // public void setVoltage(double voltage) {
-    // mMotor.setVoltage(voltage);
-    // }
-
     public void setDesiredState(ElevatorState desiredState) {
-        mSetpoint = desiredState.getHeight();
         mDesiredState = desiredState;
+        setSetpoint(mDesiredState.getHeight());
+    }
+
+    public void setSetpoint(double setpoint) {
+        mSetpoint = setpoint;
     }
 
     public ElevatorState getState() {
@@ -192,12 +257,22 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         setSpeed(moveUp ? kJogSpeed : -kJogSpeed);
     }
 
+    public void jogElevatorUp() {
+        setSpeed(0.2);
+    }
+
+    public void jogElevatorDown() {
+        setSpeed(-0.2);
+
+    }
+
     private void setSpeed(double speed) {
         if (getElevatorHeight() > kElevatorMaxHeight || getElevatorHeight() < kElevatorMinHeight) {
-            DriverStation.reportError("ELEVATOR OUT OF BOUNDS", false);
+            DriverStation.reportError("ELEVATOR OUT OF BOUNDS (set speed call)", false);
             return;
         }
         else {
+            //System.out.println("Speed --> " + speed);
             mMotor.set(speed);
         }
     }
@@ -228,6 +303,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         SmartDashboard.putNumber("Elevator Distance", getElevatorDistance());
         SmartDashboard.putNumber("Filtered Elevator Distance", getFilteredDistance());
         SmartDashboard.putNumber("Elevator Motor Velocity", mMotor.getEncoder().getVelocity());
+        SmartDashboard.putString("Elevator Mode ", mElevatorMode.toString());
     }
 
     public synchronized static ElevatorSubsystem getInstance() {

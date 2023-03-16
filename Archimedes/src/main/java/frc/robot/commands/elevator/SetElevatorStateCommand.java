@@ -26,6 +26,7 @@ public class SetElevatorStateCommand extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
+    mElevatorSubsystem.stop();
   }
 
   @Override

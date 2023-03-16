@@ -27,6 +27,7 @@ public class SetArmStateCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
+        mArmSubsystem.stop();
     }
 
     @Override

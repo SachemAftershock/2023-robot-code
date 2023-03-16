@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.enums.ArmState;
+import frc.robot.enums.ControllState;
 import frc.lib.AftershockSubsystem;
 import frc.lib.Lidar;
 import frc.lib.PID;
@@ -41,12 +43,17 @@ public class ArmSubsystem extends AftershockSubsystem {
     private ArmState mDesiredState;
     public boolean mBreak = false;
 
-    double i = 0;
+    private ArmMode mArmMode;
+    private double mSetpoint;
 
     ShuffleboardTab ArmSubsystemTab = Shuffleboard.getTab("Arm Subsystem");
     GenericEntry P = ArmSubsystemTab.add("Arm P", 0).getEntry();
     GenericEntry I = ArmSubsystemTab.add("Arm I", 0).getEntry();
     GenericEntry D = ArmSubsystemTab.add("Arm D", 0).getEntry();
+
+    public enum ArmMode {
+        ePIDControl, eManualControl, eIdle, eStowedEmpty, eLocked;
+    }
 
     private ArmSubsystem() {
         super();
@@ -64,6 +71,8 @@ public class ArmSubsystem extends AftershockSubsystem {
 
         mCurrentState = ArmState.eStowEmpty;
         mDesiredState = ArmState.eStowEmpty;
+
+        mArmMode = ArmMode.eStowedEmpty;
     }
 
     @Override
@@ -74,51 +83,93 @@ public class ArmSubsystem extends AftershockSubsystem {
         mCurrentState = null;
         mDesiredState = null;
         mPID.start(kGains);
+        mSetpoint = getBarDistance();
 
     }
 
     @Override
     public void periodic() {
 
-        // System.out.println(mCurrentState + " " + mDesiredState);
+        ControllState controlState = RobotContainer.getControllState();
+        double current = getBarDistance();
 
-        if (mCurrentState == mDesiredState) {
-            // System.out.println("Desired state reached");
-            // System.out.println("----------PID ERROR------------" + mPID.getError());
-            return;
-        }
-        // if(mBreak || true) return;
-
-        double current = mFilter.calculate(getBarDistance());
-        double setpoint = mDesiredState.getLength();// ArmConstants.getBarDistance(mDesiredState.getLength());
-        // System.out.println(setpoint + ", " + mDesiredState.getLength());
-        if (setpoint == -1) {
-            System.out.println("ERROR : Arm setpoint invalid");
-            // DriverStation.reportError("[INTAKE]: SETPOINT IS INVALID", false);
-            return;
+        if (mSetpoint != current) {
+            mArmMode = ArmMode.eIdle;
         }
 
-        // if(current < ArmConstants.getBarDistance(66.0)) {
-        // stop();
-        // return;
-        // }
+        if (mDesiredState != mCurrentState) {
+            mArmMode = ArmMode.ePIDControl;
+        } else {
+            mArmMode = ArmMode.eIdle;
+        }
 
-        // double output = MathUtil.clamp(mProfileController.calculate(current,
-        // setpoint), -0.5, 0.5);
-        double output = mPID.update(current, setpoint);
-        // output = MathUtil.clamp(output, -0.5, 0.5);
-        output = output * 0.4;
+        if (controlState == ControllState.eBackUpController || controlState == ControllState.eManualControl) {
+            mArmMode = ArmMode.eManualControl;
+        }
 
-        // System.out.println("Current " + current + " SetPoint " + setpoint + " Output
-        // " + output);
-        if (Math.abs(mPID.getError()) < kEpsilon) {
-            System.out.println("-----EXITING PID-----" + mPID.getError());
+        if (mSetpoint < kMinArmBarDistance || mSetpoint > kMaxArmBarDistance) {
+            System.out.println("Arm SETPOINT out of bounds: " + mSetpoint);
             stop();
-            mCurrentState = mDesiredState;
             return;
         }
-        setSpeed(output);
-        i++;
+
+        //System.out.println("Desired state --> " + mDesiredState.toString() + " Current state --> " + mCurrentState.toString());
+
+        switch (mArmMode) {
+            case eStowedEmpty:
+                //For having the initialize call bring the arm and elevator back in if they are out
+                break;
+            case eIdle: 
+
+                if(mPID.isPaused()) mPID.resumePID();
+                double idleOutput = mPID.update(current, mSetpoint);
+                setSpeed(idleOutput);
+                break;
+
+            case ePIDControl:
+
+                if(mPID.isPaused()) mPID.resumePID();
+
+                if (mSetpoint == -1) {
+                    System.out.println("ERROR : Arm setpoint invalid");
+                    return;
+                }
+
+                current = getBarDistance();
+                mSetpoint = mDesiredState.getLength();
+
+                double output = mPID.update(current, mSetpoint);
+                output = output * kArmSpeedScalingFactor;
+
+                if (Math.abs(mPID.getError()) < kEpsilon) {
+                    mCurrentState = mDesiredState;
+                    mArmMode = ArmMode.eIdle;
+                    return;
+                }
+
+                setSpeed(output);
+
+                break;
+            case eManualControl: 
+
+                if(!(mPID.isPaused())) mPID.pausePID();
+                setSetpoint(getBarDistance());
+                
+                break;
+            default: 
+                System.out.println("Arm in erraneous state");
+                break;
+
+        }
+    }
+
+    public void setSetpoint(double setpoint) {
+        mSetpoint = setpoint;
+    }
+
+    public void setDesiredState(ArmState desiredState) {
+        mDesiredState = desiredState;
+        setSetpoint(mDesiredState.getLength());
     }
 
     public void stop() {
@@ -129,16 +180,21 @@ public class ArmSubsystem extends AftershockSubsystem {
         setSpeed(isOut ? -kJogSpeed : kJogSpeed);
     }
 
+    public void jogArmOut() {
+        setSpeed(-0.2);
+    }
+
+    public void jogArmIn() {
+        setSpeed(0.2);
+
+    }
+
     public ArmState getState() {
         return mCurrentState;
     }
 
-    public void setDesiredState(ArmState desiredState) {
-        mDesiredState = desiredState;
-    }
-
     public double getBarDistance() {
-        return mLidar.getDistanceIn() + kArmLidarOffset;
+        return mFilter.calculate(mLidar.getDistanceIn() + kArmLidarOffset);
     }
 
     @Override

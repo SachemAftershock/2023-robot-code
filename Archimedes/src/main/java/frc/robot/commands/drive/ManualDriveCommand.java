@@ -1,5 +1,6 @@
 package frc.robot.commands.drive;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.enums.ArmState;
@@ -17,6 +18,7 @@ public class ManualDriveCommand extends CommandBase {
     private final DoubleSupplier m_translationXSupplier;
     private final DoubleSupplier m_translationYSupplier;
     private final DoubleSupplier m_rotationSupplier;
+    private SlewRateLimiter mRateLimiter;
 
     public ManualDriveCommand(
         DriveSubsystem drivetrainSubsystem, Supplier<ArmState> armStateSupplier, DoubleSupplier translationXSupplier,
@@ -28,6 +30,8 @@ public class ManualDriveCommand extends CommandBase {
         this.m_translationXSupplier = translationXSupplier;
         this.m_translationYSupplier = translationYSupplier;
         this.m_rotationSupplier = rotationSupplier;
+
+        mRateLimiter = new SlewRateLimiter(0.5);
 
         addRequirements(drivetrainSubsystem);
     }
