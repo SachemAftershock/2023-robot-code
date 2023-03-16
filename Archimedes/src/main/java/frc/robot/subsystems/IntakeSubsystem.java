@@ -46,11 +46,9 @@ public class IntakeSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
-
-        if(mLidar.getDistanceIn() < 10.0) {
+        if (mIntakeMotor.get() > 0 && getIntakeDistance() < 5.0) {
             stop();
         }
-
     }
 
     @Override

@@ -312,9 +312,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         // mMotor.getEncoder().getVelocity());
 
         // SmartDashboard.putNumber("Raw Distance", mLidar.getDistanceIn());
-        SmartDashboard.putNumber("Elevator Distance", getElevatorDistance());
-        SmartDashboard.putNumber("Filtered Elevator Distance", getFilteredDistance());
-        SmartDashboard.putNumber("Elevator Motor Velocity", mMotor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Elevator Distance", getElevatorHeight());
         SmartDashboard.putString("Elevator Mode ", mElevatorMode.toString());
     }
 

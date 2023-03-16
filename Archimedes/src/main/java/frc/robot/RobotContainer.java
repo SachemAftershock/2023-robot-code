@@ -198,10 +198,10 @@ public class RobotContainer {
 
         mButtonBox.ingestIntake().onTrue(new InstantCommand(() -> {
             if (RobotContainer.isCone()) {
-                mIntakeSubsystem.ingestCone();;
+                mIntakeSubsystem.ingestCone();
             }
             else {
-                mIntakeSubsystem.ingestCube();;
+                mIntakeSubsystem.ingestCube();
             }
         })).onFalse(new InstantCommand(() -> {
             mIntakeSubsystem.stop();
@@ -279,7 +279,7 @@ public class RobotContainer {
         // });
 
         Function<Boolean, InstantCommand> jogArmCommand = (isOut) -> new InstantCommand(() -> {
-            if (mButtonBox.isJoystickEnabled()) mArmSubsystem.jogArm(isOut);
+            mArmSubsystem.jogArm(isOut);
         });
 
         // mButtonBox.upJoystickButton().onTrue(jogElevatorCommand.apply(true)).onFalse(new
@@ -446,6 +446,13 @@ public class RobotContainer {
             ButtonPosition position = ButtonPosition.getButtonPosition(button);
             LedPosition led = kButtonBoxButtonMap.get(position);
             ButtonBoxPublisher.enableLed(led);
+
+            if (ButtonPosition.getButtonPosition(button) == ButtonPosition.eConeActive) {
+                RobotContainer.setIsCone();
+            }
+            else if (ButtonPosition.getButtonPosition(button) == ButtonPosition.eCubeActive) {
+                RobotContainer.setIsCube();
+            }
         }
     }
 

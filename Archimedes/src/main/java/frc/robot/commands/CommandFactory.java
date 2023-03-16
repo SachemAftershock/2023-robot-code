@@ -50,7 +50,7 @@ public class CommandFactory {
             return new SequentialCommandGroup(
                 new SetElevatorLedCommand(desiredState), new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
-                new SmartIngestCommand(mIntakeSubsystem),
+                /*new SmartIngestCommand(mIntakeSubsystem)*/
                 new SetArmStateCommand(desiredState.getArmState(), armSubsystem)
             );
         }
