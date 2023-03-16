@@ -193,6 +193,7 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     public void overrideCurrentState() {
         mCurrentState = ArmState.eUnknown;
+        mDesiredState = ArmState.eUnknown;
     }
 
     public void TESTSPEED() {
