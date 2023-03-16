@@ -198,25 +198,25 @@ public class RobotContainer {
 
         mButtonBox.ingestIntake().onTrue(new InstantCommand(() -> {
             if (RobotContainer.isCone()) {
-                new IngestConeCommand(mIntakeSubsystem).schedule();
+                mIntakeSubsystem.ingestCone();;
             }
             else {
-                new IngestCubeCommand(mIntakeSubsystem).schedule();
+                mIntakeSubsystem.ingestCube();;
             }
         })).onFalse(new InstantCommand(() -> {
-            (new StopIntakeCommand(mIntakeSubsystem)).schedule();
+            mIntakeSubsystem.stop();
             ButtonBoxPublisher.disableLed(LedPosition.eIngest);
         }));
 
         mButtonBox.ejectIntake().onTrue(new InstantCommand(() -> {
             if (RobotContainer.isCone()) {
-                new EjectConeCommand(mIntakeSubsystem).schedule();
+                mIntakeSubsystem.outputCone();
             }
             else {
-                new EjectCubeCommand(mIntakeSubsystem).schedule();
+                mIntakeSubsystem.outputCube();
             }
         })).onFalse(new InstantCommand(() -> {
-            (new StopIntakeCommand(mIntakeSubsystem)).schedule();
+            mIntakeSubsystem.stop();
             ButtonBoxPublisher.disableLed(LedPosition.eEject);
         }));
 

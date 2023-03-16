@@ -7,7 +7,7 @@ public enum ElevatorState {
     eStowLoaded(28.0, 28.0), eFloor(18.5, 18.5), eRaised(22.0, 22.0), // For raising the
                                                                       // elevator before
                                                                       // lowering
-    eLow(36.0, 36.0), eMid(51.0, 51.0), 
+    eLow(36.0, 26.0), eMid(51.0, 51.0), 
     eHigh(56.0, 64.0),
     ePlayerStation(57.75, 60);// was 64
 
