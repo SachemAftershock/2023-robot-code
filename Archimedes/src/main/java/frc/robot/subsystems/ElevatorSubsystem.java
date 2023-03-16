@@ -132,7 +132,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         //Setpoint should get set by this state machine
         //eIdle and ePIDControl is seperate in case to lock in setpoint
         //Elevator state machine sets the setpoint and starts the PID
-        switch(mElevatorMode) {
+        switch (mElevatorMode) {
             case eStowedEmpty:
                 break;
 
@@ -194,6 +194,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                 //     }
                 //     prevTestDistance = currentTestDistance;
                 // }
+
+                System.out.println("Manual getting called");
                 
                 setSetpoint(getElevatorHeight());
 
@@ -203,18 +205,18 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                 //If an unwind has been detected elevator will automatically go into this state 
                 //and attempt to rewind the rope
                 mPid.pausePID();
-                mSystemTimer = System.currentTimeMillis();
-                if(mSystemTimer > 100) {
-                    double currentTestDistance = getElevatorHeight();
-                    if(Math.abs(speed) > 0.0 &&  Math.abs(currentTestDistance - prevTestDistance) < kEpsilon) {
-                        setSpeed(-0.2);
-                    } else {
-                        stop();
-                    }
-                    prevTestDistance = currentTestDistance;
-                }
-                stop();
-                mElevatorMode = ElevatorMode.eRewinding;
+                // mSystemTimer = System.currentTimeMillis();
+                // if(mSystemTimer > 100) {
+                //     double currentTestDistance = getElevatorHeight();
+                //     if(Math.abs(speed) > 0.0 &&  Math.abs(currentTestDistance - prevTestDistance) < kEpsilon) {
+                //         setSpeed(-0.2);
+                //     } else {
+                //         stop();
+                //     }
+                //     prevTestDistance = currentTestDistance;
+                // }
+                // stop();
+                // mElevatorMode = ElevatorMode.eRewinding;
             break;
                 
             default:

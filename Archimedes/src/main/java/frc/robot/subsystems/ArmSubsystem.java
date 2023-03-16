@@ -90,77 +90,37 @@ public class ArmSubsystem extends AftershockSubsystem {
     @Override
     public void periodic() {
 
-        ControllState controlState = RobotContainer.getControllState();
-        double current = getBarDistance();
-
-        if (mSetpoint != current) {
-            mArmMode = ArmMode.eIdle;
+        if (mCurrentState == mDesiredState) {
+            // System.out.println("Desired state reached");
+            // System.out.println("----------PID ERROR------------" + mPID.getError());
+            return;
         }
 
-        if (mDesiredState != mCurrentState) {
-            mArmMode = ArmMode.ePIDControl;
-        } else {
-            mArmMode = ArmMode.eIdle;
+        double current = mFilter.calculate(getBarDistance());
+        double setpoint = mDesiredState.getLength();// ArmConstants.getBarDistance(mDesiredState.getLength());
+        // System.out.println(setpoint + ", " + mDesiredState.getLength());
+        if (setpoint == -1) {
+            System.out.println("ERROR : Arm setpoint invalid");
+            // DriverStation.reportError("[INTAKE]: SETPOINT IS INVALID", false);
+            return;
         }
 
-        if (controlState == ControllState.eBackUpController || controlState == ControllState.eManualControl) {
-            mArmMode = ArmMode.eManualControl;
-        }
+        double output = mPID.update(current, setpoint);
+        // output = MathUtil.clamp(output, -0.5, 0.5);
+        output = output * 0.4;
 
-        if (mSetpoint < kMinArmBarDistance || mSetpoint > kMaxArmBarDistance) {
-            System.out.println("Arm SETPOINT out of bounds: " + mSetpoint);
+        // System.out.println("Current " + current + " SetPoint " + setpoint + " Output
+        // " + output);
+        if (Math.abs(mPID.getError()) < kEpsilon) {
+            System.out.println("-----EXITING PID-----" + mPID.getError());
+            mCurrentState = mDesiredState;
             stop();
             return;
         }
 
-        //System.out.println("Desired state --> " + mDesiredState.toString() + " Current state --> " + mCurrentState.toString());
+        setSpeed(output);
 
-        switch (mArmMode) {
-            case eStowedEmpty:
-                //For having the initialize call bring the arm and elevator back in if they are out
-                break;
-            case eIdle: 
-
-                if(mPID.isPaused()) mPID.resumePID();
-                double idleOutput = mPID.update(current, mSetpoint);
-                setSpeed(idleOutput);
-                break;
-
-            case ePIDControl:
-
-                if(mPID.isPaused()) mPID.resumePID();
-
-                if (mSetpoint == -1) {
-                    System.out.println("ERROR : Arm setpoint invalid");
-                    return;
-                }
-
-                current = getBarDistance();
-                mSetpoint = mDesiredState.getLength();
-
-                double output = mPID.update(current, mSetpoint);
-                output = output * kArmSpeedScalingFactor;
-
-                if (Math.abs(mPID.getError()) < kEpsilon) {
-                    mCurrentState = mDesiredState;
-                    mArmMode = ArmMode.eIdle;
-                    return;
-                }
-
-                setSpeed(output);
-
-                break;
-            case eManualControl: 
-
-                if(!(mPID.isPaused())) mPID.pausePID();
-                setSetpoint(getBarDistance());
-                
-                break;
-            default: 
-                System.out.println("Arm in erraneous state");
-                break;
-
-        }
+       
     }
 
     public void setSetpoint(double setpoint) {
