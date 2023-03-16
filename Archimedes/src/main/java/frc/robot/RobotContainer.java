@@ -133,11 +133,11 @@ public class RobotContainer {
         // }
 
         if(mButtonBox.povUp().getAsBoolean()) {
-            System.out.println("Going up");
+            //System.out.println("Going up");
             setManualControllState();
             mElevatorSubsystem.jogElevatorUp();
         } else if(mButtonBox.povDown().getAsBoolean()){
-            System.out.println("Going down");
+            //System.out.println("Going down");
             setManualControllState();
             mElevatorSubsystem.jogElevatorDown();
         } else {
@@ -146,17 +146,17 @@ public class RobotContainer {
             setAutomaticControllState();
         }
 
-        if (mButtonBox.povDownLeft().getAsBoolean()) {
-            System.out.println("Arm going in");
-            setManualControllState();
-            mArmSubsystem.jogArmIn();
-        } else if (mButtonBox.povDownRight().getAsBoolean()) {
-            System.out.println("Arm going out");
-            setManualControllState();
-            mArmSubsystem.jogArmOut();
-        } else {
-            setAutomaticControllState();
-        } 
+        // if (mButtonBox.povDownLeft().getAsBoolean()) {
+        //     System.out.println("Arm going in");
+        //     setManualControllState();
+        //     mArmSubsystem.jogArmIn();
+        // } else if (mButtonBox.povDownRight().getAsBoolean()) {
+        //     System.out.println("Arm going out");
+        //     setManualControllState();
+        //     mArmSubsystem.jogArmOut();
+        // } else {
+        //     setAutomaticControllState();
+        // } 
         
 
     }
@@ -314,25 +314,25 @@ public class RobotContainer {
 
         // mButtonBox.povRight().onTrue(jogArmCommand.apply(true)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
         
-        mButtonBox.povDownLeft().onTrue(new InstantCommand(() -> {
-            if (mButtonBox.isJoystickEnabled()) {
-                mElevatorSubsystem.jogElevator(false);
-                mArmSubsystem.jogArm(false);
-            }
-        })).onFalse(new InstantCommand(() -> {
-            mElevatorSubsystem.stop();
-            mArmSubsystem.stop();
-        }));
+        // mButtonBox.povDownLeft().onTrue(new InstantCommand(() -> {
+        //     if (mButtonBox.isJoystickEnabled()) {
+        //         mElevatorSubsystem.jogElevator(false);
+        //         mArmSubsystem.jogArm(false);
+        //     }
+        // })).onFalse(new InstantCommand(() -> {
+        //     mElevatorSubsystem.stop();
+        //     mArmSubsystem.stop();
+        // }));
 
-        mButtonBox.povDownRight().onTrue(new InstantCommand(() -> {
-            if (mButtonBox.isJoystickEnabled()) {
-                mElevatorSubsystem.jogElevator(false);
-                mArmSubsystem.jogArm(true);
-            }
-        })).onFalse(new InstantCommand(() -> {
-            mElevatorSubsystem.stop();
-            mArmSubsystem.stop();
-        }));
+        // mButtonBox.povDownRight().onTrue(new InstantCommand(() -> {
+        //     if (mButtonBox.isJoystickEnabled()) {
+        //         mElevatorSubsystem.jogElevator(false);
+        //         mArmSubsystem.jogArm(true);
+        //     }
+        // })).onFalse(new InstantCommand(() -> {
+        //     mElevatorSubsystem.stop();
+        //     mArmSubsystem.stop();
+        // }));
 
         mButtonBox.povUpLeft().onTrue(new InstantCommand(() -> {
             if (mButtonBox.isJoystickEnabled()) {

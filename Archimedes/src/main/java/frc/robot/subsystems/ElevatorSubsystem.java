@@ -127,7 +127,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
             return;
         }
 
-        System.out.println("Current mode --> " + mElevatorMode);
+        //System.out.println("Current mode --> " + mElevatorMode);
         
         //Setpoint should get set by this state machine
         //eIdle and ePIDControl is seperate in case to lock in setpoint

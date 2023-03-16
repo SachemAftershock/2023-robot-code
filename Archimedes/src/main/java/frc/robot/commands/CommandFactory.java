@@ -5,7 +5,7 @@ import frc.robot.ButtonBoxPublisher;
 import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.elevator.SetElevatorLedCommand;
 import frc.robot.commands.elevator.SetElevatorStateCommand;
-import frc.robot.commands.intake.SmartIntakeCommand;
+import frc.robot.commands.intake.SmartIngestCommand;
 import frc.robot.commands.intake.StopIntakeCommand;
 import frc.robot.enums.ArmState;
 import frc.robot.enums.ElevatorState;
@@ -50,7 +50,7 @@ public class CommandFactory {
             return new SequentialCommandGroup(
                 new SetElevatorLedCommand(desiredState), new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
-                new SmartIntakeCommand(mIntakeSubsystem),
+                new SmartIngestCommand(mIntakeSubsystem),
                 new SetArmStateCommand(desiredState.getArmState(), armSubsystem)
             );
         }

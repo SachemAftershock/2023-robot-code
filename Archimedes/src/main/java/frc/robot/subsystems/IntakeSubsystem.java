@@ -21,10 +21,14 @@ public class IntakeSubsystem extends AftershockSubsystem {
     private static IntakeSubsystem mInstance;
     private final Lidar mLidar;
 
+    private boolean mIsIngestSpeedReached;
+    private boolean mIsEjectCalled; 
+    private IntakeMode mIntakeMode;
+
     private CANSparkMax mIntakeMotor = new CANSparkMax(kIntakeMotorId, MotorType.kBrushless);
 
     public enum IntakeMode {
-        eConeLoaded, eCubeLoaded, eEmpty
+        eEmpty, eLoaded;
     }
 
     private IntakeSubsystem() {
@@ -35,6 +39,9 @@ public class IntakeSubsystem extends AftershockSubsystem {
 
     @Override
     public void initialize() {
+        mIsIngestSpeedReached = false; 
+        mIsEjectCalled = false; 
+        mIntakeMode = IntakeMode.eEmpty;
     }
 
     @Override

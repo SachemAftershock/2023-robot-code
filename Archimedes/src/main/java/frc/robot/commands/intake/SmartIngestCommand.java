@@ -7,11 +7,11 @@ import frc.robot.RobotContainer;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class SmartIntakeCommand extends InstantCommand {
+public class SmartIngestCommand extends InstantCommand {
 
   private IntakeSubsystem mIntakeSubsystem;
 
-  public SmartIntakeCommand(IntakeSubsystem intakeSubsystem) {
+  public SmartIngestCommand(IntakeSubsystem intakeSubsystem) {
     mIntakeSubsystem = intakeSubsystem;
     addRequirements(mIntakeSubsystem);
 
