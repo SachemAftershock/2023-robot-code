@@ -11,6 +11,7 @@ enum CommandType
   COMMAND_ONE_LED,
   COMMAND_ALL_LEDS,
   MESSAGE_COMMAND,
+  CLEAR_COMMAND,
 };
 
 enum LedStatus
@@ -22,9 +23,9 @@ enum LedStatus
 
 enum MessageLine
 {
-  NO_LINE,
   FIRST_LINE,
   SECOND_LINE,
+  NO_LINE,
 };
 
 struct Command
@@ -354,6 +355,38 @@ Command parseCommand(String command)
     {
       cmd.commandType = NO_TYPE;
     }
+  }
+  else if (strcmp(split, "lcd"))
+  {
+    split = strtok(NULL, " ");
+    if (split == NULL)
+    {
+      cmd.commandType = NO_TYPE;
+      return cmd;
+    }
+
+    cmd.commandType = CLEAR_COMMAND;
+
+    split = strtok(NULL, " ");
+    if (split == NULL)
+    {
+      cmd.line = NO_LINE;
+    }
+
+    if (strcmp(split, "1") == 0)
+    {
+      cmd.line = FIRST_LINE;
+    }
+    else if (strcmp(split, "2") == 0)
+    {
+      cmd.line = SECOND_LINE;
+    }
+    else
+    {
+      cmd.commandType = NO_TYPE;
+    }
+
+    return cmd;
   }
   else
   {

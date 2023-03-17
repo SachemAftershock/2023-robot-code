@@ -23,6 +23,7 @@ import frc.lib.SubsystemManager;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
+import frc.robot.ErrorTracker.ErrorType;
 import frc.robot.auto.AutoPathOne;
 import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
@@ -125,39 +126,41 @@ public class RobotContainer {
         mArmSubsystem.outputTelemetry();
         mElevatorSubsystem.outputTelemetry();
         mIntakeSubsystem.outputTelemetry();
+        ErrorTracker.getInstance().reportErrors();
 
         // System.out.println("CONE----> " + RobotContainer.isCone());
 
         // if (mTestController.getAButton()) {
-        //     setBackUpControllState();
+        // setBackUpControllState();
         // }
 
-        if(mButtonBox.povUp().getAsBoolean()) {
-            //System.out.println("Going up");
+        if (mButtonBox.povUp().getAsBoolean()) {
+            // System.out.println("Going up");
             setManualControllState();
             mElevatorSubsystem.jogElevatorUp();
-        } else if(mButtonBox.povDown().getAsBoolean()){
-            //System.out.println("Going down");
+        }
+        else if (mButtonBox.povDown().getAsBoolean()) {
+            // System.out.println("Going down");
             setManualControllState();
             mElevatorSubsystem.jogElevatorDown();
-        } else {
-            //System.out.println("Stopping");
-            //mElevatorSubsystem.stop();
+        }
+        else {
+            // System.out.println("Stopping");
+            // mElevatorSubsystem.stop();
             setAutomaticControllState();
         }
 
         // if (mButtonBox.povDownLeft().getAsBoolean()) {
-        //     System.out.println("Arm going in");
-        //     setManualControllState();
-        //     mArmSubsystem.jogArmIn();
+        // System.out.println("Arm going in");
+        // setManualControllState();
+        // mArmSubsystem.jogArmIn();
         // } else if (mButtonBox.povDownRight().getAsBoolean()) {
-        //     System.out.println("Arm going out");
-        //     setManualControllState();
-        //     mArmSubsystem.jogArmOut();
+        // System.out.println("Arm going out");
+        // setManualControllState();
+        // mArmSubsystem.jogArmOut();
         // } else {
-        //     setAutomaticControllState();
-        // } 
-        
+        // setAutomaticControllState();
+        // }
 
     }
 
@@ -170,12 +173,11 @@ public class RobotContainer {
             mElevatorSubsystem.setTestSpeed(0.0);
         }
 
-        if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 ||
-        mTestController.getLeftX() < -0.05)) {
-        mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
+        if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 || mTestController.getLeftX() < -0.05)) {
+            mArmSubsystem.setTestSpeed(mTestController.getLeftX() * 0.8);
         }
         else {
-        mArmSubsystem.setTestSpeed(0.0);
+            mArmSubsystem.setTestSpeed(0.0);
         }
 
     }
@@ -220,18 +222,28 @@ public class RobotContainer {
             ButtonBoxPublisher.disableLed(LedPosition.eEject);
         }));
 
-        mButtonBox.highPosition()
-            .onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem));
-        mButtonBox.mediumPosition()
-            .onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eMid, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem));
-        mButtonBox.floorPosition()
-            .onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem));
+        mButtonBox.highPosition().onTrue(
+            CommandFactory
+                .HandleSuperStructureSequence(SuperState.eHigh, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+        );
+        mButtonBox.mediumPosition().onTrue(
+            CommandFactory
+                .HandleSuperStructureSequence(SuperState.eMid, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+        );
+        mButtonBox.floorPosition().onTrue(
+            CommandFactory
+                .HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+        );
 
         mButtonBox.humanPlayerPostion().onTrue(
-            CommandFactory.HandleSuperStructureSequence(SuperState.ePlayerStation, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+            CommandFactory.HandleSuperStructureSequence(
+                SuperState.ePlayerStation, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem
+            )
         );
-        mButtonBox.stowPostion()
-            .onTrue(CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem));
+        mButtonBox.stowPostion().onTrue(
+            CommandFactory
+                .HandleSuperStructureSequence(SuperState.eStow, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+        );
 
         mButtonBox.cancel().onTrue(new InstantCommand(() -> {
             CommandScheduler.getInstance().cancelAll();
@@ -274,8 +286,9 @@ public class RobotContainer {
         );
         // mButtonBox.rightHumanStation().onTrue(new SetWaypointCommand(,
         // mDriveSubsystem));
-        // Function<Boolean, InstantCommand> jogElevatorCommand = (isUp) -> new InstantCommand(() -> {
-        //     if (mButtonBox.isJoystickEnabled()) mElevatorSubsystem.jogElevator(isUp);
+        // Function<Boolean, InstantCommand> jogElevatorCommand = (isUp) -> new
+        // InstantCommand(() -> {
+        // if (mButtonBox.isJoystickEnabled()) mElevatorSubsystem.jogElevator(isUp);
         // });
 
         Function<Boolean, InstantCommand> jogArmCommand = (isOut) -> new InstantCommand(() -> {
@@ -310,28 +323,30 @@ public class RobotContainer {
         // mButtonBox.povUp().onTrue(jogElevatorCommand.apply(true))
         // .onFalse(new InstantCommand(() -> mElevatorSubsystem.stop()));
 
-        // mButtonBox.povLeft().onTrue(jogArmCommand.apply(false)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
+        // mButtonBox.povLeft().onTrue(jogArmCommand.apply(false)).onFalse(new
+        // InstantCommand(() -> mArmSubsystem.stop()));
 
-        // mButtonBox.povRight().onTrue(jogArmCommand.apply(true)).onFalse(new InstantCommand(() -> mArmSubsystem.stop()));
-        
+        // mButtonBox.povRight().onTrue(jogArmCommand.apply(true)).onFalse(new
+        // InstantCommand(() -> mArmSubsystem.stop()));
+
         // mButtonBox.povDownLeft().onTrue(new InstantCommand(() -> {
-        //     if (mButtonBox.isJoystickEnabled()) {
-        //         mElevatorSubsystem.jogElevator(false);
-        //         mArmSubsystem.jogArm(false);
-        //     }
+        // if (mButtonBox.isJoystickEnabled()) {
+        // mElevatorSubsystem.jogElevator(false);
+        // mArmSubsystem.jogArm(false);
+        // }
         // })).onFalse(new InstantCommand(() -> {
-        //     mElevatorSubsystem.stop();
-        //     mArmSubsystem.stop();
+        // mElevatorSubsystem.stop();
+        // mArmSubsystem.stop();
         // }));
 
         // mButtonBox.povDownRight().onTrue(new InstantCommand(() -> {
-        //     if (mButtonBox.isJoystickEnabled()) {
-        //         mElevatorSubsystem.jogElevator(false);
-        //         mArmSubsystem.jogArm(true);
-        //     }
+        // if (mButtonBox.isJoystickEnabled()) {
+        // mElevatorSubsystem.jogElevator(false);
+        // mArmSubsystem.jogArm(true);
+        // }
         // })).onFalse(new InstantCommand(() -> {
-        //     mElevatorSubsystem.stop();
-        //     mArmSubsystem.stop();
+        // mElevatorSubsystem.stop();
+        // mArmSubsystem.stop();
         // }));
 
         mButtonBox.povUpLeft().onTrue(new InstantCommand(() -> {
