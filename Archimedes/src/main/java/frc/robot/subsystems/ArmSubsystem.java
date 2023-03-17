@@ -106,11 +106,17 @@ public class ArmSubsystem extends AftershockSubsystem {
         }
 
         double output = mPID.update(current, setpoint);
+        //double output = mProfileController.calculate(current, setpoint);
         // output = MathUtil.clamp(output, -0.5, 0.5);
-        output = output * 0.4;
 
-        // System.out.println("Current " + current + " SetPoint " + setpoint + " Output
-        // " + output);
+        if(current > 17.0) {
+            output = output *0.5;
+        } else {
+            output = output*0.6;
+        }
+
+        //System.out.println("ERROR: Current " + current + " SetPoint " + setpoint + " Output " + output);
+
         if (Math.abs(mPID.getError()) < kEpsilon) {
             System.out.println("-----EXITING PID-----" + mPID.getError());
             mCurrentState = mDesiredState;
@@ -140,7 +146,7 @@ public class ArmSubsystem extends AftershockSubsystem {
     }
 
     public void jogArmOut() {
-        setSpeed(-0.2);
+        setSpeed(-0.4);
     }
 
     public void jogArmIn() {

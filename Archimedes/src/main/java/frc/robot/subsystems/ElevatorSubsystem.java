@@ -138,10 +138,13 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
             case eIdle:
                 //Runs the pid but only to hold it in place
-                if(mPid.isPaused()) mPid.resumePID();
-                checkBounds(current);
-                double idleOutput = mPid.update(current, mSetpoint);
-                setSpeed(idleOutput);
+                // if(mPid.isPaused()) mPid.resumePID();
+                // checkBounds(current);
+                // double idleOutput = mPid.update(current, mSetpoint);
+                // setSpeed(idleOutput);
+
+                mMotor.setVoltage(0.5);
+
                 break;
 
             case ePIDControl:
@@ -174,8 +177,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                     return;
                 }
 
-                System.out.println("Setpoint --> " + mSetpoint + " Current --> " + current + " speed --> " + output);
-                output = output*0.8;
+                //System.out.println("Setpoint --> " + mSetpoint + " Current --> " + current + " speed --> " + output);
+                output = output*0.9;
                 setSpeed(output);
 
                 break;

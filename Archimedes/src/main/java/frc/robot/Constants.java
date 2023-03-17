@@ -165,7 +165,7 @@ public class Constants {
         public static final double kMaxVelocityMeterPerSecond = 0.05;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.025;
         public static final double kArmOffsetRads = 0;
-        public static final double[] kGains = { 2.0, 0.0, 0.0 };// { 1.2, 0.0, 0.0 };
+        public static final double[] kGains = {1.2, 0.0, 0.0 };// { 1.2, 0.0, 0.0 };
         public static final double kIntegralZone = 0.0;
         public static final double kDt = 0.02;
 
@@ -216,7 +216,7 @@ public class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final double[] kPidGains = { 0.06, 0.0, 0.0 };
+        public static final double[] kPidGains = {0.2, 0.0, 0.0};//{ 0.06, 0.0, 0.0 };
         public static final double[] kTrapezoidalPidGains = { 0.05, 0.0, 0.0 };
         public static final double kMaxVelocityMeterPerSecond = 0.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.25;
