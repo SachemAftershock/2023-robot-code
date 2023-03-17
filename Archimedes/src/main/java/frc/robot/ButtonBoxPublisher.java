@@ -61,7 +61,7 @@ public class ButtonBoxPublisher {
     }
 
     public static void sendMessage(String message, int line) {
-        if (line > 2 || line < 0) {
+        if (line > 2 || line < 1) {
             System.out.println("invalid line number");
             return;
         }
@@ -82,24 +82,45 @@ public class ButtonBoxPublisher {
 
         switch (errorType) {
             case eArmLidarInfinity:
-                sendMessage("Arm Lidar Inf", 2);
+                sendMessage("Arm_Lidar_Inf", 2);
                 break;
             case eElevatorLidarInfinity:
-                sendMessage("Elev Lidar Inf", 2);
+                sendMessage("Elev_Lidar_Inf", 2);
                 break;
             case eIntakeLidarInfinity:
-                sendMessage("Intake Lidar Inf", 2);
+                sendMessage("Intake_Lidar_Inf", 2);
                 break;
             case eElevatorMoveFailure:
-                sendMessage("Elev Move Fail", 2);
+                sendMessage("Elev_Move_Fail", 2);
                 break;
             case eNavXZero:
-                sendMessage("NavX Zero", 2);
+                sendMessage("NavX_Zero", 2);
                 break;
             default:
                 break;
         }
 
+    }
+
+    public static void sendError(String error) {
+        if (error.length() > 16) {
+            sendError("Error too long");
+            return;
+        }
+
+        sendMessage(error, 2);
+    }
+
+    public static void clearDisplay() {
+        sMessagePub.set("lcd clear\0");
+    }
+
+    public static void clearMessage() {
+        sMessagePub.set("lcd clear 1\0");
+    }
+
+    public static void clearError() {
+        sMessagePub.set("lcd clear 2\0");
     }
 
     private static void setLed(LedPosition ledPosition, LedState ledState) {

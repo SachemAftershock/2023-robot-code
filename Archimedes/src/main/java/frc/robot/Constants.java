@@ -156,7 +156,7 @@ public class Constants {
             kButtonBoxButtonMap.put(ButtonPosition.eJoystickEnable, LedPosition.eJoystickEnable); // enable joystick
         }
 
-        public static final double kErrorDelaySeconds = 1.0;
+        public static final double kErrorDelaySeconds = 2.0;
     }
 
     public static class IntakeConstants {
