@@ -30,7 +30,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutoPathZeroBasic extends SequentialCommandGroup{
+public class AutoPathCube extends SequentialCommandGroup{
 
     private final DriveSubsystem mDrive; 
     private final ElevatorSubsystem mElevator;
@@ -58,7 +58,7 @@ public class AutoPathZeroBasic extends SequentialCommandGroup{
         new Translation2d(2.39, 2.37)
         ), new Pose2d(3.92, 2.39, new Rotation2d()), config);
 
-    public AutoPathZeroBasic(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+    public AutoPathCube(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
@@ -66,39 +66,14 @@ public class AutoPathZeroBasic extends SequentialCommandGroup{
         mIntake = intake;
 
         addCommands(
-            //Places cone preloaded in robot
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
+            //Places cube preloaded in robot
+            new InstantCommand(() -> RobotContainer.setIsCube()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)
-            
-            // //Robot moves to cone on field
-            // FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCube),
-            // new RotateDriveCommand(mDrive, 180),
-            
-            // //Sequence for picking up cone and stowing
-            // new InstantCommand(() -> RobotContainer.toggleIsCone()),
-            // new IngestConeCommand(mIntake),
-            // CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm),
-            // new DelayCommand(0.5),
-            // new StopIntakeCommand(mIntake),
-            // CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm),
-
-            // //Driving back
-            // new RotateDriveCommand(mDrive, 180),
-            // FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCommunity),
-            // new DriveToWaypointCommand(SlotState.ePosition1.getPosition(), mDrive),
-
-            // //Placing cone sequence
-            // new InstantCommand(() -> RobotContainer.toggleIsCone()),
-            // CommandFactory.HandleSuperStructureSequence(SuperState.eMid, mElevator, mArm),
-            // new EjectConeCommand(mIntake),
-            // new DelayCommand(0.5),
-            // new StopIntakeCommand(mIntake),
-            // CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm),
-            // FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToChargeStation)
+        
         );
     }
 

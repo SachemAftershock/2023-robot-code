@@ -67,7 +67,7 @@ public class AutoPathZero extends SequentialCommandGroup{
 
         addCommands(
             //Places cone preloaded in robot
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
+            new InstantCommand(() -> RobotContainer.setIsCube()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
@@ -78,8 +78,7 @@ public class AutoPathZero extends SequentialCommandGroup{
             FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCube),
             new RotateDriveCommand(mDrive, 180),
             
-            //Sequence for picking up cone and stowing
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
+            //Sequence for picking up cube and stowing
             new IngestConeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm, mIntake),
             new DelayCommand(0.5),
@@ -91,8 +90,7 @@ public class AutoPathZero extends SequentialCommandGroup{
             FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCommunity),
             new DriveToWaypointCommand(SlotState.ePosition1.getPosition(), mDrive),
 
-            //Placing cone sequence
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
+            //Placing cube sequence
             CommandFactory.HandleSuperStructureSequence(SuperState.eMid, mElevator, mArm, mIntake),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),

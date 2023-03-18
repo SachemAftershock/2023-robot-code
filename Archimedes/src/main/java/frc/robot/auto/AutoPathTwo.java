@@ -67,7 +67,7 @@ public class AutoPathTwo extends SequentialCommandGroup{
 
         addCommands(
             //Places cone preloaded in robot
-            // new InstantCommand(() -> RobotContainer.toggleIsCone()),
+            new InstantCommand(() -> RobotContainer.setIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
@@ -80,7 +80,6 @@ public class AutoPathTwo extends SequentialCommandGroup{
             
             
             //Sequence for picking up cone and stowing
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
             new IngestConeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm, mIntake),
             new DelayCommand(0.5),
@@ -93,7 +92,6 @@ public class AutoPathTwo extends SequentialCommandGroup{
             new DriveToWaypointCommand(SlotState.ePosition1.getPosition(), mDrive),
 
             //Placing cone sequence
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
