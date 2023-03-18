@@ -42,7 +42,7 @@ public class AutoPathOne extends SequentialCommandGroup{
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(),
+    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, .45), new Rotation2d(1/2 * Math.PI)),
         List.of(new Translation2d(1.9, 0.45),
         new Translation2d(4.98, 0.92)
         ), new Pose2d(6.45, 2.11, new Rotation2d()), config);
