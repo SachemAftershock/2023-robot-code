@@ -99,6 +99,13 @@ public class Constants {
         public static final double kRampLevelAngle = 34.25; // degrees
         public static final double kRampMaxTiltAngle = 71.5; // degrees
         public static final double kTargetBalanceAngle = 0;
+
+        public static final double kBlueGridXCoordinate = 1.9;
+        public static final double kRedGridXCoordinate = 14.64;
+        //Blue y coordinates is opposite of red y coordinates i.e. first item in list is blue grid spot 1,
+        //while the first item in list is red spot 9
+        public static final double[] kGridYCoordinates = {4.9, 4.44, 3.87, 3.3, 2.76, 2.22, 1.62, 1.07, .41};
+        
     }
 
     public static class VisionConstants {

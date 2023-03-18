@@ -9,12 +9,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.SubsystemManager;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class Robot extends TimedRobot {
     private Command mAutonomousCommand;
 
     private RobotContainer mRobotContainer;
-
+    private AutoSelector mAutoSelector;
+    private DriveSubsystem mDrive;
     /**
      * This function is run when the robot is first started up and should be used
      * for any initialization code.
@@ -23,6 +25,11 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         mRobotContainer = RobotContainer.getInstance();
         mRobotContainer.initialize();
+  
+        mDrive = DriveSubsystem.getInstance();
+  
+        mAutoSelector = new AutoSelector();
+        mAutoSelector.selectAuto();
     }
 
     /**
@@ -57,12 +64,14 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         mRobotContainer.initializeSubsystems();
-
-        mAutonomousCommand = mRobotContainer.getAutonomousCommand();
-
-        if (mAutonomousCommand != null) {
-            mAutonomousCommand.schedule();
-        }
+        mRobotContainer.initialize();
+        // CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().schedule(mRobotContainer.getAutonomousCommand());
+        // mAutonomousCommand = mAutoSelector.getSelectedAutoCommand();
+        // mAutonomousCommand = mRobotContainer.getAutonomousCommand();
+        // if (mAutonomousCommand != null) {
+        //     mAutonomousCommand.schedule();
+        // }
     }
 
     /** This function is called periodically during autonomous. */

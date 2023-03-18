@@ -109,11 +109,13 @@ public class ArmSubsystem extends AftershockSubsystem {
         //double output = mProfileController.calculate(current, setpoint);
         // output = MathUtil.clamp(output, -0.5, 0.5);
 
-        if(current > 17.0) {
-            output = output *0.5;
-        } else {
-            output = output*0.6;
-        }
+        // if(current > 17.0) {
+        //     output = output *0.5;
+        // } else {
+        //     output = output*0.5;
+        // }
+
+        output = output*0.4;
 
         //System.out.println("ERROR: Current " + current + " SetPoint " + setpoint + " Output " + output);
 

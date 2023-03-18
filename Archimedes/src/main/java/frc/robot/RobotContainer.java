@@ -24,6 +24,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.ErrorTracker.ErrorType;
+import frc.robot.auto.AutoPathCone;
 import frc.robot.auto.AutoPathOne;
 import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
@@ -424,8 +425,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-
-        return new AutoPathOne(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        return new AutoPathCone(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
     }
 
     private static double deadband(double value, double deadband) {

@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.commands.semiAutoCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.SetWaypointCommand;
 

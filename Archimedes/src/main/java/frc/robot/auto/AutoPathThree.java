@@ -44,7 +44,7 @@ public class AutoPathThree extends SequentialCommandGroup{
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToCube = TrajectoryGenerator.generateTrajectory(new Pose2d(),
+    Trajectory pathToCube = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 4.4), new Rotation2d(1/2 * Math.PI)),
         List.of(new Translation2d(1.9, 4.4),
         new Translation2d(6.67, 4.6)
         ), new Pose2d(7.78, 4.61, new Rotation2d()), config);
@@ -69,7 +69,7 @@ public class AutoPathThree extends SequentialCommandGroup{
 
         addCommands(
             //Places cone preloaded in robot
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
+            new InstantCommand(() -> RobotContainer.setIsCube()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
             new EjectCubeCommand(mIntake),
             new DelayCommand(0.5),
@@ -82,7 +82,6 @@ public class AutoPathThree extends SequentialCommandGroup{
             
             
             //Sequence for picking up cone and stowing
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
             new IngestCubeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm, mIntake),
             new DelayCommand(0.5),
@@ -95,7 +94,6 @@ public class AutoPathThree extends SequentialCommandGroup{
             new DriveToWaypointCommand(SlotState.ePosition1.getPosition(), mDrive),
 
             //Placing cone sequence
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eMid, mElevator, mArm, mIntake),
             new EjectCubeCommand(mIntake),
             new DelayCommand(0.5),

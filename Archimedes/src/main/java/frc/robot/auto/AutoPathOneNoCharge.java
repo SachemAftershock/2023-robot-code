@@ -42,7 +42,7 @@ public class AutoPathOneNoCharge extends SequentialCommandGroup{
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(),
+    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, .45), new Rotation2d(1/2 * Math.PI)),
         List.of(new Translation2d(1.9, 0.45),
         new Translation2d(4.98, 0.92)
         ), new Pose2d(6.45, 2.11, new Rotation2d()), config);
@@ -67,7 +67,7 @@ public class AutoPathOneNoCharge extends SequentialCommandGroup{
 
         addCommands(
             //Places cone preloaded in robot
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
+            new InstantCommand(() -> RobotContainer.setIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
@@ -79,7 +79,6 @@ public class AutoPathOneNoCharge extends SequentialCommandGroup{
             new RotateDriveCommand(mDrive, 180),
             
             //Sequence for picking up cone and stowing
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
             new IngestConeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm, mIntake),
             new DelayCommand(0.5),
@@ -92,7 +91,6 @@ public class AutoPathOneNoCharge extends SequentialCommandGroup{
             new DriveToWaypointCommand(SlotState.ePosition1.getPosition(), mDrive),
 
             //Placing cone sequence
-            new InstantCommand(() -> RobotContainer.toggleIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),

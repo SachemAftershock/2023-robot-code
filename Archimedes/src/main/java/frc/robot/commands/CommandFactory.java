@@ -40,9 +40,9 @@ public class CommandFactory {
             System.out.println("--------FLOOR SEQUENCE-----------");
             return new SequentialCommandGroup(
                 new SetElevatorLedCommand(desiredState),
-                new SetElevatorStateCommand(ElevatorState.eRaised, elevatorSubsystem),
+                new SetElevatorStateCommand(ElevatorState.eClearBumper, elevatorSubsystem),
                 new SetArmStateCommand(ArmState.eLow, armSubsystem),
-                new SetElevatorStateCommand(ElevatorState.eStowEmpty, elevatorSubsystem)
+                new SetElevatorStateCommand(ElevatorState.eFloor, elevatorSubsystem)
             );
 
         }

@@ -42,7 +42,7 @@ public class AutoPathFive extends SequentialCommandGroup{
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(),
+    Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 2.2), new Rotation2d(1/2 * Math.PI)),
         List.of(new Translation2d(1.9, 2.2),
         new Translation2d(2.15, 3.2)
         ), new Pose2d(3.9, 3.44, new Rotation2d()), config);
@@ -56,7 +56,7 @@ public class AutoPathFive extends SequentialCommandGroup{
 
         addCommands(
             //Places cone preloaded in robot
-            // new InstantCommand(() -> RobotContainer.toggleIsCone()),
+            new InstantCommand(() -> RobotContainer.setIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
@@ -65,29 +65,7 @@ public class AutoPathFive extends SequentialCommandGroup{
             
             //Robot moves to cone on field
             new RotateDriveCommand(mDrive, 180),
-            // FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCone),
             
-            
-            // //Sequence for picking up cone and stowing
-            // new InstantCommand(() -> RobotContainer.toggleIsCone()),
-            // new IngestConeCommand(mIntake),
-            // CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm),
-            // new DelayCommand(0.5),
-            // new StopIntakeCommand(mIntake),
-            // CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm),
-
-            // //Driving back
-            // new RotateDriveCommand(mDrive, 180),
-            // FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCommunity),
-            // new DriveToWaypointCommand(SlotState.ePosition1.getPosition(), mDrive),
-
-            // //Placing cone sequence
-            // new InstantCommand(() -> RobotContainer.toggleIsCone()),
-            // CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm),
-            // new EjectConeCommand(mIntake),
-            // new DelayCommand(0.5),
-            // new StopIntakeCommand(mIntake),
-            // CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm),
             FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToChargeStation)
         );
     }
