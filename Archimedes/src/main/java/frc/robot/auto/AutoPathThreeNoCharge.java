@@ -44,7 +44,7 @@ public class AutoPathThreeNoCharge extends SequentialCommandGroup{
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToCube = TrajectoryGenerator.generateTrajectory(new Pose2d(),
+    Trajectory pathToCube = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 4.4), new Rotation2d(1/2 * Math.PI)),
         List.of(new Translation2d(1.9, 4.4),
         new Translation2d(6.67, 4.6)
         ), new Pose2d(7.78, 4.61, new Rotation2d()), config);
