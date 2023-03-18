@@ -69,6 +69,7 @@ public class AutoPathCone extends SequentialCommandGroup{
             //Places cone preloaded in robot
             new InstantCommand(() -> RobotContainer.setIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
+            
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),

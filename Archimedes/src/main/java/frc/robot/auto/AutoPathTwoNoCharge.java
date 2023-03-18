@@ -42,7 +42,7 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(),
+    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 4.89), new Rotation2d(1/2 * Math.PI)),
         List.of(new Translation2d(1.9, 4.89),
         new Translation2d(6.67, 4.6)
         ), new Pose2d(7.78, 4.61, new Rotation2d()), config);
@@ -82,7 +82,7 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
             //Sequence for picking up cone and stowing
             new InstantCommand(() -> RobotContainer.setIsCone()),
             new IngestConeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm, mIntake),
+            CommandFactory.HandleSuperStructureSequence(SuperState.eFloor, mElevator, mArm, mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
