@@ -32,7 +32,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.auto.DelayCommand;
 
-public class AutoPathTwoNoCharge extends SequentialCommandGroup{
+public class AutoPath2NC extends SequentialCommandGroup{
 
     private final DriveSubsystem mDrive; 
     private final ElevatorSubsystem mElevator;
@@ -54,25 +54,25 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
 
 
     Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(1.9 - startX, 4.89 - startY),
-        new Translation2d(6.67- startX, 4.6 - startY)
-        ), new Pose2d(7.78- startX, 4.61 - startY, new Rotation2d()), config);
+        List.of(new Translation2d(0, 0),
+        new Translation2d(4.77, -.29)
+        ), new Pose2d(5.88, -.28, new Rotation2d()), config);
 
     Trajectory pathToCommunity = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(7.78, 4.61),
-        new Translation2d(3.64, 4.76),
-        new Translation2d(2.09, 4.38)
-        ), new Pose2d(1.9, 3.83, new Rotation2d()), config);
+        List.of(new Translation2d(5.88, -.28),
+        new Translation2d(1.74, -.13),
+        new Translation2d(.19, -.51)
+        ), new Pose2d(0, -1.06, new Rotation2d()), config);
 
     Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(1.9, 3.83),
-        new Translation2d(2.15, 3.2)
-        ), new Pose2d(3.9, 3.44, new Rotation2d()), config);
+        List.of(new Translation2d(0, -1.06),
+        new Translation2d(.25, -1.69)
+        ), new Pose2d(2, -1.45, new Rotation2d()), config);
 
 
     Trajectory mNewPathToCone = pathToCone.transformBy(mTransform2d);
 
-    public AutoPathTwoNoCharge(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+    public AutoPath2NC(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
