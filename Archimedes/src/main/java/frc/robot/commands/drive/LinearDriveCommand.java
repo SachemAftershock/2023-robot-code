@@ -5,6 +5,7 @@ import frc.lib.PID;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.subsystems.DriveSubsystem;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class LinearDriveCommand extends CommandBase {
@@ -14,6 +15,7 @@ public class LinearDriveCommand extends CommandBase {
     private PID mPid;
     private double mCurrentPose;
     private CardinalDirection mDirection;
+    private SlewRateLimiter mRateLimiter;
 
     // Field Relative : Y direction is horizontal, X direction is downfield
 
@@ -40,6 +42,8 @@ public class LinearDriveCommand extends CommandBase {
         System.out.println(
             "Linear Drive Command started : Current Pose --> " + mDrive.getPose() + " Setpoint " + mLinearSetpoint
         );
+
+        mRateLimiter = new SlewRateLimiter(10.0);
     }
 
     @Override
@@ -61,8 +65,13 @@ public class LinearDriveCommand extends CommandBase {
 
         double speed = mPid.update(mCurrentPose, mLinearSetpoint) * DriveConstants.kMaxVelocityMetersPerSecond;
 
+        //speed = mRateLimiter.calculate(speed);
+        System.out.println("Current --> " + mCurrentPose + " Setpoint --> " + mLinearSetpoint + " Error --> " + Math.abs(mPid.getError()));
+        speed = speed*0.8;
+
         if (direction) {
             mDrive.drive(new ChassisSpeeds(0, speed, 0));
+            //System.out.println("Wrong");
         }
         else {
             mDrive.drive(new ChassisSpeeds(speed, 0, 0));

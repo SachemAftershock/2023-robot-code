@@ -16,6 +16,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class CommandFactory {
 
+    private static boolean mWasInFloorPosition = false;
+
     public static SequentialCommandGroup HandleSuperStructureSequence(
         SuperState desiredState, ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem mIntakeSubsystem
     ) {
@@ -38,6 +40,7 @@ public class CommandFactory {
         }
         else if (desiredState == SuperState.eFloor) {
             System.out.println("--------FLOOR SEQUENCE-----------");
+            mWasInFloorPosition = true;
             return new SequentialCommandGroup(
                 new SetElevatorLedCommand(desiredState),
                 new SetElevatorStateCommand(ElevatorState.eClearBumper, elevatorSubsystem),
@@ -52,6 +55,17 @@ public class CommandFactory {
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
                 /*new SmartIngestCommand(mIntakeSubsystem)*/
                 new SetArmStateCommand(desiredState.getArmState(), armSubsystem)
+            );
+        }
+        else if (desiredState == SuperState.eStow && mWasInFloorPosition) {
+            mWasInFloorPosition = false;
+            System.out.println("-------------Starting FLOOR retract----------");
+            return new SequentialCommandGroup(
+                new StopIntakeCommand(mIntakeSubsystem),
+                new SetElevatorLedCommand(desiredState), 
+                new SetElevatorStateCommand(ElevatorState.eLow, elevatorSubsystem),
+                new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
+                new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem)
             );
         }
         else {

@@ -44,7 +44,7 @@ public class ErrorTracker {
         }
 
         for (int i = mErrorIndex; i < mErrors.length; i++) {
-            System.out.println(i + " " + mErrors[i]);
+           // System.out.println(i + " " + mErrors[i]);
             if (mErrors[i]) {
                 ButtonBoxPublisher.sendError(ErrorType.values()[i]);
                 //System.out.println("Sending error " + ErrorType.values()[i]);

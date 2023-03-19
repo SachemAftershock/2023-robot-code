@@ -29,14 +29,16 @@ public class RotateDriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double currentAngle = mDrive.getYaw();//Util.normalizeAngle(mDrive.getGyroscopeRotation().getDegrees());
+        double currentAngle = Util.normalizeAngle(mDrive.getGyroscopeRotation().getDegrees());
         double rotationSpeed = mPid.updateRotation(currentAngle, mAngularSetpoint) * DriveConstants.kMaxAngularVelocityRadiansPerSecond * 0.5;
-
+        //System.out.println("Current Angle --> " + currentAngle + " speed --> " + rotationSpeed + " setpoint --> " + mAngularSetpoint);
+        //System.out.println("Error --> " + Math.abs(mPid.getError()));
         mDrive.drive(new ChassisSpeeds(0, 0, rotationSpeed));
     }
 
     @Override
     public boolean isFinished() {
+        //System.out.println("finishing --> " + (Math.abs(mPid.getError()) < DriveConstants.kAutoRotateEpsilon));
         return Math.abs(mPid.getError()) < DriveConstants.kAutoRotateEpsilon;
     }
 
