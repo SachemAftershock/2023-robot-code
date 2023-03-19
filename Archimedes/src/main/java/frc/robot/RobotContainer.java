@@ -26,6 +26,7 @@ import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.ErrorTracker.ErrorType;
 import frc.robot.auto.fieldOrientedTrajectoryAuto.*;
 import frc.robot.auto.linearAuto.AutoPathTwoNoChargeLinear;
+import frc.robot.auto.robotOrientedTrajectoryAuto.AutoPath2NC;
 import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.arm.SetArmStateCommand;
@@ -433,9 +434,11 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return new AutoPathTwoNoChargeLinear(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        //return new AutoPathTwoNoChargeLinear(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
         //return new RotateDriveCommand(mDriveSubsystem, 180);
         //return new LinearDriveCommand(mDriveSubsystem, -0.3, CardinalDirection.eY);
+        //return new AutoPathTwoNoCharge(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        return new AutoPath2NC(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
     }
 
     private static double deadband(double value, double deadband) {

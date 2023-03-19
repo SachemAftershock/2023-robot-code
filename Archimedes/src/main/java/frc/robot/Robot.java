@@ -65,6 +65,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
+        mDrive.zeroGyroscope();
         mRobotContainer.initializeSubsystems();
         mRobotContainer.initialize();
         // CommandScheduler.getInstance().cancelAll();
