@@ -30,7 +30,6 @@ public class Robot extends TimedRobot {
         mDrive = DriveSubsystem.getInstance();
   
         mAutoSelector = new AutoSelector();
-        mAutoSelector.selectAuto();
 
         CameraServer.startAutomaticCapture();
     }
@@ -57,7 +56,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-
+        mAutoSelector.selectAuto();
     }
 
     /**
@@ -70,7 +69,6 @@ public class Robot extends TimedRobot {
         mRobotContainer.initialize();
         // CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().schedule(mRobotContainer.getAutonomousCommand());
-        //mAutonomousCommand = mAutoSelector.getSelectedAutoCommand();
         //mAutonomousCommand = mRobotContainer.getAutonomousCommand();
         //CommandScheduler.getInstance().schedule(mAutoSelector.getSelectedAutoCommand());
         // if (mAutonomousCommand != null) {

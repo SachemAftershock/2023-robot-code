@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
@@ -10,6 +11,7 @@ import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -154,6 +156,14 @@ public class ArmSubsystem extends AftershockSubsystem {
     public void jogArmIn() {
         setSpeed(0.2);
 
+    }
+
+    public void setHookSpeed(double speed) {
+        mHookMotor.set(ControlMode.PercentOutput, speed);
+    }
+
+    public void stopHook() {
+        mHookMotor.set(ControlMode.PercentOutput, 0.0);
     }
 
     public ArmState getState() {

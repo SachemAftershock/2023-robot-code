@@ -1,4 +1,4 @@
-package frc.robot.auto;
+package frc.robot.auto.linearAuto;
 
 import java.util.List;
 
@@ -13,10 +13,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.FollowTrajectoryCommandFactory;
+import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.RotateDriveCommand;
 import frc.robot.commands.elevator.SetElevatorStateCommand;
 import frc.robot.commands.intake.EjectConeCommand;
@@ -30,20 +32,21 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.auto.DelayCommand;
 
-public class AutoPathTwoNoCharge extends SequentialCommandGroup{
+public class AutoPathTwoNoChargeLinear extends SequentialCommandGroup{
 
     private final DriveSubsystem mDrive; 
     private final ElevatorSubsystem mElevator;
     private final ArmSubsystem mArm;
     private final IntakeSubsystem mIntake;
-    private Pose2d mStartingPose = new Pose2d(1.9, 4.89, new Rotation2d());
+    private Pose2d mStartingPose = new Pose2d(1.9, 4.89, new Rotation2d(Math.PI));
     //private Transform2d x = new Pose2d(1.9, 4.89, new Rotation2d(Math.PI));
 
     private Transform2d mTransform2d = new Transform2d(new Pose2d(), mStartingPose);
     
     TrajectoryConfig config = new TrajectoryConfig(
-        DriveConstants.kMaxVelocityMetersPerSecond * 0.1,
+        DriveConstants.kMaxVelocityMetersPerSecond * 0.05,
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
@@ -71,7 +74,7 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
 
     Trajectory mNewPathToCone = pathToCone.transformBy(mTransform2d);
 
-    public AutoPathTwoNoCharge(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+    public AutoPathTwoNoChargeLinear(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
@@ -90,13 +93,13 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
             
             //Robot moves to cone on field
-            FollowTrajectoryCommandFactory.generateCommand(mDrive, mNewPathToCone),
+            new LinearDriveCommand(mDrive, -4.77, CardinalDirection.eX),
             new RotateDriveCommand(mDrive, 180),
             
             //Sequence for picking up cone and stowing
             new InstantCommand(() -> RobotContainer.setIsCone()),
-            new IngestConeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eFloor, mElevator, mArm, mIntake),
+            new IngestConeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)

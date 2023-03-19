@@ -198,7 +198,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                 //     prevTestDistance = currentTestDistance;
                 // }
 
-                System.out.println("Manual getting called");
+                //System.out.println("Manual getting called");
                 
                 setSetpoint(getElevatorHeight());
 

@@ -1,4 +1,4 @@
-package frc.robot.auto;
+package frc.robot.auto.fieldOrientedTrajectoryAuto;
 
 import java.util.List;
 
@@ -29,8 +29,9 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.auto.DelayCommand;
 
-public class AutoPathFour extends SequentialCommandGroup{
+public class AutoPathTwo extends SequentialCommandGroup{
 
     private final DriveSubsystem mDrive; 
     private final ElevatorSubsystem mElevator;
@@ -42,12 +43,23 @@ public class AutoPathFour extends SequentialCommandGroup{
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 2.74), new Rotation2d(1/2 * Math.PI)),
-        List.of(new Translation2d(1.9, 2.74),
+    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 4.89), new Rotation2d(1/2 * Math.PI)),
+        List.of(new Translation2d(1.9, 4.89),
+        new Translation2d(6.67, 4.6)
+        ), new Pose2d(7.78, 4.61, new Rotation2d()), config);
+
+    Trajectory pathToCommunity = TrajectoryGenerator.generateTrajectory(new Pose2d(),
+        List.of(new Translation2d(7.78, 4.61),
+        new Translation2d(3.64, 4.76),
+        new Translation2d(2.09, 4.38)
+        ), new Pose2d(1.9, 3.83, new Rotation2d()), config);
+
+    Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(),
+        List.of(new Translation2d(1.9, 3.83),
         new Translation2d(2.15, 3.2)
         ), new Pose2d(3.9, 3.44, new Rotation2d()), config);
 
-    public AutoPathFour(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+    public AutoPathTwo(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
@@ -56,7 +68,7 @@ public class AutoPathFour extends SequentialCommandGroup{
 
         addCommands(
             //Places cone preloaded in robot
-            new InstantCommand(() -> RobotContainer.setIsCube()),
+            new InstantCommand(() -> RobotContainer.setIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
@@ -65,7 +77,27 @@ public class AutoPathFour extends SequentialCommandGroup{
             
             //Robot moves to cone on field
             new RotateDriveCommand(mDrive, 180),
+            FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCone),
+            
+            
+            //Sequence for picking up cone and stowing
+            new IngestConeCommand(mIntake),
+            CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm, mIntake),
+            new DelayCommand(0.5),
+            new StopIntakeCommand(mIntake),
+            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
 
+            //Driving back
+            new RotateDriveCommand(mDrive, 180),
+            FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCommunity),
+            new DriveToWaypointCommand(SlotState.ePosition1.getPosition(), mDrive),
+
+            //Placing cone sequence
+            CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
+            new EjectConeCommand(mIntake),
+            new DelayCommand(0.5),
+            new StopIntakeCommand(mIntake),
+            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
             FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToChargeStation)
         );
     }

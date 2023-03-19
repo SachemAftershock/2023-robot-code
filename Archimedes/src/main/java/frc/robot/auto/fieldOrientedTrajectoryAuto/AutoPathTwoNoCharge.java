@@ -1,9 +1,10 @@
-package frc.robot.auto;
+package frc.robot.auto.fieldOrientedTrajectoryAuto;
 
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -29,45 +30,60 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.auto.DelayCommand;
 
-public class AutoPathOneNoCharge extends SequentialCommandGroup{
+public class AutoPathTwoNoCharge extends SequentialCommandGroup{
 
     private final DriveSubsystem mDrive; 
     private final ElevatorSubsystem mElevator;
     private final ArmSubsystem mArm;
     private final IntakeSubsystem mIntake;
+    private Pose2d mStartingPose = new Pose2d(1.9, 4.89, new Rotation2d(Math.PI));
+    //private Transform2d x = new Pose2d(1.9, 4.89, new Rotation2d(Math.PI));
 
+    private Transform2d mTransform2d = new Transform2d(new Pose2d(), mStartingPose);
+    
     TrajectoryConfig config = new TrajectoryConfig(
-        DriveConstants.kMaxVelocityMetersPerSecond * 0.3,
+        DriveConstants.kMaxVelocityMetersPerSecond * 0.05,
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, .45), new Rotation2d(1/2 * Math.PI)),
-        List.of(new Translation2d(1.9, 0.45),
-        new Translation2d(4.98, 0.92)
-        ), new Pose2d(6.45, 2.11, new Rotation2d()), config);
+    double startX = 0;//1.9;
+    double startY = 0;//4.89;
+
+
+
+    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(),
+        List.of(new Translation2d(1.9 - startX, 4.89 - startY),
+        new Translation2d(6.67- startX, 4.6 - startY)
+        ), new Pose2d(7.78- startX, 4.61 - startY, new Rotation2d()), config);
 
     Trajectory pathToCommunity = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(6.46, 2.11),
-        new Translation2d(5.23, 0.74),
-        new Translation2d(3.19, 0.72)
-        ), new Pose2d(1.9, 1.62, new Rotation2d()), config);
+        List.of(new Translation2d(7.78, 4.61),
+        new Translation2d(3.64, 4.76),
+        new Translation2d(2.09, 4.38)
+        ), new Pose2d(1.9, 3.83, new Rotation2d()), config);
 
     Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(1.9, 1.62),
-        new Translation2d(2.39, 2.37)
-        ), new Pose2d(3.92, 2.39, new Rotation2d()), config);
+        List.of(new Translation2d(1.9, 3.83),
+        new Translation2d(2.15, 3.2)
+        ), new Pose2d(3.9, 3.44, new Rotation2d()), config);
 
-    public AutoPathOneNoCharge(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+
+    Trajectory mNewPathToCone = pathToCone.transformBy(mTransform2d);
+
+    public AutoPathTwoNoCharge(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
         mArm = arm;
         mIntake = intake;
 
+        //pathToCone.transformBy(mStartingPose);
+
         addCommands(
             //Places cone preloaded in robot
-            new InstantCommand(() -> RobotContainer.setIsCone()),
+            // new InstantCommand(() -> RobotContainer.toggleIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
@@ -75,27 +91,28 @@ public class AutoPathOneNoCharge extends SequentialCommandGroup{
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
             
             //Robot moves to cone on field
-            FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCone),
+            FollowTrajectoryCommandFactory.generateCommand(mDrive, mNewPathToCone),
             new RotateDriveCommand(mDrive, 180),
             
             //Sequence for picking up cone and stowing
+            new InstantCommand(() -> RobotContainer.setIsCone()),
             new IngestConeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm, mIntake),
-            new DelayCommand(0.5),
-            new StopIntakeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-
-            //Driving back
-            new RotateDriveCommand(mDrive, 180),
-            FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCommunity),
-            new DriveToWaypointCommand(SlotState.ePosition1.getPosition(), mDrive),
-
-            //Placing cone sequence
-            CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
-            new EjectConeCommand(mIntake),
+            CommandFactory.HandleSuperStructureSequence(SuperState.eFloor, mElevator, mArm, mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)
+
+            //Driving back
+            // new RotateDriveCommand(mDrive, 180),
+            // FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCommunity),
+            // new DriveToWaypointCommand(SlotState.ePosition1.getPosition(), mDrive),
+
+            // //Placing cone sequence
+            // CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
+            // new EjectConeCommand(mIntake),
+            // new DelayCommand(0.5),
+            // new StopIntakeCommand(mIntake),
+            // CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)
         );
     }
 

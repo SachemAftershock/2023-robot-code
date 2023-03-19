@@ -8,6 +8,7 @@ public enum ArmState {
     eUnknown(-1, -1),
     // These are going to be raw lidar values until we learn how to interpolate
     // correctly
+    //eStowEmpty was 17.5;
     eStowEmpty(17.5, 17.5), eStowLoaded(0, 0), eFloor(15.8, 15.8), eLow(16.22, 14.0), eMid(15.3, 15.3),
     eHigh(13.4, 13.4), ePlayerStation(16.71, 16.0);// (17.0, 15.5/*16.5*/);
 

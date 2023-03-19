@@ -1,4 +1,4 @@
-package frc.robot.auto;
+package frc.robot.auto.fieldOrientedTrajectoryAuto;
 
 import java.util.List;
 
@@ -31,6 +31,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.auto.DelayCommand;
 
 public class AutoPathThree extends SequentialCommandGroup{
 

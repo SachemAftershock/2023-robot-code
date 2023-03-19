@@ -24,9 +24,8 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.ErrorTracker.ErrorType;
-import frc.robot.auto.AutoPathCone;
-import frc.robot.auto.AutoPathOne;
-import frc.robot.auto.AutoPathTwoNoCharge;
+import frc.robot.auto.fieldOrientedTrajectoryAuto.*;
+import frc.robot.auto.linearAuto.AutoPathTwoNoChargeLinear;
 import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.arm.SetArmStateCommand;
@@ -104,9 +103,9 @@ public class RobotContainer {
         mDriveSubsystem.setDefaultCommand(
             new ManualDriveCommand(
                 mDriveSubsystem, mArmSubsystem::getState, mElevatorSubsystem::getState,
+                () -> modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kMaxVelocityMetersPerSecond,
                 () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kMaxVelocityMetersPerSecond,
-                () -> -modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kMaxVelocityMetersPerSecond,
-                () -> modifyAxis(mPrimaryTwistController.getTwist())
+                () -> -modifyAxis(mPrimaryTwistController.getTwist())
                     * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant
             )
         );
@@ -183,6 +182,13 @@ public class RobotContainer {
             mArmSubsystem.setTestSpeed(0.0);
         }
 
+        if (mTestController.getRightBumper()) {
+            mArmSubsystem.setHookSpeed(0.2);
+        } else if (mTestController.getLeftBumper()) {
+            mArmSubsystem.setHookSpeed(-0.2);
+        } else {
+            mArmSubsystem.stopHook();
+        }
     }
 
     public void initializeSubsystems() {
@@ -427,7 +433,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return new AutoPathTwoNoCharge(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        return new AutoPathTwoNoChargeLinear(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
         //return new RotateDriveCommand(mDriveSubsystem, 270);
     }
 

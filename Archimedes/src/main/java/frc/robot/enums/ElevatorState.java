@@ -11,7 +11,7 @@ public enum ElevatorState {
                                                                       // lowering
     eLow(36.0, 26.0), eMid(51.0, 51.0), 
     eHigh(56.0, 62.0),
-    ePlayerStation(57.75, 60.5);// was 64
+    ePlayerStation(57.75, 60.0);//was +0.5// was 64
 
     private double mCubeHeight;
     private double mConeHeight;
