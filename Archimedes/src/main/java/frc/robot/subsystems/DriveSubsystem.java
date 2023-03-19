@@ -195,7 +195,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 		// We have to invert the angle of the NavX so that rotating the robot
 		// counter-clockwise makes the angle increase.
-		return Rotation2d.fromDegrees(360.0 - (getYaw()) + 90); // TODO: Add 90 here I think
+		return Rotation2d.fromDegrees(360.0 - (getYaw())); // TODO: Add 90 here I think
 	}
 
 	public void drive(ChassisSpeeds chassisSpeeds) {
@@ -232,6 +232,8 @@ public class DriveSubsystem extends AftershockSubsystem {
 		if (poseInfo != null && poseInfo.isValidTarget()) {
 			mPoseEstimator.addVisionMeasurement(poseInfo.getPose(), poseInfo.getTimestamp());
 		}
+
+		//System.out.println("Angle --> " + mNavx.getYaw());
 
 		// photonvision update pose
 

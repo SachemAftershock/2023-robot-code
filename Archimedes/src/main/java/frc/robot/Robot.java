@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -30,6 +31,8 @@ public class Robot extends TimedRobot {
   
         mAutoSelector = new AutoSelector();
         mAutoSelector.selectAuto();
+
+        CameraServer.startAutomaticCapture();
     }
 
     /**
@@ -67,8 +70,9 @@ public class Robot extends TimedRobot {
         mRobotContainer.initialize();
         // CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().schedule(mRobotContainer.getAutonomousCommand());
-        // mAutonomousCommand = mAutoSelector.getSelectedAutoCommand();
-        // mAutonomousCommand = mRobotContainer.getAutonomousCommand();
+        //mAutonomousCommand = mAutoSelector.getSelectedAutoCommand();
+        //mAutonomousCommand = mRobotContainer.getAutonomousCommand();
+        //CommandScheduler.getInstance().schedule(mAutoSelector.getSelectedAutoCommand());
         // if (mAutonomousCommand != null) {
         //     mAutonomousCommand.schedule();
         // }
