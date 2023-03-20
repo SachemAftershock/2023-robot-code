@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -10,6 +12,7 @@ import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,7 +31,11 @@ import static frc.robot.Ports.ArmPorts.*;
 public class ArmSubsystem extends AftershockSubsystem {
 
     private static ArmSubsystem mInstance;
-    private CANSparkMax mArmMotor;
+    private CANSparkMax mLeftArmMotor;
+    private CANSparkMax mRighthArmMotor;
+    private SparkMaxPIDController mLeftController;
+    private SparkMaxPIDController mRightController;
+    private MotorControllerGroup mMotorControllerGroup;
     private TalonSRX mHookMotor;
 
     private final Lidar mLidar;
@@ -56,7 +63,15 @@ public class ArmSubsystem extends AftershockSubsystem {
     private ArmSubsystem() {
         super();
 
-        mArmMotor = new CANSparkMax(kArmMotorId, MotorType.kBrushless);
+        mLeftArmMotor = new CANSparkMax(kLeftArmMotorId, MotorType.kBrushless);
+        mLeftArmMotor.setIdleMode(IdleMode.kBrake);
+        mLeftArmMotor.setOpenLoopRampRate(0.5);
+
+        mRighthArmMotor = new CANSparkMax(kRightArmMotorId, MotorType.kBrushless);
+        mRighthArmMotor.setIdleMode(IdleMode.kBrake);
+        mRighthArmMotor.setOpenLoopRampRate(0.5);
+        mRighthArmMotor.setInverted(true);
+
         mHookMotor = new TalonSRX(kHookMotorId);
         mHookMotor.setNeutralMode(NeutralMode.Brake);
 
@@ -173,7 +188,6 @@ public class ArmSubsystem extends AftershockSubsystem {
 
         // SmartDashboard.putNumber("Raw Bar Distance", mLidar.getDistanceIn());
         SmartDashboard.putNumber("Bar Distance", getBarDistance());
-        SmartDashboard.putNumber("Arm Motor Velocity", mArmMotor.getEncoder().getVelocity());
     }
 
     @Override
@@ -196,17 +210,24 @@ public class ArmSubsystem extends AftershockSubsystem {
         mDesiredState = ArmState.eUnknown;
     }
 
+    public boolean isArmStowedEnough() {
+        return getBarDistance() < kArmStowedEnough;
+    }
+
     public void TESTSPEED() {
         setSpeed(-1.0);
     }
 
     private void setSpeed(double speed) {
         // System.out.println("Motor Controller speed" + speed);
-        mArmMotor.set(speed);
+        mLeftArmMotor.set(speed);
+        mRighthArmMotor.set(speed);
+
     }
 
     public void setTestSpeed(double speed) {
-        mArmMotor.set(speed);
+        mLeftArmMotor.set(speed);
+        mRighthArmMotor.set(speed);
     }
 
     public static synchronized ArmSubsystem getInstance() {

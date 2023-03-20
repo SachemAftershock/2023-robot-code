@@ -7,9 +7,7 @@ public enum ElevatorState {
     eStowLoaded(28.0, 28.0), eFloor(18.5, 18.5), eRaised(22.0, 22.0), // For raising the
                                                                       // elevator before
                                                                       // lowering
-    eLow(36.0, 26.0), eMid(51.0, 51.0), 
-    eHigh(56.0, 64.0),
-    ePlayerStation(57.75, 60.5);// was 64
+    eLow(36.0, 26.0), eMid(51.0, 51.0), eHigh(56.0, 64.0), ePlayerStation(57.75, 60.5), eUnknown(-1, -1);// was 64
 
     private double mCubeHeight;
     private double mConeHeight;
@@ -20,9 +18,10 @@ public enum ElevatorState {
     }
 
     public double getHeight() {
-        if(RobotContainer.isCone()) {
+        if (RobotContainer.isCone()) {
             return mConeHeight;
-        } else {
+        }
+        else {
             return mCubeHeight;
         }
     }

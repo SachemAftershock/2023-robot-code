@@ -27,18 +27,37 @@ public class ErrorTracker {
     }
 
     public void reportErrors() {
-        if (mErrorIndex > 4) mErrorIndex = 0;
-        if (!isErrorPresent(mErrors)) return;
-        if (System.currentTimeMillis() - mErrorTime < kErrorDelaySeconds * 1000) return;
+        if (mErrorIndex >= 4) mErrorIndex = 0;
+
+        // for (int i = 0; i < mErrors.length; i++) {
+        // System.out.print(mErrors[i] + " ");
+        // }
+        // System.out.println();
+
+        if (!isErrorPresent(mErrors)) {
+            ButtonBoxPublisher.clearError();
+            // System.out.println("No errors");
+            return;
+        }
+
+        if (System.currentTimeMillis() - mErrorTime < kErrorDelaySeconds * 1000) {
+            // System.out.println("waiting");
+            return;
+        }
 
         for (int i = mErrorIndex; i < mErrors.length; i++) {
+            // System.out.println(i + " " + mErrors[i]);
             if (mErrors[i]) {
                 ButtonBoxPublisher.sendError(ErrorType.values()[i]);
+                // System.out.println("Sending error " + ErrorType.values()[i]);
                 mErrorIndex = i + 1;
+                mErrorTime = System.currentTimeMillis();
                 break;
             }
         }
     }
+
+   
 
     /**
      * Enable or disable an error to be sent to the button box lcd.

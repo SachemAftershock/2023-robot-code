@@ -35,7 +35,8 @@ public class Constants {
         public static final double kDriveControllerDeadband = 0.05;
         public static final boolean kSquareAxis = true;
 
-        public static final double kDriveSpeedScaleFactor = 0.25;
+        public static final double kArmOutSpeedScaleFactor = 0.5;
+        public static final double kArmStowedEnoughScaleFactor = 0.75;
 
         public static final double[] kDriveAngularGains = { 0.02, 0.0, 0.0 }; // dont use I it sucks - Shreyas
         public static final double[] kDriveLinearGains = { 0.4, 0.0, 0.0 };
@@ -176,6 +177,8 @@ public class Constants {
 
         public static final double kJogSpeed = 0.2;
         public static final double kArmLidarOffset = -3.0;
+
+        public static final double kArmStowedEnough = 15.8;
 
         public static final double[][] kBarDistanceToArmExtension = { { 18, 17.25 }, { 17, 29 }, { 16, 34.75 },
                 { 15, 42 }, { 13, 49 }

@@ -10,11 +10,11 @@ import frc.robot.subsystems.DriveSubsystem;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import static frc.robot.Constants.DriveConstants.kDriveSpeedScaleFactor;
+import static frc.robot.Constants.DriveConstants.*;
 
 public class ManualDriveCommand extends CommandBase {
     private final DriveSubsystem mDrivetrainSubsystem;
-    private final Supplier<ArmState> mArmStateSupplier;
+    private final Supplier<Boolean> mArmStowedEnoughSupplier;
     private final Supplier<ElevatorState> mElevatorStateSupplier;
 
     private final DoubleSupplier m_translationXSupplier;
@@ -23,12 +23,12 @@ public class ManualDriveCommand extends CommandBase {
     private SlewRateLimiter mRateLimiter;
 
     public ManualDriveCommand(
-        DriveSubsystem drivetrainSubsystem, Supplier<ArmState> armStateSupplier,
+        DriveSubsystem drivetrainSubsystem, Supplier<Boolean> armStowedEnoughSupplier,
         Supplier<ElevatorState> elevatorStateSupplier, DoubleSupplier translationXSupplier,
         DoubleSupplier translationYSupplier, DoubleSupplier rotationSupplier
     ) {
         this.mDrivetrainSubsystem = drivetrainSubsystem;
-        mArmStateSupplier = armStateSupplier;
+        mArmStowedEnoughSupplier = armStowedEnoughSupplier;
         mElevatorStateSupplier = elevatorStateSupplier;
 
         this.m_translationXSupplier = translationXSupplier;
@@ -49,10 +49,13 @@ public class ManualDriveCommand extends CommandBase {
 
         double rotSpeed = m_rotationSupplier.getAsDouble();
 
-        if (mArmStateSupplier.get() != ArmState.eStowEmpty
-            && mElevatorStateSupplier.get() != ElevatorState.eStowEmpty) {
-            xSpeed *= kDriveSpeedScaleFactor;
-            ySpeed *= kDriveSpeedScaleFactor;
+        if (!mArmStowedEnoughSupplier.get()) {
+            xSpeed *= kArmOutSpeedScaleFactor;
+            ySpeed *= kArmOutSpeedScaleFactor;
+        }
+        else if (mElevatorStateSupplier.get() != ElevatorState.eStowEmpty) {
+            xSpeed *= kArmStowedEnoughScaleFactor;
+            ySpeed *= kArmOutSpeedScaleFactor;
         }
 
         mDrivetrainSubsystem.drive(
