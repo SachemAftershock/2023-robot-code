@@ -43,19 +43,19 @@ public class AutoPathTwo extends SequentialCommandGroup{
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 4.89), new Rotation2d(1/2 * Math.PI)),
-        List.of(new Translation2d(1.9, 4.89),
+    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 4.89), new Rotation2d(Math.PI)),
+        List.of(
         new Translation2d(6.67, 4.6)
         ), new Pose2d(7.78, 4.61, new Rotation2d()), config);
 
     Trajectory pathToCommunity = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(7.78, 4.61),
+        List.of(
         new Translation2d(3.64, 4.76),
         new Translation2d(2.09, 4.38)
         ), new Pose2d(1.9, 3.83, new Rotation2d()), config);
 
     Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(1.9, 3.83),
+        List.of(
         new Translation2d(2.15, 3.2)
         ), new Pose2d(3.9, 3.44, new Rotation2d()), config);
 

@@ -43,19 +43,19 @@ public class AutoPathZero extends SequentialCommandGroup{
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToCube = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 1.08), new Rotation2d(1/2 * Math.PI)),
-        List.of(new Translation2d(1.9, 1.08),
+    Trajectory pathToCube = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 1.08), new Rotation2d( Math.PI)),
+        List.of(
         new Translation2d(4.98, 0.92)
         ), new Pose2d(6.45, 2.11, new Rotation2d()), config);
 
     Trajectory pathToCommunity = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(6.46, 2.11),
+        List.of(
         new Translation2d(5.23, 0.74),
         new Translation2d(3.19, 0.72)
         ), new Pose2d(1.9, 1.08, new Rotation2d()), config);
 
     Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(1.9, 1.08),
+        List.of(
         new Translation2d(2.39, 2.37)
         ), new Pose2d(3.92, 2.39, new Rotation2d()), config);
 

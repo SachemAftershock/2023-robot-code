@@ -43,29 +43,25 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
 
     private Transform2d mTransform2d = new Transform2d(new Pose2d(), mStartingPose);
     
+    
     TrajectoryConfig config = new TrajectoryConfig(
-        DriveConstants.kMaxVelocityMetersPerSecond * 0.05,
+        DriveConstants.kMaxVelocityMetersPerSecond * 0.3,
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    double startX = 0;//1.9;
-    double startY = 0;//4.89;
-
-
-
-    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(1.9, 4.89, new Rotation2d()),
-        List.of(//new Translation2d(1.9 - startX, 4.89 - startY),
+    Trajectory pathToCone = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 4.89), new Rotation2d(Math.PI)),
+        List.of(
         new Translation2d(6.67, 4.6)
         ), new Pose2d(7.78, 4.61, new Rotation2d()), config);
 
     Trajectory pathToCommunity = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(7.78, 4.61),
+        List.of(
         new Translation2d(3.64, 4.76),
         new Translation2d(2.09, 4.38)
         ), new Pose2d(1.9, 3.83, new Rotation2d()), config);
 
     Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(1.9, 3.83),
+        List.of(
         new Translation2d(2.15, 3.2)
         ), new Pose2d(3.9, 3.44, new Rotation2d()), config);
 
