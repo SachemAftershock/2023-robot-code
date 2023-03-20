@@ -31,22 +31,22 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.auto.DelayCommand;
 
-public class AutoPathFour extends SequentialCommandGroup{
+public class AutoPathFour extends SequentialCommandGroup {
 
-    private final DriveSubsystem mDrive; 
+    private final DriveSubsystem mDrive;
     private final ElevatorSubsystem mElevator;
     private final ArmSubsystem mArm;
     private final IntakeSubsystem mIntake;
 
     TrajectoryConfig config = new TrajectoryConfig(
-        DriveConstants.kMaxVelocityMetersPerSecond * 0.3,
-        DriveConstants.kMaxAccelerationMetersPerSecondSquared
+        DriveConstants.kAutoMaxVelocityMetersPerSecond * 0.3, DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(1.9, 2.74), new Rotation2d(1/2 * Math.PI)),
-        List.of(new Translation2d(1.9, 2.74),
-        new Translation2d(2.15, 3.2)
-        ), new Pose2d(3.9, 3.44, new Rotation2d()), config);
+    Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(new Translation2d(1.9, 2.74), new Rotation2d(1 / 2 * Math.PI)),
+        List.of(new Translation2d(1.9, 2.74), new Translation2d(2.15, 3.2)), new Pose2d(3.9, 3.44, new Rotation2d()),
+        config
+    );
 
     public AutoPathFour(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
@@ -56,22 +56,17 @@ public class AutoPathFour extends SequentialCommandGroup{
         mIntake = intake;
 
         addCommands(
-            //Places cone preloaded in robot
+            // Places cone preloaded in robot
             new InstantCommand(() -> RobotContainer.setIsCube()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
-            new EjectConeCommand(mIntake),
-            new DelayCommand(0.5),
-            new StopIntakeCommand(mIntake),
+            new EjectConeCommand(mIntake), new DelayCommand(0.5), new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-            
-            //Robot moves to cone on field
+
+            // Robot moves to cone on field
             new RotateDriveCommand(mDrive, 180),
 
             FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToChargeStation)
         );
     }
 
-
-
-    
 }

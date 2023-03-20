@@ -105,8 +105,8 @@ public class RobotContainer {
         mDriveSubsystem.setDefaultCommand(
             new ManualDriveCommand(
                 mDriveSubsystem, mArmSubsystem::getState, mElevatorSubsystem::getState,
-                () -> modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kMaxVelocityMetersPerSecond,
-                () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kMaxVelocityMetersPerSecond,
+                () -> modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
+                () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
                 () -> -modifyAxis(mPrimaryTwistController.getTwist())
                     * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant
             )
@@ -185,11 +185,11 @@ public class RobotContainer {
         }
 
         // if (mTestController.getRightBumper()) {
-        //     mArmSubsystem.setHookSpeed(0.2);
+        // mArmSubsystem.setHookSpeed(0.2);
         // } else if (mTestController.getLeftBumper()) {
-        //     mArmSubsystem.setHookSpeed(-0.2);
+        // mArmSubsystem.setHookSpeed(-0.2);
         // } else {
-        //     mArmSubsystem.stopHook();
+        // mArmSubsystem.stopHook();
         // }
     }
 
@@ -437,10 +437,12 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        //return new AutoPathTwoNoChargeLinear(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
-        //return new RotateDriveCommand(mDriveSubsystem, 180);
-        //return new LinearDriveCommand(mDriveSubsystem, -0.3, CardinalDirection.eY);
-        //return new AutoPathTwoNoCharge(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        // return new AutoPathTwoNoChargeLinear(mDriveSubsystem, mElevatorSubsystem,
+        // mArmSubsystem, mIntakeSubsystem);
+        // return new RotateDriveCommand(mDriveSubsystem, 180);
+        // return new LinearDriveCommand(mDriveSubsystem, -0.3, CardinalDirection.eY);
+        // return new AutoPathTwoNoCharge(mDriveSubsystem, mElevatorSubsystem,
+        // mArmSubsystem, mIntakeSubsystem);
         return new AutoPath2NC(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
     }
 

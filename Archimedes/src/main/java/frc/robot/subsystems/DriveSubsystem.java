@@ -233,7 +233,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 			mPoseEstimator.addVisionMeasurement(poseInfo.getPose(), poseInfo.getTimestamp());
 		}
 
-		//System.out.println("Angle --> " + mNavx.getYaw());
+		// System.out.println("Angle --> " + mNavx.getYaw());
 
 		// photonvision update pose
 
@@ -255,19 +255,23 @@ public class DriveSubsystem extends AftershockSubsystem {
 		mPoseEstimator.update(getGyroscopeRotation(), getPositions());
 
 		SwerveModuleState[] states = mKinematics.toSwerveModuleStates(mChassisSpeeds);
-		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxVelocityMetersPerSecond);
+		SwerveDriveKinematics.desaturateWheelSpeeds(states, kManualMaxVelocityMetersPerSecond);
 
 		mFrontLeftModule.set(
-			states[0].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[0].angle.getRadians()
+			states[0].speedMetersPerSecond / kManualMaxVelocityMetersPerSecond * MAX_VOLTAGE,
+			states[0].angle.getRadians()
 		);
 		mFrontRightModule.set(
-			states[1].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[1].angle.getRadians()
+			states[1].speedMetersPerSecond / kManualMaxVelocityMetersPerSecond * MAX_VOLTAGE,
+			states[1].angle.getRadians()
 		);
 		mBackLeftModule.set(
-			states[2].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[2].angle.getRadians()
+			states[2].speedMetersPerSecond / kManualMaxVelocityMetersPerSecond * MAX_VOLTAGE,
+			states[2].angle.getRadians()
 		);
 		mBackRightModule.set(
-			states[3].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[3].angle.getRadians()
+			states[3].speedMetersPerSecond / kManualMaxVelocityMetersPerSecond * MAX_VOLTAGE,
+			states[3].angle.getRadians()
 		);
 
 	}

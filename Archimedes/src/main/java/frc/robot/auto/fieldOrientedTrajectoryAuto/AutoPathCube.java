@@ -31,33 +31,32 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutoPathCube extends SequentialCommandGroup{
+public class AutoPathCube extends SequentialCommandGroup {
 
-    private final DriveSubsystem mDrive; 
+    private final DriveSubsystem mDrive;
     private final ElevatorSubsystem mElevator;
     private final ArmSubsystem mArm;
     private final IntakeSubsystem mIntake;
 
     TrajectoryConfig config = new TrajectoryConfig(
-        DriveConstants.kMaxVelocityMetersPerSecond * 0.3,
-        DriveConstants.kMaxAccelerationMetersPerSecondSquared
+        DriveConstants.kAutoMaxVelocityMetersPerSecond * 0.3, DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
-    Trajectory pathToCube = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(1.9, 1.08),
-        new Translation2d(4.98, 0.92)
-        ), new Pose2d(6.45, 2.11, new Rotation2d()), config);
+    Trajectory pathToCube = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(), List.of(new Translation2d(1.9, 1.08), new Translation2d(4.98, 0.92)),
+        new Pose2d(6.45, 2.11, new Rotation2d()), config
+    );
 
-    Trajectory pathToCommunity = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(6.46, 2.11),
-        new Translation2d(5.23, 0.74),
-        new Translation2d(3.19, 0.72)
-        ), new Pose2d(1.9, 1.08, new Rotation2d()), config);
+    Trajectory pathToCommunity = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(),
+        List.of(new Translation2d(6.46, 2.11), new Translation2d(5.23, 0.74), new Translation2d(3.19, 0.72)),
+        new Pose2d(1.9, 1.08, new Rotation2d()), config
+    );
 
-    Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(new Pose2d(),
-        List.of(new Translation2d(1.9, 1.08),
-        new Translation2d(2.39, 2.37)
-        ), new Pose2d(3.92, 2.39, new Rotation2d()), config);
+    Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(), List.of(new Translation2d(1.9, 1.08), new Translation2d(2.39, 2.37)),
+        new Pose2d(3.92, 2.39, new Rotation2d()), config
+    );
 
     public AutoPathCube(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
@@ -67,18 +66,13 @@ public class AutoPathCube extends SequentialCommandGroup{
         mIntake = intake;
 
         addCommands(
-            //Places cube preloaded in robot
+            // Places cube preloaded in robot
             new InstantCommand(() -> RobotContainer.setIsCube()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
-            new EjectConeCommand(mIntake),
-            new DelayCommand(0.5),
-            new StopIntakeCommand(mIntake),
+            new EjectConeCommand(mIntake), new DelayCommand(0.5), new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)
-        
+
         );
     }
 
-
-
-    
 }

@@ -63,15 +63,18 @@ public class LinearDriveCommand extends CommandBase {
             direction = false;
         }
 
-        double speed = mPid.update(mCurrentPose, mLinearSetpoint) * DriveConstants.kMaxVelocityMetersPerSecond;
+        double speed = mPid.update(mCurrentPose, mLinearSetpoint) * DriveConstants.kManualMaxVelocityMetersPerSecond;
 
-        //speed = mRateLimiter.calculate(speed);
-        System.out.println("Current --> " + mCurrentPose + " Setpoint --> " + mLinearSetpoint + " Error --> " + Math.abs(mPid.getError()));
-        speed = speed*0.8;
+        // speed = mRateLimiter.calculate(speed);
+        System.out.println(
+            "Current --> " + mCurrentPose + " Setpoint --> " + mLinearSetpoint + " Error --> "
+                + Math.abs(mPid.getError())
+        );
+        speed = speed * 0.8;
 
         if (direction) {
             mDrive.drive(new ChassisSpeeds(0, speed, 0));
-            //System.out.println("Wrong");
+            // System.out.println("Wrong");
         }
         else {
             mDrive.drive(new ChassisSpeeds(speed, 0, 0));

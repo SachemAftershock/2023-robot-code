@@ -18,6 +18,7 @@ public class Robot extends TimedRobot {
     private RobotContainer mRobotContainer;
     private AutoSelector mAutoSelector;
     private DriveSubsystem mDrive;
+
     /**
      * This function is run when the robot is first started up and should be used
      * for any initialization code.
@@ -26,9 +27,9 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         mRobotContainer = RobotContainer.getInstance();
         mRobotContainer.initialize();
-  
+
         mDrive = DriveSubsystem.getInstance();
-  
+
         mAutoSelector = new AutoSelector();
 
         CameraServer.startAutomaticCapture();
@@ -70,10 +71,10 @@ public class Robot extends TimedRobot {
         mRobotContainer.initialize();
         // CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().schedule(mRobotContainer.getAutonomousCommand());
-        //mAutonomousCommand = mRobotContainer.getAutonomousCommand();
-        //CommandScheduler.getInstance().schedule(mAutoSelector.getSelectedAutoCommand());
+        // mAutonomousCommand = mRobotContainer.getAutonomousCommand();
+        // CommandScheduler.getInstance().schedule(mAutoSelector.getSelectedAutoCommand());
         // if (mAutonomousCommand != null) {
-        //     mAutonomousCommand.schedule();
+        // mAutonomousCommand.schedule();
         // }
     }
 
