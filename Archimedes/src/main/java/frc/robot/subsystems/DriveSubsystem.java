@@ -318,51 +318,47 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 	public double[] runBalanceControl(double pow, double rot) {
 		double robotPitch = mNavx.getPitch();
+		double robotRoll = mNavx.getRoll();
+
 		double NewPowRot[] = new double[2];
 		NewPowRot[0] = pow;
 		NewPowRot[1] = rot;
 
-		if ((mEnableBalance) && (Math.abs(robotPitch) > kMinBalanceAngle)
-			&& (Math.abs(robotPitch) < kMaxBalanceAngle)) {
-			double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
-			double correctionOffset = slope * (robotPitch - kMinBalanceAngle);
-			NewPowRot[0] = NewPowRot[0] + correctionOffset;
-			NewPowRot[1] = -rot;
-			// System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "
-			// Pitch :" + robotPitch);
+		if ( (mEnableBalance) && (Math.abs(robotPitch) > kMinBalanceAngle) &&
+		(Math.abs(robotPitch) < kMaxBalanceAngle) ) {
+		double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
+		double correctionOffset = slope * (robotPitch - kMinBalanceAngle);
+		NewPowRot[0] = -(NewPowRot[0] + correctionOffset);
+		// System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "Pitch :" + robotPitch);
+		}
+		if ( (mEnableBalance) && (Math.abs(robotRoll) > kMinBalanceAngle) &&
+		(Math.abs(robotRoll) < kMaxBalanceAngle) ) {
+		double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
+		double correctionOffset = slope * (robotRoll - kMinBalanceAngle);
+		NewPowRot[0] = -(NewPowRot[0] + correctionOffset);
+		// System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset+ " Pitch :" + robotPitch);
 		}
 		return NewPowRot;
 	}
+		// double robotPitch = mNavx.getPitch();
+		// double NewPowRot[] = new double[2];
+		// NewPowRot[0] = pow;
+		// NewPowRot[1] = rot;
+
+		// if ((mEnableBalance) && (Math.abs(robotPitch) > kMinBalanceAngle)
+		// 	&& (Math.abs(robotPitch) < kMaxBalanceAngle)) {
+		// 	double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
+		// 	double correctionOffset = slope * (robotPitch - kMinBalanceAngle);
+		// 	NewPowRot[0] = NewPowRot[0] + correctionOffset;
+		// 	NewPowRot[1] = -rot;
+		// 	// System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "
+		// 	// Pitch :" + robotPitch);
+		// }
+		// return NewPowRot;
+	// }
 	// TODO I wasn't sure which code was the correct to merge and
 	// TODO mohid wasn't here to ask so I just merged both
-	// double robotPitch = mNavx.getPitch();
-	// double robotRoll = mNavx.getRoll();
-
-	// double NewPowRot[] = new double[2];
-	// NewPowRot[0] = pow;
-	// NewPowRot[1] = rot;
-
-	// if ( (mEnableBalance) && (Math.abs(robotPitch) > kMinBalanceAngle) &&
-	// (Math.abs(robotPitch) < kMaxBalanceAngle) ) {
-	// double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
-	// double correctionOffset = slope * (robotPitch - kMinBalanceAngle);
-	// NewPowRot[0] = -(NewPowRot[0] + correctionOffset);
-	// // System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset
-	// + "
-	// // Pitch :" + robotPitch);
-	// }
-	// else if ( (mEnableBalance) && (Math.abs(robotRoll) > kMinBalanceAngle) &&
-	// (Math.abs(robotRoll) < kMaxBalanceAngle) ) {
-	// double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
-	// double correctionOffset = slope * (robotRoll - kMinBalanceAngle);
-	// NewPowRot[0] = -(NewPowRot[0] + correctionOffset);
-	// // System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset
-	// + "
-	// // Pitch :" + robotPitch);
-	// }
-	// return NewPowRot;
-	// }
-
+	
 	public double balanceOnChargeStation() {
 		double currentTiltAngle = getChargeStationTiltAngle();
 		double tiltError = kTargetBalanceAngle - currentTiltAngle;
