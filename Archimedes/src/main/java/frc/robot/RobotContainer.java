@@ -104,10 +104,10 @@ public class RobotContainer {
         configureButtonBindings();
         mDriveSubsystem.setDefaultCommand(
             new ManualDriveCommand(
-                mDriveSubsystem, mArmSubsystem::getState, mElevatorSubsystem::getState,
-                () -> modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
-                () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
-                () -> -modifyAxis(mPrimaryTwistController.getTwist())
+                mDriveSubsystem, mArmSubsystem::isArmStowedEnough, mElevatorSubsystem::getState,
+                () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kMaxVelocityMetersPerSecond,
+                () -> -modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kMaxVelocityMetersPerSecond,
+                () -> modifyAxis(mPrimaryTwistController.getTwist())
                     * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant
             )
         );
@@ -446,6 +446,18 @@ public class RobotContainer {
         return new AutoPath2NC(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
     }
 
+    private static double modifyAxis(double value) {
+        // Deadband
+        value = deadband(value, DriveConstants.kDriveControllerDeadband);
+
+        // Square the axis
+        if (DriveConstants.kSquareAxis) {
+            value = Math.copySign(value * value, value);
+        }
+
+        return value;
+    }
+
     private static double deadband(double value, double deadband) {
         if (Math.abs(value) > deadband) {
             if (value > 0.0) {
@@ -458,18 +470,6 @@ public class RobotContainer {
         else {
             return 0.0;
         }
-    }
-
-    private static double modifyAxis(double value) {
-        // Deadband
-        value = deadband(value, DriveConstants.kDriveControllerDeadband);
-
-        // Square the axis
-        if (DriveConstants.kSquareAxis) {
-            value = Math.copySign(value * value, value);
-        }
-
-        return value;
     }
 
     private void syncLeds() {

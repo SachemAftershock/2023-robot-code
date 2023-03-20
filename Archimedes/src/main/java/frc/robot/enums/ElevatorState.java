@@ -4,6 +4,7 @@ import frc.robot.RobotContainer;
 
 public enum ElevatorState {
     eStowEmpty(25.0, 25.0), // height from floor
+    
     eStowLoaded(28.0, 28.0), eClearBumper(26.0, 26.0), eFloor(22.5, 22.5), eRaised(22.0, 22.0), // For raising the
                                                                                                 // elevator before
                                                                                                 // lowering

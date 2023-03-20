@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.robot.RobotContainer;
 import frc.robot.ErrorTracker;
 import frc.robot.ErrorTracker.ErrorType;
@@ -36,8 +37,10 @@ public class ArmSubsystem extends AftershockSubsystem {
     private static ArmSubsystem mInstance;
     private CANSparkMax mLeftArmMotor;
     private CANSparkMax mRighthArmMotor;
+
     private SparkMaxPIDController mLeftController; 
     private SparkMaxPIDController mRighController;
+
     private MotorControllerGroup mMotorControllerGroup;
     private TalonSRX mHookMotor;
 
@@ -208,6 +211,7 @@ public class ArmSubsystem extends AftershockSubsystem {
 
         // SmartDashboard.putNumber("Raw Bar Distance", mLidar.getDistanceIn());
         SmartDashboard.putNumber("Bar Distance", getBarDistance());
+
         SmartDashboard.putNumber("Arm Motor Velocity", mLeftArmMotor.getEncoder().getVelocity());
     }
 
@@ -229,6 +233,10 @@ public class ArmSubsystem extends AftershockSubsystem {
     public void overrideCurrentState() {
         mCurrentState = ArmState.eUnknown;
         mDesiredState = ArmState.eUnknown;
+    }
+
+    public boolean isArmStowedEnough() {
+        return getBarDistance() < kArmStowedEnough;
     }
 
     public void TESTSPEED() {
