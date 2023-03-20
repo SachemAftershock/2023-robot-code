@@ -65,6 +65,6 @@ public class ManualDriveCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        mDrivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+        mDrivetrainSubsystem.drive(new ChassisSpeeds());
     }
 }

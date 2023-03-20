@@ -27,11 +27,13 @@ public class BalanceRobotContinousCommand extends CommandBase {
     public void execute() {
 
         double robotPitch = mDrive.getPitch();
-        double robotRoll = mDrive.getRoll();
+        //double robotRoll = mDrive.getRoll();
         //double tiltVector = Math.sqrt(Math.pow(robotPitch, 2) + Math.pow(robotRoll, 2));
 
         double speed = mPID.update(robotPitch, 0);
-        mDrive.drive(new ChassisSpeeds(speed, 0, 0));
+        speed = speed*100;
+        System.out.println("Speed output --> " + speed);
+        mDrive.drive(new ChassisSpeeds(-speed, 0, 0));
 
     }
     

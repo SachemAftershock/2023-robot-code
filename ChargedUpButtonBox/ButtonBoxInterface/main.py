@@ -1,4 +1,4 @@
-from ntcore import NetworkTableInstance, StringSubscriber
+from ntcore import NetworkTableInstance, StringSubscriber, PubSubOptions
 from serial import Serial, SerialTimeoutException, SerialException
 from serial.tools import list_ports
 from traceback import print_exc
@@ -7,8 +7,6 @@ SERIAL_PORT = "COM7"  # Leave empty to try to find port automatically
 ARDUINO_NAME = "Arduino Mega 2560"  # The arduino to search for when scanning ports. Can leave blank if not scanning
 TEAM_NUMBER = 263
 NT_NAME = "DS Laptop"
-ROBORIO_BUSY = "b"
-ROBORIO_READY = "r"
 
 NT_WAYPOINT_PATH = "/ButtonBox/Waypoint"
 NT_INTAKE_PATH = "/ButtonBox/Intake"
@@ -16,6 +14,13 @@ NT_SUPERSTRUCTURE_PATH = "/ButtonBox/Superstructure"
 NT_TOGGLE_PATH = "/ButtonBox/Toggle"
 NT_JOYSTICK_PATH = "/ButtonBox/Joystick"
 NT_MESSAGE_PATH = "/ButtonBox/Message"
+
+NT_HEARTBEAT_PATH = "/ButtonBoxHeartbeat/PythonScript"
+
+heartbeat = (
+    NetworkTableInstance.getDefault().getBooleanArrayTopic(NT_HEARTBEAT_PATH).publish()
+)
+heartbeat.setDefault(False)
 
 
 def send_serial(serial: Serial, command: str) -> bool:
@@ -131,4 +136,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        heartbeat.set(True)
+        main()
+    except:
+        print_exc()
+        print()
+        print("Something went wrong in the main loop")
+    finally:
+        heartbeat.set(False)

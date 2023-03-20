@@ -195,7 +195,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 		// We have to invert the angle of the NavX so that rotating the robot
 		// counter-clockwise makes the angle increase.
-		return Rotation2d.fromDegrees(360.0 - (getYaw()) + 90); // TODO: Add 90 here I think
+		return Rotation2d.fromDegrees(360.0 - (getYaw())); // TODO: Add 90 here I think
 	}
 
 	public void drive(ChassisSpeeds chassisSpeeds) {
@@ -233,6 +233,8 @@ public class DriveSubsystem extends AftershockSubsystem {
 			mPoseEstimator.addVisionMeasurement(poseInfo.getPose(), poseInfo.getTimestamp());
 		}
 
+		// System.out.println("Angle --> " + mNavx.getYaw());
+
 		// photonvision update pose
 
 		// if(pcw.getEstimatedGlobalPose(mPoseEstimator.getEstimatedPosition()) != null)
@@ -253,19 +255,23 @@ public class DriveSubsystem extends AftershockSubsystem {
 		mPoseEstimator.update(getGyroscopeRotation(), getPositions());
 
 		SwerveModuleState[] states = mKinematics.toSwerveModuleStates(mChassisSpeeds);
-		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxVelocityMetersPerSecond);
+		SwerveDriveKinematics.desaturateWheelSpeeds(states, kManualMaxVelocityMetersPerSecond);
 
 		mFrontLeftModule.set(
-			states[0].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[0].angle.getRadians()
+			states[0].speedMetersPerSecond / kManualMaxVelocityMetersPerSecond * MAX_VOLTAGE,
+			states[0].angle.getRadians()
 		);
 		mFrontRightModule.set(
-			states[1].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[1].angle.getRadians()
+			states[1].speedMetersPerSecond / kManualMaxVelocityMetersPerSecond * MAX_VOLTAGE,
+			states[1].angle.getRadians()
 		);
 		mBackLeftModule.set(
-			states[2].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[2].angle.getRadians()
+			states[2].speedMetersPerSecond / kManualMaxVelocityMetersPerSecond * MAX_VOLTAGE,
+			states[2].angle.getRadians()
 		);
 		mBackRightModule.set(
-			states[3].speedMetersPerSecond / kMaxVelocityMetersPerSecond * MAX_VOLTAGE, states[3].angle.getRadians()
+			states[3].speedMetersPerSecond / kManualMaxVelocityMetersPerSecond * MAX_VOLTAGE,
+			states[3].angle.getRadians()
 		);
 
 	}

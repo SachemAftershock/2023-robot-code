@@ -84,6 +84,20 @@ LedGroup ledGroups[] = {
 };
 size_t ledGroupsSize = sizeof(ledGroups) / sizeof(ledGroups[0]);
 
+void clearDisplay()
+{
+  lcd.clear();
+}
+
+void clearDisplay(uint8_t line)
+{
+  if (line < 0 || line > 1)
+    return;
+
+  lcd.setCursor(0, line);
+  lcd.print("                ");
+}
+
 void setDisplay(String message)
 {
   lcd.clear();
@@ -113,7 +127,11 @@ void setDisplay(String message)
 
 void setDisplay(String message, uint8_t line)
 {
-  lcd.clear();
+
+  if (line < 0 || line > 1)
+    return;
+
+  clearDisplay(line);
   lcd.setCursor(0, line);
 
   if (message.length() > 16)
@@ -226,6 +244,16 @@ void processCommand(Command command)
       setDisplay(command.message, command.line);
     }
     break;
+  case CLEAR_COMMAND:
+    if (command.line == NO_LINE)
+    {
+      clearDisplay();
+    }
+    else
+    {
+      clearDisplay(command.line);
+    }
+    break;
   default:
     break;
   }
@@ -273,10 +301,6 @@ void loop()
       }
       String command = buffer;
       cmd = parseCommand(command);
-      lcd.clear();
-      lcd.print(cmd.commandType);
-      lcd.setCursor(0, 1);
-      lcd.print(cmd.message);
       processCommand(cmd);
       memset(buffer, 0, sizeof(buffer));
       currentIndex = 0;

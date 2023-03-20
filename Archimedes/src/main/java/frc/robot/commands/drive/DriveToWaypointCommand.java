@@ -41,8 +41,8 @@ public class DriveToWaypointCommand extends CommandBase {
         // Arhum did this to pass in the april tag as the setpoint and be a little off
         // of it
         // TODO: Consider moving this logic elsewhere, so the command works as intended
-        mXCoordSetpoint = mSetpoint.getX() - 0.5;
-        mYCoordSetpoint = mSetpoint.getY() - 0.5;
+        //mXCoordSetpoint = mSetpoint.getX() - 0.5;
+        //mYCoordSetpoint = mSetpoint.getY() - 0.5;
 
         mPIDX.start(DriveConstants.kDriveLinearGains);
         mPIDY.start(DriveConstants.kDriveLinearGains);

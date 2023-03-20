@@ -1,21 +1,25 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.robot.RobotContainer;
 import frc.robot.ErrorTracker;
 import frc.robot.ErrorTracker.ErrorType;
@@ -33,8 +37,10 @@ public class ArmSubsystem extends AftershockSubsystem {
     private static ArmSubsystem mInstance;
     private CANSparkMax mLeftArmMotor;
     private CANSparkMax mRighthArmMotor;
-    private SparkMaxPIDController mLeftController;
-    private SparkMaxPIDController mRightController;
+
+    private SparkMaxPIDController mLeftController; 
+    private SparkMaxPIDController mRighController;
+
     private MotorControllerGroup mMotorControllerGroup;
     private TalonSRX mHookMotor;
 
@@ -80,6 +86,7 @@ public class ArmSubsystem extends AftershockSubsystem {
         mConstraints = new TrapezoidProfile.Constraints(
             kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared
         );
+
         mProfileController = new ProfiledPIDController(kGains[0], kGains[1], kGains[2], mConstraints);
         mFilter = new MedianFilter(10);
         mPID = new PID();
@@ -121,11 +128,19 @@ public class ArmSubsystem extends AftershockSubsystem {
         }
 
         double output = mPID.update(current, setpoint);
+        //double output = mProfileController.calculate(current, setpoint);
         // output = MathUtil.clamp(output, -0.5, 0.5);
-        output = output * 0.4;
 
-        // System.out.println("Current " + current + " SetPoint " + setpoint + " Output
-        // " + output);
+        // if(current > 17.0) {
+        //     output = output *0.5;
+        // } else {
+        //     output = output*0.5;
+        // }
+
+        output = output*0.5;
+
+        //System.out.println("ERROR: Current " + current + " SetPoint " + setpoint + " Output " + output);
+
         if (Math.abs(mPID.getError()) < kEpsilon) {
             System.out.println("-----EXITING PID-----" + mPID.getError());
             mCurrentState = mDesiredState;
@@ -155,12 +170,20 @@ public class ArmSubsystem extends AftershockSubsystem {
     }
 
     public void jogArmOut() {
-        setSpeed(-0.2);
+        setSpeed(-0.4);
     }
 
     public void jogArmIn() {
         setSpeed(0.2);
 
+    }
+
+    public void setHookSpeed(double speed) {
+        mHookMotor.set(ControlMode.PercentOutput, speed);
+    }
+
+    public void stopHook() {
+        mHookMotor.set(ControlMode.PercentOutput, 0.0);
     }
 
     public ArmState getState() {
@@ -188,6 +211,8 @@ public class ArmSubsystem extends AftershockSubsystem {
 
         // SmartDashboard.putNumber("Raw Bar Distance", mLidar.getDistanceIn());
         SmartDashboard.putNumber("Bar Distance", getBarDistance());
+
+        SmartDashboard.putNumber("Arm Motor Velocity", mLeftArmMotor.getEncoder().getVelocity());
     }
 
     @Override

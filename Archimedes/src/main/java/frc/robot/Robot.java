@@ -4,16 +4,20 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.SubsystemManager;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class Robot extends TimedRobot {
     private Command mAutonomousCommand;
 
     private RobotContainer mRobotContainer;
+    private AutoSelector mAutoSelector;
+    private DriveSubsystem mDrive;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -23,6 +27,12 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         mRobotContainer = RobotContainer.getInstance();
         mRobotContainer.initialize();
+
+        mDrive = DriveSubsystem.getInstance();
+
+        mAutoSelector = new AutoSelector();
+
+        CameraServer.startAutomaticCapture();
     }
 
     /**
@@ -47,7 +57,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-
+        mAutoSelector.selectAuto();
     }
 
     /**
@@ -56,13 +66,16 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
+        mDrive.zeroGyroscope();
         mRobotContainer.initializeSubsystems();
-
-        mAutonomousCommand = mRobotContainer.getAutonomousCommand();
-
-        if (mAutonomousCommand != null) {
-            mAutonomousCommand.schedule();
-        }
+        mRobotContainer.initialize();
+        // CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().schedule(mRobotContainer.getAutonomousCommand());
+        // mAutonomousCommand = mRobotContainer.getAutonomousCommand();
+        // CommandScheduler.getInstance().schedule(mAutoSelector.getSelectedAutoCommand());
+        // if (mAutonomousCommand != null) {
+        // mAutonomousCommand.schedule();
+        // }
     }
 
     /** This function is called periodically during autonomous. */

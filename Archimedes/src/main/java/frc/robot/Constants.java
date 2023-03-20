@@ -38,40 +38,43 @@ public class Constants {
         public static final double kArmOutSpeedScaleFactor = 0.5;
         public static final double kArmStowedEnoughScaleFactor = 0.75;
 
-        public static final double[] kDriveAngularGains = { 0.02, 0.0, 0.0 }; // dont use I it sucks - Shreyas
+        public static final double[] kDriveAngularGains = { 0.013, 0.0, 0.0 }; // dont use I it sucks - Shreyas
         public static final double[] kDriveLinearGains = { 0.4, 0.0, 0.0 };
 
         public static final double kPX = 1.25;
         public static final double kPY = 1.25;
 
-        public static final double kAutoRotateEpsilon = 3.0;
-        public static final double kLinearDriveEpsilon = 0.0;
+        public static final double kAutoRotateEpsilon = 2.0;
+        public static final double kLinearDriveEpsilon = 0.1;
 
         public static final double kDrivetrainTrackwidthMeters = 0.5461;
         public static final double kDrivetrainWheelbaseMeters = 0.5461;
 
         // angles in radians.
         // to convert from degrees to radians multiply by pi/180
-        public static final double kFrontLeftSteerOffset = -0.35 - 0.05 + (Math.PI / 2.0);// -0.35 + (Math.PI / 2.0); //
+        public static final double kFrontLeftSteerOffset = -0.35 - 0.05 - (Math.PI / 2.0);// -0.35 + (Math.PI / 2.0); //
                                                                                           // - Math.toRadians(15);// -
         // (Math.PI / 2.0);// -.35;
-        public static final double kFrontRightSteerOffset = 0.4 + (Math.PI / 2.0); // - Math.toRadians(15);; //-
+        public static final double kFrontRightSteerOffset = 0.4 - (Math.PI / 2.0); // - Math.toRadians(15);; //-
                                                                                    // (Math.PI / 2.0);// 0.40;
-        public static final double kBackLeftSteerOffset = 0.45 + (Math.PI / 2.0); // - Math.toRadians(15);; //- (Math.PI
+        public static final double kBackLeftSteerOffset = 0.45 - (Math.PI / 2.0); // - Math.toRadians(15);; //- (Math.PI
                                                                                   // / 2.0);// .45;
-        public static final double kBackRightSteerOffset = -0.5 + (Math.PI / 2.0); // - Math.toRadians(15);; //-
+        public static final double kBackRightSteerOffset = -0.5 - (Math.PI / 2.0); // - Math.toRadians(15);; //-
                                                                                    // (Math.PI / 2.0);// -.5;
 
         private static final double kMk4L1DriveReduction = (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0);
         private static final double kMk4WheelDiameter = 0.10033;
 
-        public static final double kMaxVelocityMetersPerSecond = 6380.0 / 60.0 * kMk4L1DriveReduction
+        public static final double kManualMaxVelocityMetersPerSecond = (680.0 / 60.0 * kMk4L1DriveReduction
+            * kMk4WheelDiameter * Math.PI) * 100;
+
+        public static final double kAutoMaxVelocityMetersPerSecond = 6380.0 / 60.0 * kMk4L1DriveReduction
             * kMk4WheelDiameter * Math.PI;
 
         // TODO: Change
-        public static final double kMaxAccelerationMetersPerSecondSquared = kMaxVelocityMetersPerSecond * 0.25;
+        public static final double kMaxAccelerationMetersPerSecondSquared = kManualMaxVelocityMetersPerSecond * 0.25;
 
-        public static final double kMaxAngularVelocityRadiansPerSecond = kMaxVelocityMetersPerSecond
+        public static final double kMaxAngularVelocityRadiansPerSecond = kManualMaxVelocityMetersPerSecond
             / Math.hypot(kDrivetrainTrackwidthMeters / 2.0, kDrivetrainWheelbaseMeters / 2.0);
 
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
@@ -85,7 +88,7 @@ public class Constants {
         public static final double kMinBalanceAngle = 9.0;// In degrees
         public static final double kMaxBalanceAngle = 16.0;
 
-        public static final double[] kBalanceRobotGains = { 0.0, 0.0, 0.0 };
+        public static final double[] kBalanceRobotGains = { 1.0, 0.0, 0.0 };
         public static final double kBalanceRobotEpsilon = 1.0;
 
         public static final double kDriveSpeed = 0.5; // adjust as needed
@@ -100,6 +103,14 @@ public class Constants {
         public static final double kRampLevelAngle = 34.25; // degrees
         public static final double kRampMaxTiltAngle = 71.5; // degrees
         public static final double kTargetBalanceAngle = 0;
+
+        public static final double kBlueGridXCoordinate = 1.9;
+        public static final double kRedGridXCoordinate = 14.64;
+        // Blue y coordinates is opposite of red y coordinates i.e. first item in list
+        // is blue grid spot 1,
+        // while the first item in list is red spot 9
+        public static final double[] kGridYCoordinates = { 4.9, 4.44, 3.87, 3.3, 2.76, 2.22, 1.62, 1.07, .41 };
+
     }
 
     public static class VisionConstants {
@@ -150,7 +161,7 @@ public class Constants {
             kButtonBoxButtonMap.put(ButtonPosition.eJoystickEnable, LedPosition.eJoystickEnable); // enable joystick
         }
 
-        public static final double kErrorDelaySeconds = 1.0;
+        public static final double kErrorDelaySeconds = 2.0;
     }
 
     public static class IntakeConstants {
@@ -166,7 +177,7 @@ public class Constants {
         public static final double kMaxVelocityMeterPerSecond = 0.05;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.025;
         public static final double kArmOffsetRads = 0;
-        public static final double[] kGains = { 2.0, 0.0, 0.0 };// { 1.2, 0.0, 0.0 };
+        public static final double[] kGains = { 1.2, 0.0, 0.0 };// { 1.2, 0.0, 0.0 };
         public static final double kIntegralZone = 0.0;
         public static final double kDt = 0.02;
 
@@ -174,6 +185,15 @@ public class Constants {
         public static final double kMinArmBarDistance = 13.0;
         public static final double kMaxArmBarDistance = 18.0;
         public static final double kArmSpeedScalingFactor = 0.4;
+
+        public static final double[] kSparkPidGains = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+        public static final double kMinOutput = -1.0;
+        public static final double kMaxOutput = 1.0;
+        public static final double kMaxVelocity = 0.0;
+        public static final double kMinVelocity = 0.0;
+        public static final double kMaxAcel = 0.0;
+        public static final int kSmartMotionPidSlot = 0;
+        public static final double kAllowedError = 0.0;
 
         public static final double kJogSpeed = 0.2;
         public static final double kArmLidarOffset = -3.0;
@@ -219,7 +239,7 @@ public class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final double[] kPidGains = { 0.06, 0.0, 0.0 };
+        public static final double[] kPidGains = { 0.2, 0.0, 0.0 };// { 0.06, 0.0, 0.0 };
         public static final double[] kTrapezoidalPidGains = { 0.05, 0.0, 0.0 };
         public static final double kMaxVelocityMeterPerSecond = 0.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.25;
