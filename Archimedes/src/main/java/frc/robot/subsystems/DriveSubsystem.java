@@ -338,7 +338,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 		NewPowRot[0] = -(NewPowRot[0] + correctionOffset);
 		// System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset+ " Pitch :" + robotPitch);
 		}
-		NewPowRot[1] = getGyroscopeRotation();
+		NewPowRot[1] = mNavx.getFusedHeading();
 		return NewPowRot;
 	}
 		// double robotPitch = mNavx.getPitch();
