@@ -105,8 +105,8 @@ public class RobotContainer {
         mDriveSubsystem.setDefaultCommand(
             new ManualDriveCommand(
                 mDriveSubsystem, mArmSubsystem::isArmStowedEnough, mElevatorSubsystem::getState,
-                () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kMaxVelocityMetersPerSecond,
-                () -> -modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kMaxVelocityMetersPerSecond,
+                () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
+                () -> -modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
                 () -> modifyAxis(mPrimaryTwistController.getTwist())
                     * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant
             )

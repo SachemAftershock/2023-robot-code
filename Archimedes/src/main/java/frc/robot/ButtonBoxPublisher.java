@@ -26,10 +26,6 @@ public class ButtonBoxPublisher {
     private ButtonBoxPublisher() {
     }
 
-    public static void clearError() {
-        sMessagePub.set("lcd clear 2\0");
-    }
-
     public static void enableLed(LedPosition ledPosition) {
         setLed(ledPosition, LedState.eOn);
     }

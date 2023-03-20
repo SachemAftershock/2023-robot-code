@@ -45,7 +45,7 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
     
     
     TrajectoryConfig config = new TrajectoryConfig(
-        DriveConstants.kMaxVelocityMetersPerSecond * 0.3,
+        DriveConstants.kAutoMaxVelocityMetersPerSecond * 0.3,
         DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
 
