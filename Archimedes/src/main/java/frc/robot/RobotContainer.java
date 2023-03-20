@@ -30,6 +30,7 @@ import frc.robot.auto.robotOrientedTrajectoryAuto.AutoPath2NC;
 import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.arm.SetArmStateCommand;
+import frc.robot.commands.drive.BalanceRobotContinousCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
@@ -183,13 +184,13 @@ public class RobotContainer {
             mArmSubsystem.setTestSpeed(0.0);
         }
 
-        if (mTestController.getRightBumper()) {
-            mArmSubsystem.setHookSpeed(0.2);
-        } else if (mTestController.getLeftBumper()) {
-            mArmSubsystem.setHookSpeed(-0.2);
-        } else {
-            mArmSubsystem.stopHook();
-        }
+        // if (mTestController.getRightBumper()) {
+        //     mArmSubsystem.setHookSpeed(0.2);
+        // } else if (mTestController.getLeftBumper()) {
+        //     mArmSubsystem.setHookSpeed(-0.2);
+        // } else {
+        //     mArmSubsystem.stopHook();
+        // }
     }
 
     public void initializeSubsystems() {
@@ -204,6 +205,8 @@ public class RobotContainer {
             mDriveToCoordinateCommand.cancel();
             ButtonBoxPublisher.enableLed(mDriveSubsystem.getLedPosition());
         }));
+
+        mPrimaryTwistController.getTrigger().whileTrue(new BalanceRobotContinousCommand(mDriveSubsystem));
 
         mButtonBox.cubeToggle().onTrue(new InstantCommand(() -> RobotContainer.setIsCube()));
         mButtonBox.coneToggle().onTrue(new InstantCommand(() -> RobotContainer.setIsCone()));
@@ -242,7 +245,7 @@ public class RobotContainer {
         );
         mButtonBox.floorPosition().onTrue(
             CommandFactory
-                .HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+                .HandleSuperStructureSequence(SuperState.eFloor, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
         );
 
         mButtonBox.humanPlayerPostion().onTrue(

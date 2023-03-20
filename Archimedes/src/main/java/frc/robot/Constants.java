@@ -64,8 +64,8 @@ public class Constants {
         private static final double kMk4L1DriveReduction = (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0);
         private static final double kMk4WheelDiameter = 0.10033;
 
-        public static final double kMaxVelocityMetersPerSecond = 6380.0 / 60.0 * kMk4L1DriveReduction
-            * kMk4WheelDiameter * Math.PI;
+        public static final double kMaxVelocityMetersPerSecond = (6380.0 / 60.0 * kMk4L1DriveReduction
+            * kMk4WheelDiameter * Math.PI) * 100.0;
 
         // TODO: Change
         public static final double kMaxAccelerationMetersPerSecondSquared = kMaxVelocityMetersPerSecond * 0.25;
@@ -84,7 +84,7 @@ public class Constants {
         public static final double kMinBalanceAngle = 9.0;// In degrees
         public static final double kMaxBalanceAngle = 16.0;
 
-        public static final double[] kBalanceRobotGains = { 0.0, 0.0, 0.0 };
+        public static final double[] kBalanceRobotGains = {1.0, 0.0, 0.0 };
         public static final double kBalanceRobotEpsilon = 1.0;
 
         public static final double kDriveSpeed = 0.5; // adjust as needed
@@ -180,6 +180,15 @@ public class Constants {
         public static final double kMinArmBarDistance = 13.0;
         public static final double kMaxArmBarDistance = 18.0;
         public static final double kArmSpeedScalingFactor = 0.4;
+
+        public static final double[] kSparkPidGains = {0.0, 0.0, 0.0, 0.0, 0.0};
+        public static final double kMinOutput = -1.0;
+        public static final double kMaxOutput = 1.0;
+        public static final double kMaxVelocity = 0.0;
+        public static final double kMinVelocity = 0.0;
+        public static final double kMaxAcel = 0.0;
+        public static final int kSmartMotionPidSlot = 0;
+        public static final double kAllowedError = 0.0;
 
         public static final double kJogSpeed = 0.2;
         public static final double kArmLidarOffset = -3.0;
