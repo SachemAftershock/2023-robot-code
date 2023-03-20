@@ -329,7 +329,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 		double slope = (0.4 - 0.0) / (kMaxBalanceAngle - kMinBalanceAngle);
 		double correctionOffset = slope * (robotPitch - kMinBalanceAngle);
 		NewPowRot[0] = -(NewPowRot[0] + correctionOffset);
-		// System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "Pitch :" + robotPitch);
+ 		// System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + "Pitch :" + robotPitch);
 		}
 		if ( (mEnableBalance) && (Math.abs(robotRoll) > kMinBalanceAngle) &&
 		(Math.abs(robotRoll) < kMaxBalanceAngle) ) {
@@ -338,6 +338,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 		NewPowRot[0] = -(NewPowRot[0] + correctionOffset);
 		// System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset+ " Pitch :" + robotPitch);
 		}
+		NewPowRot[1] = getGyroscopeRotation();
 		return NewPowRot;
 	}
 		// double robotPitch = mNavx.getPitch();
