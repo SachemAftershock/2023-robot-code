@@ -49,10 +49,13 @@ public class ManualDriveCommand extends CommandBase {
 
         double rotSpeed = m_rotationSupplier.getAsDouble();
 
-        if (mArmStateSupplier.get() != ArmState.eStowEmpty
-            || mElevatorStateSupplier.get() != ElevatorState.eStowEmpty) {
-            xSpeed *= kDriveSpeedScaleFactor;
-            ySpeed *= kDriveSpeedScaleFactor;
+        if ((mArmStateSupplier.get() != ArmState.eStowEmpty
+            || mElevatorStateSupplier.get() != ElevatorState.eStowEmpty)) {
+            
+            if (mArmStateSupplier.get() != null && mElevatorStateSupplier.get() != null) {
+                xSpeed *= kDriveSpeedScaleFactor;
+                ySpeed *= kDriveSpeedScaleFactor;
+            }
         }
 
         mDrivetrainSubsystem.drive(

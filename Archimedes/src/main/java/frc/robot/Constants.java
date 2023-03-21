@@ -172,6 +172,11 @@ public class Constants {
 
     public static class ArmConstants {
 
+        public static final double[] kHookMotorGains = {0.001, 0.0, 0.0};
+        public static final double kHoookAttachedPosition = 0.0;
+        public static final double kHoookDetachedPosition = 0.0;
+        public static final double kHookEpsilon = 0.0;
+
         public static final double kCubeOffset = 0.0;
         public static final double kMaxVelocityMeterPerSecond = 0.05;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.025;
