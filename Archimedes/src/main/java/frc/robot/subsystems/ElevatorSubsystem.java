@@ -100,6 +100,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
+        //System.out.println(getElevatorHeight());
 
         ControllState controlState = RobotContainer.getControllState();
         double current = getElevatorHeight();
@@ -132,6 +133,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         //Setpoint should get set by this state machine
         //eIdle and ePIDControl is seperate in case to lock in setpoint
         //Elevator state machine sets the setpoint and starts the PID
+
         switch (mElevatorMode) {
             case eStowedEmpty:
                 break;
@@ -143,7 +145,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                 // double idleOutput = mPid.update(current, mSetpoint);
                 // setSpeed(idleOutput);
 
-                mMotor.setVoltage(0.5);
+                mMotor.setVoltage(0.5); //was 0.5
 
                 break;
 
@@ -248,6 +250,10 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     public ElevatorState getState() {
         return mCurrentState;
+    }
+
+    public boolean isLowEnough() {
+        return getElevatorHeight() <= 41;
     }
 
     public void jogSetpoint(double jogValue) {

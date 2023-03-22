@@ -46,9 +46,9 @@ public class IntakeSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
-        if (mIntakeMotor.get() > 0 && getIntakeDistance() < 5.0) {
-            stop();
-        }
+        // if (mIntakeMotor.get() > 0 && getIntakeDistance() < 5.0) {
+        //     stop();
+        // }
     }
 
     @Override

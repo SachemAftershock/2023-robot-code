@@ -15,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -40,6 +41,7 @@ public class ArmSubsystem extends AftershockSubsystem {
     private SparkMaxPIDController mRighController;
     private MotorControllerGroup mMotorControllerGroup;
     private TalonSRX mHookMotor;
+    private DutyCycleEncoder mHookEncoder;
 
     private final Lidar mLidar;
     private ProfiledPIDController mProfileController; // Add final back
@@ -77,6 +79,8 @@ public class ArmSubsystem extends AftershockSubsystem {
 
         mHookMotor = new TalonSRX(kHookMotorId);
         mHookMotor.setNeutralMode(NeutralMode.Brake);
+
+        mHookEncoder = new DutyCycleEncoder(new DigitalInput(4));
 
         mLidar = new Lidar(new DigitalInput(kArmLidarId));
 
@@ -158,6 +162,17 @@ public class ArmSubsystem extends AftershockSubsystem {
         setSetpoint(mDesiredState.getLength());
     }
 
+    public boolean isArmStowed() {
+        if  (mDesiredState == ArmState.eStowEmpty && getBarDistance() < ArmState.eStowEmpty.getLength()) {
+            return true;
+        }
+        return false; 
+    }
+
+    public boolean isArmStowedEnough() {
+        return getBarDistance() > kArmStowedEnough;
+    }
+
     public void stop() {
         setSpeed(0);
     }
@@ -181,6 +196,10 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     public void stopHook() {
         mHookMotor.set(ControlMode.PercentOutput, 0.0);
+    }
+
+    public double getHookPosition() {
+        return mHookEncoder.getAbsolutePosition();
     }
 
     public ArmState getState() {

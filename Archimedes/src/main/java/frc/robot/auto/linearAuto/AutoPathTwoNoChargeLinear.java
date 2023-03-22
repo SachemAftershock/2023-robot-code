@@ -95,7 +95,7 @@ public class AutoPathTwoNoChargeLinear extends SequentialCommandGroup {
 
             // Sequence for picking up cone and stowing
             new InstantCommand(() -> RobotContainer.setIsCone()),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eFloor, mElevator, mArm, mIntake),
+            CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm, mIntake),
             new IngestConeCommand(mIntake), new DelayCommand(0.5), new StopIntakeCommand(mIntake),
             new SetElevatorStateCommand(ElevatorState.eLow, mElevator),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)

@@ -28,6 +28,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Ports.DrivePorts.*;
@@ -210,8 +211,8 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 	@Override
 	public void initialize() {
-		// mPoseEstimator.resetPosition(new Pose2d() ,new Rotation2d());
 		zeroGyroscope();
+		mPoseEstimator.resetPosition(getGyroscopeRotation(), getPositions(), new Pose2d());
 		try {
 			pcw = new PhotonCameraSubsystem();
 		}
@@ -253,6 +254,8 @@ public class DriveSubsystem extends AftershockSubsystem {
 		// }
 
 		mPoseEstimator.update(getGyroscopeRotation(), getPositions());
+
+		//System.out.println(mPoseEstimator.getEstimatedPosition());
 
 		SwerveModuleState[] states = mKinematics.toSwerveModuleStates(mChassisSpeeds);
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, kManualMaxVelocityMetersPerSecond);
@@ -468,7 +471,6 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 	@Override
 	public void outputTelemetry() {
-
 	}
 
 	public synchronized static DriveSubsystem getInstance() {

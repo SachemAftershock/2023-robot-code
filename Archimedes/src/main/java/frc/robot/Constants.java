@@ -35,13 +35,14 @@ public class Constants {
         public static final double kDriveControllerDeadband = 0.05;
         public static final boolean kSquareAxis = true;
 
-        public static final double kDriveSpeedScaleFactor = 0.25;
+        public static final double kDriveSpeedFastScaleFactor = 0.75;
+        public static final double kDriveSpeedScaleFactor = 0.45;
 
         public static final double[] kDriveAngularGains = { 0.013, 0.0, 0.0 }; // dont use I it sucks - Shreyas
         public static final double[] kDriveLinearGains = { 0.4, 0.0, 0.0 };
 
-        public static final double kPX = 1.25;
-        public static final double kPY = 1.25;
+        public static final double kPX = 1.25 * 10;
+        public static final double kPY = 1.25 * 10;
 
         public static final double kAutoRotateEpsilon = 2.0;
         public static final double kLinearDriveEpsilon = 0.1;
@@ -78,7 +79,7 @@ public class Constants {
 
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
 
-        public static double kRotationScalingConstant = 0.3;
+        public static double kRotationScalingConstant = 0.5;
 
         // TODO: Consider if we need this
         public static double kMinimumDistanceForAutoDrive = 0.0;
@@ -172,6 +173,11 @@ public class Constants {
 
     public static class ArmConstants {
 
+        public static final double[] kHookMotorGains = {0.001, 0.0, 0.0};
+        public static final double kHoookAttachedPosition = 0.0;
+        public static final double kHoookDetachedPosition = 0.0;
+        public static final double kHookEpsilon = 0.0;
+
         public static final double kCubeOffset = 0.0;
         public static final double kMaxVelocityMeterPerSecond = 0.05;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.025;
@@ -196,6 +202,8 @@ public class Constants {
 
         public static final double kJogSpeed = 0.2;
         public static final double kArmLidarOffset = -3.0;
+
+        public static final double kArmStowedEnough = 15.8;
 
         public static final double[][] kBarDistanceToArmExtension = { { 18, 17.25 }, { 17, 29 }, { 16, 34.75 },
                 { 15, 42 }, { 13, 49 }

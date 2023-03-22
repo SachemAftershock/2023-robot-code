@@ -63,7 +63,7 @@ public class AutoPathOneNoChargeLinear extends SequentialCommandGroup{
             
             // //Sequence for picking up cone and stowing
             new IngestConeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eFloor, mElevator, mArm, mIntake),
+            CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm, mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)

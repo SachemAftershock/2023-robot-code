@@ -4,7 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 
@@ -32,6 +37,7 @@ import frc.robot.commands.CommandFactory;
 import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.BalanceRobotContinousCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
+import frc.robot.commands.drive.FollowTrajectoryCommandFactory;
 import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.commands.drive.RotateDriveCommand;
@@ -57,6 +63,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import static frc.robot.Constants.FieldConstants.kPlacingPoses;
 import static frc.robot.Constants.ButtonBoxConstants.kButtonBoxButtonMap;
 
+import java.util.List;
 import java.util.ResourceBundle.Control;
 import java.util.function.Function;
 
@@ -104,7 +111,7 @@ public class RobotContainer {
         configureButtonBindings();
         mDriveSubsystem.setDefaultCommand(
             new ManualDriveCommand(
-                mDriveSubsystem, mArmSubsystem::getState, mElevatorSubsystem::getState,
+                mDriveSubsystem, mArmSubsystem::getState, mArmSubsystem::isArmStowedEnough, mElevatorSubsystem::getState,
                 () -> modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
                 () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
                 () -> -modifyAxis(mPrimaryTwistController.getTwist())
@@ -139,12 +146,12 @@ public class RobotContainer {
         // }
 
         if (mButtonBox.povUp().getAsBoolean()) {
-            // System.out.println("Going up");
+             //System.out.println("Going up");
             setManualControllState();
             mElevatorSubsystem.jogElevatorUp();
         }
         else if (mButtonBox.povDown().getAsBoolean()) {
-            // System.out.println("Going down");
+             //System.out.println("Going down");
             setManualControllState();
             mElevatorSubsystem.jogElevatorDown();
         }
@@ -245,7 +252,7 @@ public class RobotContainer {
         );
         mButtonBox.floorPosition().onTrue(
             CommandFactory
-                .HandleSuperStructureSequence(SuperState.eFloor, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+                .HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
         );
 
         mButtonBox.humanPlayerPostion().onTrue(
@@ -443,6 +450,22 @@ public class RobotContainer {
         // return new LinearDriveCommand(mDriveSubsystem, -0.3, CardinalDirection.eY);
         // return new AutoPathTwoNoCharge(mDriveSubsystem, mElevatorSubsystem,
         // mArmSubsystem, mIntakeSubsystem);
+        TrajectoryConfig config = new TrajectoryConfig(
+            DriveConstants.kAutoMaxVelocityMetersPerSecond, DriveConstants.kMaxAccelerationMetersPerSecondSquared
+        );
+
+        Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(
+            new Pose2d(), 
+            List.of(
+                new Translation2d(-.25, 1.06), 
+                new Translation2d(-.5, 1.69)
+            ),
+            new Pose2d(-2, 1.45, new Rotation2d()), config
+        );
+
+        //return FollowTrajectoryCommandFactory.generateCommand(mDriveSubsystem, pathToChargeStation);
+
+         
         return new AutoPath2NC(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
     }
 
