@@ -38,25 +38,7 @@ public class CommandFactory {
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem)
             );
         }
-        else if (desiredState == SuperState.eFloor) {
-            System.out.println("--------FLOOR SEQUENCE-----------");
-            mWasInFloorPosition = true;
-            return new SequentialCommandGroup(
-                new SetElevatorLedCommand(desiredState),
-                new SetElevatorStateCommand(ElevatorState.eClearBumper, elevatorSubsystem),
-                new SetArmStateCommand(ArmState.eLow, armSubsystem),
-                new SetElevatorStateCommand(ElevatorState.eFloor, elevatorSubsystem)
-            );
 
-        }
-        else if (desiredState == SuperState.ePlayerStation) {
-            return new SequentialCommandGroup(
-                new SetElevatorLedCommand(desiredState), new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
-                new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem),
-                /*new SmartIngestCommand(mIntakeSubsystem)*/
-                new SetArmStateCommand(desiredState.getArmState(), armSubsystem)
-            );
-        }
         else if (desiredState == SuperState.eStow && mWasInFloorPosition) {
             mWasInFloorPosition = false;
             System.out.println("-------------Starting FLOOR retract----------");

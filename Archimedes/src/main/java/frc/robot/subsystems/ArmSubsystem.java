@@ -169,6 +169,10 @@ public class ArmSubsystem extends AftershockSubsystem {
         return false; 
     }
 
+    public boolean isArmStowedEnough() {
+        return getBarDistance() > kArmStowedEnough;
+    }
+
     public void stop() {
         setSpeed(0);
     }
