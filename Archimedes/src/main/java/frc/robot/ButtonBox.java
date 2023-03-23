@@ -169,12 +169,12 @@ public class ButtonBox extends CommandGenericHID {
 
     public void setJoystickEnabled() {
         mIsJoysticEnabled = true;
-        ButtonBoxPublisher.enableLed(LedPosition.eJoystickEnable);
+        ButtonBoxPublisher.enableLed(LedPosition.eHook);
     }
 
     public void setJoystickDisabled() {
         mIsJoysticEnabled = false;
-        ButtonBoxPublisher.disableLed(LedPosition.eJoystickEnable);
+        ButtonBoxPublisher.disableLed(LedPosition.eHook);
     }
 
     public int[] getPressedButtons() {

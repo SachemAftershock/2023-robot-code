@@ -1,6 +1,8 @@
 package frc.robot.commands.arm;
 
 import frc.lib.PID;
+import frc.robot.ButtonBoxPublisher;
+import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import frc.robot.subsystems.ArmSubsystem;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -19,7 +21,7 @@ public class AttachHookCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        System.out.println("attaching");
+        ButtonBoxPublisher.enableLed(LedPosition.eHook);
         mPID.start(kHookMotorGains);
     }
 
@@ -30,7 +32,6 @@ public class AttachHookCommand extends CommandBase {
 
         double speed = mPID.update(current, setpoint);
         mArmSubsystem.setHookSpeed(speed);
-
     }
 
     @Override

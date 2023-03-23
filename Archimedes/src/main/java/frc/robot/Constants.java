@@ -158,7 +158,7 @@ public class Constants {
             kButtonBoxButtonMap.put(ButtonPosition.eLow, LedPosition.eLow); // low
             kButtonBoxButtonMap.put(ButtonPosition.eMid, LedPosition.eMid); // mid
             kButtonBoxButtonMap.put(ButtonPosition.eHigh, LedPosition.eHigh); // high
-            kButtonBoxButtonMap.put(ButtonPosition.eHook, LedPosition.eJoystickEnable); // enable joystick
+            kButtonBoxButtonMap.put(ButtonPosition.eHook, LedPosition.eHook); // enable joystick
         }
 
         public static final double kErrorDelaySeconds = 2.0;

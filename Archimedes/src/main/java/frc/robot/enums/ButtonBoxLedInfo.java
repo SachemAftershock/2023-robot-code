@@ -31,7 +31,7 @@ public class ButtonBoxLedInfo {
         eCubeActive(2), eConeActive(9),
 
         // JOYSTICK
-        eJoystickEnable(8);
+        eHook(8);
 
         private int mLedId;
 

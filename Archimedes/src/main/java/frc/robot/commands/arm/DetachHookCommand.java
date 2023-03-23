@@ -1,6 +1,8 @@
 package frc.robot.commands.arm;
 
 import frc.lib.PID;
+import frc.robot.ButtonBoxPublisher;
+import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
 import frc.robot.subsystems.ArmSubsystem;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -19,7 +21,7 @@ public class DetachHookCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        System.out.println("detatch");
+        ButtonBoxPublisher.disableLed(LedPosition.eHook);
         mPID.start(kHookMotorGains);
     }
 
