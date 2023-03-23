@@ -62,7 +62,14 @@ Button ElevatorButtonArray[] = {
 size_t ElevatorButtonArraySize = sizeof(ElevatorButtonArray) / sizeof(ElevatorButtonArray[0]);
 ToggleButtonGroup ElevatorButtonGroup(ElevatorButtonArray, ElevatorButtonArraySize, ElevatorButtonArray[0]);
 
-SingleToggleButton JoystickEnableToggle(17, 22);
+// SingleToggleButton JoystickEnableToggle(17, 22);
+
+Button HeldHookButtonArray[] = {
+    Button(17, 22),
+};
+size_t HeldHookButtonArraySize = sizeof(HeldHookButtonArray) / sizeof(HeldHookButtonArray[0]);
+
+HeldButtonGroup HookHeldGroup(HeldHookButtonArray, HeldHookButtonArraySize);
 
 PovInfo povInfo = {21, 24, 23, 22};
 POV pov = POV(povInfo);
@@ -82,7 +89,8 @@ void loop()
   DriveToToggleGroup.PollButtons();
   ConeToggleButton.PollButton();
   IntakeHeldGroup.PollButtons();
-  JoystickEnableToggle.PollButton();
+  // JoystickEnableToggle.PollButton();
+  HookHeldGroup.PollButtons();
   ElevatorButtonGroup.PollButtons();
   pov.Poll();
   delay(20);

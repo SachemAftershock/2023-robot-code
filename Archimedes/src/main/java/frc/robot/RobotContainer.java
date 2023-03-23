@@ -4,7 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 
@@ -29,9 +34,12 @@ import frc.robot.auto.linearAuto.AutoPathTwoNoChargeLinear;
 import frc.robot.auto.robotOrientedTrajectoryAuto.AutoPath2NC;
 import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.arm.AttachHookCommand;
+import frc.robot.commands.arm.DetachHookCommand;
 import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.BalanceRobotContinousCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
+import frc.robot.commands.drive.FollowTrajectoryCommandFactory;
 import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.commands.drive.RotateDriveCommand;
@@ -57,6 +65,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import static frc.robot.Constants.FieldConstants.kPlacingPoses;
 import static frc.robot.Constants.ButtonBoxConstants.kButtonBoxButtonMap;
 
+import java.util.List;
 import java.util.ResourceBundle.Control;
 import java.util.function.Function;
 
@@ -104,10 +113,11 @@ public class RobotContainer {
         configureButtonBindings();
         mDriveSubsystem.setDefaultCommand(
             new ManualDriveCommand(
-                mDriveSubsystem, mArmSubsystem::isArmStowedEnough, mElevatorSubsystem::getState,
+                mDriveSubsystem, mArmSubsystem::getState, mArmSubsystem::isArmStowedEnough,
+                mElevatorSubsystem::getState,
+                () -> modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
                 () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
-                () -> -modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
-                () -> modifyAxis(mPrimaryTwistController.getTwist())
+                () -> -modifyAxis(mPrimaryTwistController.getTwist())
                     * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant
             )
         );
@@ -245,7 +255,7 @@ public class RobotContainer {
         );
         mButtonBox.floorPosition().onTrue(
             CommandFactory
-                .HandleSuperStructureSequence(SuperState.eFloor, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+                .HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
         );
 
         mButtonBox.humanPlayerPostion().onTrue(
@@ -362,28 +372,35 @@ public class RobotContainer {
         // mArmSubsystem.stop();
         // }));
 
-        mButtonBox.povUpLeft().onTrue(new InstantCommand(() -> {
-            if (mButtonBox.isJoystickEnabled()) {
-                mElevatorSubsystem.jogElevator(true);
-                mArmSubsystem.jogArm(false);
-            }
-        })).onFalse(new InstantCommand(() -> {
-            mElevatorSubsystem.stop();
-            mArmSubsystem.stop();
-        }));
+        // mButtonBox.povUpLeft().onTrue(new InstantCommand(() -> {
+        // if (mButtonBox.isJoystickEnabled()) {
+        // mElevatorSubsystem.jogElevator(true);
+        // mArmSubsystem.jogArm(false);
+        // }
+        // })).onFalse(new InstantCommand(() -> {
+        // mElevatorSubsystem.stop();
+        // mArmSubsystem.stop();
+        // }));
 
-        mButtonBox.povUpRight().onTrue(new InstantCommand(() -> {
-            if (mButtonBox.isJoystickEnabled()) {
-                mElevatorSubsystem.jogElevator(true);
-                mArmSubsystem.jogArm(true);
-            }
-        })).onFalse(new InstantCommand(() -> {
-            mElevatorSubsystem.stop();
-            mArmSubsystem.stop();
-        }));
+        // mButtonBox.povUpRight().onTrue(new InstantCommand(() -> {
+        // if (mButtonBox.isJoystickEnabled()) {
+        // mElevatorSubsystem.jogElevator(true);
+        // mArmSubsystem.jogArm(true);
+        // }
+        // })).onFalse(new InstantCommand(() -> {
+        // mElevatorSubsystem.stop();
+        // mArmSubsystem.stop();
+        // }));
 
-        mButtonBox.enableJoystick().onTrue(new InstantCommand(() -> mButtonBox.setJoystickEnabled()))
-            .onFalse(new InstantCommand(() -> mButtonBox.setJoystickDisabled()));
+        // mButtonBox.enableJoystick().onTrue(new InstantCommand(() ->
+        // mButtonBox.setJoystickEnabled()))
+        // .onFalse(new InstantCommand(() -> mButtonBox.setJoystickDisabled()));
+        // mButtonBox.hook().onTrue(new InstantCommand(() ->
+        // mArmSubsystem.setHookSpeed(0.2)))
+        // .onFalse(new InstantCommand(() -> mArmSubsystem.stopHook()));
+        mButtonBox.hook().onTrue(new AttachHookCommand(mArmSubsystem)).onFalse(new DetachHookCommand(mArmSubsystem));
+        // DetachHookCommand(mArmSubsystem));
+
     }
 
     public static void setIsCone() {
@@ -443,19 +460,19 @@ public class RobotContainer {
         // return new LinearDriveCommand(mDriveSubsystem, -0.3, CardinalDirection.eY);
         // return new AutoPathTwoNoCharge(mDriveSubsystem, mElevatorSubsystem,
         // mArmSubsystem, mIntakeSubsystem);
+        TrajectoryConfig config = new TrajectoryConfig(
+            DriveConstants.kAutoMaxVelocityMetersPerSecond, DriveConstants.kMaxAccelerationMetersPerSecondSquared
+        );
+
+        Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(
+            new Pose2d(), List.of(new Translation2d(-.25, 1.06), new Translation2d(-.5, 1.69)),
+            new Pose2d(-2, 1.45, new Rotation2d()), config
+        );
+
+        // return FollowTrajectoryCommandFactory.generateCommand(mDriveSubsystem,
+        // pathToChargeStation);
+
         return new AutoPath2NC(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
-    }
-
-    private static double modifyAxis(double value) {
-        // Deadband
-        value = deadband(value, DriveConstants.kDriveControllerDeadband);
-
-        // Square the axis
-        if (DriveConstants.kSquareAxis) {
-            value = Math.copySign(value * value, value);
-        }
-
-        return value;
     }
 
     private static double deadband(double value, double deadband) {
@@ -470,6 +487,18 @@ public class RobotContainer {
         else {
             return 0.0;
         }
+    }
+
+    private static double modifyAxis(double value) {
+        // Deadband
+        value = deadband(value, DriveConstants.kDriveControllerDeadband);
+
+        // Square the axis
+        if (DriveConstants.kSquareAxis) {
+            value = Math.copySign(value * value, value);
+        }
+
+        return value;
     }
 
     private void syncLeds() {

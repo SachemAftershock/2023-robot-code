@@ -63,7 +63,7 @@ public class Ports {
 
     public static final class IntakePorts {
         public static final int kIntakeMotorId = CanAddresses.eCanAddress4.get();
-        public static final int kIntakeLidarId = DioPorts.eDioPort1.get();
+        public static final int kIntakeLidarId = DioPorts.eDioPort3.get();
     }
 
     public static final class ElevatorPorts {
@@ -76,5 +76,8 @@ public class Ports {
         public static final int kRightArmMotorId = CanAddresses.eCanAddress6.get();
         public static final int kHookMotorId = CanAddresses.eCanAddress6.get();
         public static final int kArmLidarId = DioPorts.eDioPort2.get();
+
+        public static final int kHookEncoderId = DioPorts.eDioPort1.get();
     }
+
 }

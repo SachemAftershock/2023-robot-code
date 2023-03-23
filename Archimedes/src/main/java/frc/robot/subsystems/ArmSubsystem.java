@@ -15,11 +15,11 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import frc.robot.RobotContainer;
 import frc.robot.ErrorTracker;
 import frc.robot.ErrorTracker.ErrorType;
@@ -37,12 +37,11 @@ public class ArmSubsystem extends AftershockSubsystem {
     private static ArmSubsystem mInstance;
     private CANSparkMax mLeftArmMotor;
     private CANSparkMax mRighthArmMotor;
-
-    private SparkMaxPIDController mLeftController; 
+    private SparkMaxPIDController mLeftController;
     private SparkMaxPIDController mRighController;
-
     private MotorControllerGroup mMotorControllerGroup;
     private TalonSRX mHookMotor;
+    private DutyCycleEncoder mHookEncoder;
 
     private final Lidar mLidar;
     private ProfiledPIDController mProfileController; // Add final back
@@ -81,6 +80,8 @@ public class ArmSubsystem extends AftershockSubsystem {
         mHookMotor = new TalonSRX(kHookMotorId);
         mHookMotor.setNeutralMode(NeutralMode.Brake);
 
+        mHookEncoder = new DutyCycleEncoder(kHookEncoderId);
+
         mLidar = new Lidar(new DigitalInput(kArmLidarId));
 
         mConstraints = new TrapezoidProfile.Constraints(
@@ -111,7 +112,6 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
-
         if (mCurrentState == mDesiredState) {
             // System.out.println("Desired state reached");
             // System.out.println("----------PID ERROR------------" + mPID.getError());
@@ -128,18 +128,19 @@ public class ArmSubsystem extends AftershockSubsystem {
         }
 
         double output = mPID.update(current, setpoint);
-        //double output = mProfileController.calculate(current, setpoint);
+        // double output = mProfileController.calculate(current, setpoint);
         // output = MathUtil.clamp(output, -0.5, 0.5);
 
         // if(current > 17.0) {
-        //     output = output *0.5;
+        // output = output *0.5;
         // } else {
-        //     output = output*0.5;
+        // output = output*0.5;
         // }
 
-        output = output*0.5;
+        output = output * 0.5;
 
-        //System.out.println("ERROR: Current " + current + " SetPoint " + setpoint + " Output " + output);
+        // System.out.println("ERROR: Current " + current + " SetPoint " + setpoint + "
+        // Output " + output);
 
         if (Math.abs(mPID.getError()) < kEpsilon) {
             System.out.println("-----EXITING PID-----" + mPID.getError());
@@ -159,6 +160,17 @@ public class ArmSubsystem extends AftershockSubsystem {
     public void setDesiredState(ArmState desiredState) {
         mDesiredState = desiredState;
         setSetpoint(mDesiredState.getLength());
+    }
+
+    public boolean isArmStowed() {
+        if (mDesiredState == ArmState.eStowEmpty && getBarDistance() < ArmState.eStowEmpty.getLength()) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isArmStowedEnough() {
+        return getBarDistance() > kArmStowedEnough;
     }
 
     public void stop() {
@@ -186,6 +198,10 @@ public class ArmSubsystem extends AftershockSubsystem {
         mHookMotor.set(ControlMode.PercentOutput, 0.0);
     }
 
+    public double getHookPosition() {
+        return mHookEncoder.getAbsolutePosition();
+    }
+
     public ArmState getState() {
         return mCurrentState;
     }
@@ -211,7 +227,6 @@ public class ArmSubsystem extends AftershockSubsystem {
 
         // SmartDashboard.putNumber("Raw Bar Distance", mLidar.getDistanceIn());
         SmartDashboard.putNumber("Bar Distance", getBarDistance());
-
         SmartDashboard.putNumber("Arm Motor Velocity", mLeftArmMotor.getEncoder().getVelocity());
     }
 
@@ -233,10 +248,6 @@ public class ArmSubsystem extends AftershockSubsystem {
     public void overrideCurrentState() {
         mCurrentState = ArmState.eUnknown;
         mDesiredState = ArmState.eUnknown;
-    }
-
-    public boolean isArmStowedEnough() {
-        return getBarDistance() < kArmStowedEnough;
     }
 
     public void TESTSPEED() {

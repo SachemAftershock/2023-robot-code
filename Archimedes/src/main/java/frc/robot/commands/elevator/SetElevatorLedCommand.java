@@ -21,9 +21,6 @@ public class SetElevatorLedCommand extends InstantCommand {
             case eStow:
                 position = LedPosition.eStow;
                 break;
-            case eFloor:
-                position = LedPosition.eLow;
-                break;
             case eLow:
                 position = LedPosition.eLow;
                 break;
