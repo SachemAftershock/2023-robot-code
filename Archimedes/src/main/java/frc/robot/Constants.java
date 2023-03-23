@@ -111,6 +111,10 @@ public class Constants {
         // while the first item in list is red spot 9
         public static final double[] kGridYCoordinates = { 4.9, 4.44, 3.87, 3.3, 2.76, 2.22, 1.62, 1.07, .41 };
 
+        public static class BalanceConstants {
+            public static final double kBalanceKillDelta = -3 / 25d;
+        }
+
     }
 
     public static class VisionConstants {
