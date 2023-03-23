@@ -37,7 +37,7 @@ public class ArmSubsystem extends AftershockSubsystem {
     private static ArmSubsystem mInstance;
     private CANSparkMax mLeftArmMotor;
     private CANSparkMax mRighthArmMotor;
-    private SparkMaxPIDController mLeftController; 
+    private SparkMaxPIDController mLeftController;
     private SparkMaxPIDController mRighController;
     private MotorControllerGroup mMotorControllerGroup;
     private TalonSRX mHookMotor;
@@ -80,7 +80,7 @@ public class ArmSubsystem extends AftershockSubsystem {
         mHookMotor = new TalonSRX(kHookMotorId);
         mHookMotor.setNeutralMode(NeutralMode.Brake);
 
-        mHookEncoder = new DutyCycleEncoder(new DigitalInput(4));
+        mHookEncoder = new DutyCycleEncoder(kHookEncoderId);
 
         mLidar = new Lidar(new DigitalInput(kArmLidarId));
 
@@ -113,6 +113,9 @@ public class ArmSubsystem extends AftershockSubsystem {
     @Override
     public void periodic() {
 
+        System.out.println("Hook Encoder: " + mHookEncoder.get());
+        System.out.println("Hook Encoder: " + mHookEncoder.getAbsolutePosition());
+
         if (mCurrentState == mDesiredState) {
             // System.out.println("Desired state reached");
             // System.out.println("----------PID ERROR------------" + mPID.getError());
@@ -129,18 +132,19 @@ public class ArmSubsystem extends AftershockSubsystem {
         }
 
         double output = mPID.update(current, setpoint);
-        //double output = mProfileController.calculate(current, setpoint);
+        // double output = mProfileController.calculate(current, setpoint);
         // output = MathUtil.clamp(output, -0.5, 0.5);
 
         // if(current > 17.0) {
-        //     output = output *0.5;
+        // output = output *0.5;
         // } else {
-        //     output = output*0.5;
+        // output = output*0.5;
         // }
 
-        output = output*0.5;
+        output = output * 0.5;
 
-        //System.out.println("ERROR: Current " + current + " SetPoint " + setpoint + " Output " + output);
+        // System.out.println("ERROR: Current " + current + " SetPoint " + setpoint + "
+        // Output " + output);
 
         if (Math.abs(mPID.getError()) < kEpsilon) {
             System.out.println("-----EXITING PID-----" + mPID.getError());
@@ -163,10 +167,10 @@ public class ArmSubsystem extends AftershockSubsystem {
     }
 
     public boolean isArmStowed() {
-        if  (mDesiredState == ArmState.eStowEmpty && getBarDistance() < ArmState.eStowEmpty.getLength()) {
+        if (mDesiredState == ArmState.eStowEmpty && getBarDistance() < ArmState.eStowEmpty.getLength()) {
             return true;
         }
-        return false; 
+        return false;
     }
 
     public boolean isArmStowedEnough() {
