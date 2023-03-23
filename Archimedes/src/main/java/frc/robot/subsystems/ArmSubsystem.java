@@ -182,11 +182,11 @@ public class ArmSubsystem extends AftershockSubsystem {
     }
 
     public void jogArmOut() {
-        setSpeed(-0.4);
+        setSpeed(-0.9);
     }
 
     public void jogArmIn() {
-        setSpeed(0.2);
+        setSpeed(0.6);
 
     }
 

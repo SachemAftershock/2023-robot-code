@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -33,6 +34,8 @@ public class Robot extends TimedRobot {
         mAutoSelector = new AutoSelector();
 
         CameraServer.startAutomaticCapture();
+
+        mRobotContainer.syncLeds();
     }
 
     /**
@@ -70,12 +73,12 @@ public class Robot extends TimedRobot {
         mRobotContainer.initializeSubsystems();
         mRobotContainer.initialize();
         // CommandScheduler.getInstance().cancelAll();
-        //CommandScheduler.getInstance().schedule(mRobotContainer.getAutonomousCommand());
+        CommandScheduler.getInstance().schedule(mRobotContainer.getAutonomousCommand());
         //mAutonomousCommand = mRobotContainer.getAutonomousCommand();
-        CommandScheduler.getInstance().schedule(mAutoSelector.getSelectedAutoCommand());
-        if (mAutonomousCommand != null) {
-            mAutonomousCommand.schedule();
-        }
+        // CommandScheduler.getInstance().schedule(mAutoSelector.getSelectedAutoCommand());
+        // if (mAutonomousCommand != null) {
+        //     mAutonomousCommand.schedule();
+        // }
     }
 
     /** This function is called periodically during autonomous. */
@@ -86,7 +89,11 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         CommandScheduler.getInstance().cancelAll();
-        mRobotContainer.initialize();
+
+        if(!DriverStation.isFMSAttached()) mRobotContainer.initialize();
+
+        mRobotContainer.syncLeds();
+
         if (mAutonomousCommand != null) {
             mAutonomousCommand.cancel();
         }
