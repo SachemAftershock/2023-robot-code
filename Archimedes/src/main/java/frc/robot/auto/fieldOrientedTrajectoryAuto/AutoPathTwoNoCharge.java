@@ -87,7 +87,7 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
             
             //Robot moves to cone on field
-            FollowTrajectoryCommandFactory.generateCommand(mDrive, mNewPathToCone),
+            FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCone),
             new RotateDriveCommand(mDrive, 180),
             
             //Sequence for picking up cone and stowing

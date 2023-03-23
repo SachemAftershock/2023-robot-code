@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 
 import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Ports.DrivePorts.*;
@@ -207,6 +209,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 		mChassisSpeeds = mKinematics.toChassisSpeeds(states);
 	}
 
+	//instead of using set<oduleStates use the method above
 	PhotonCameraSubsystem pcw;
 
 	@Override
@@ -479,4 +482,12 @@ public class DriveSubsystem extends AftershockSubsystem {
 		}
 		return mInstance;
 	}
+	public void resetOdometry(PathPlannerTrajectory trag){
+		mPoseEstimator.resetPosition(trag.getInitialHolonomicPose().getRotation(), getPositions(), trag.getInitialHolonomicPose());
+	}
+	// public Command followPathTrajectory(boolean firstPath, PathPlannerTrajectory trag){
+	// 	if(firstPath){
+	// 		resetOdometry(trag);
+	// 	}
+	// }
 }

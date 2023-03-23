@@ -2,39 +2,36 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.lib.PID;
-import frc.robot.Constants.DriveConstants;
+
 import frc.robot.subsystems.DriveSubsystem;
+
+import static frc.robot.Constants.DriveConstants.BalanceConstants.kBalanceKillDelta;
 
 public class BalanceRobotCommand extends CommandBase {
 
-    private PID mPID; 
     private DriveSubsystem mDrive;
+    private double mLastPitch;
+    private boolean mIsFinished;
 
     public BalanceRobotCommand(DriveSubsystem drive) {
         mDrive = drive;
-        mPID = new PID();
+        mIsFinished = false;
+        mLastPitch = 0;
         addRequirements(mDrive);
     }
 
     @Override
     public void initialize() {
-        mPID.start(DriveConstants.kBalanceRobotGains);
-
+        mDrive.drive(new ChassisSpeeds(0, -1d, 0));
     }
 
     @Override
     public void execute() {
-
         double robotPitch = mDrive.getPitch();
-        double robotRoll = mDrive.getRoll();
-        //double tiltVector = Math.sqrt(Math.pow(robotPitch, 2) + Math.pow(robotRoll, 2));
-
-        double speed = mPID.update(robotPitch, 0);
-        mDrive.drive(new ChassisSpeeds(speed, 0, 0));
-
+        if (robotPitch - mLastPitch < kBalanceKillDelta) mIsFinished = true;
+        mLastPitch = robotPitch;
     }
-    
+
     @Override
     public void end(boolean interrupted) {
         mDrive.drive(new ChassisSpeeds());
@@ -42,7 +39,7 @@ public class BalanceRobotCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(mPID.getError()) < DriveConstants.kBalanceRobotEpsilon;
+        return mIsFinished;
     }
-    
+
 }
