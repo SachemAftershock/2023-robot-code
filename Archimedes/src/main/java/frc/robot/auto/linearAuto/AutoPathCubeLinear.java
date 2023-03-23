@@ -16,6 +16,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.arm.SetArmStateCommand;
+import frc.robot.commands.drive.BalanceRobotCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.FollowTrajectoryCommandFactory;
 import frc.robot.commands.drive.LinearDriveCommand;
@@ -85,13 +86,14 @@ public class AutoPathCubeLinear extends SequentialCommandGroup {
         addCommands(
             // Places cone preloaded in robot
             // new InstantCommand(() -> RobotContainer.toggleIsCone()),
-            new InstantCommand(() -> RobotContainer.setIsCube()),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
-            new EjectConeCommand(mIntake), new DelayCommand(0.5), new StopIntakeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
+            // new InstantCommand(() -> RobotContainer.setIsCube()),
+            // CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
+            // new EjectConeCommand(mIntake), new DelayCommand(0.5), new StopIntakeCommand(mIntake),
+            // CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
 
             // Robot moves to cone on field
-            new LinearDriveCommand(mDrive, -4.6, CardinalDirection.eX), new RotateDriveCommand(mDrive, 180)
+            //new LinearDriveCommand(mDrive, -4.2, CardinalDirection.eX),
+            new BalanceRobotCommand(mDrive) //new RotateDriveCommand(mDrive, 180)
             //Try using -2.5 as the distance
             //new LinearDriveCommand(mDrive, -0.3, CardinalDirection.eY)
 

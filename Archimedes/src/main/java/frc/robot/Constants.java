@@ -39,7 +39,7 @@ public class Constants {
         public static final double kDriveSpeedScaleFactor = 0.45;
 
         public static final double[] kDriveAngularGains = { 0.013, 0.0, 0.0 }; // dont use I it sucks - Shreyas
-        public static final double[] kDriveLinearGains = { 0.4, 0.0, 0.0 };
+        public static final double[] kDriveLinearGains = { 0.7, 0.0, 0.0 };
 
         public static final double kPX = 1.25 * 10;
         public static final double kPY = 1.25 * 10;
@@ -88,7 +88,7 @@ public class Constants {
         public static final double kMinBalanceAngle = 9.0;// In degrees
         public static final double kMaxBalanceAngle = 16.0;
 
-        public static final double[] kBalanceRobotGains = { 1.0, 0.0, 0.0 };
+        public static final double[] kBalanceRobotGains = { 2.0, 0.0, 0.0 };
         public static final double kBalanceRobotEpsilon = 1.0;
 
         public static final double kDriveSpeed = 0.5; // adjust as needed

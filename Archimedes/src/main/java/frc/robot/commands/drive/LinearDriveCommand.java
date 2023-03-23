@@ -43,7 +43,7 @@ public class LinearDriveCommand extends CommandBase {
             "Linear Drive Command started : Current Pose --> " + mDrive.getPose() + " Setpoint " + mLinearSetpoint
         );
 
-        mRateLimiter = new SlewRateLimiter(10.0);
+        mRateLimiter = new SlewRateLimiter(0.5);
     }
 
     @Override

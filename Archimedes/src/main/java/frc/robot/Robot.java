@@ -70,12 +70,12 @@ public class Robot extends TimedRobot {
         mRobotContainer.initializeSubsystems();
         mRobotContainer.initialize();
         // CommandScheduler.getInstance().cancelAll();
-        //CommandScheduler.getInstance().schedule(mRobotContainer.getAutonomousCommand());
+        CommandScheduler.getInstance().schedule(mRobotContainer.getAutonomousCommand());
         //mAutonomousCommand = mRobotContainer.getAutonomousCommand();
-        CommandScheduler.getInstance().schedule(mAutoSelector.getSelectedAutoCommand());
-        if (mAutonomousCommand != null) {
-            mAutonomousCommand.schedule();
-        }
+        // CommandScheduler.getInstance().schedule(mAutoSelector.getSelectedAutoCommand());
+        // if (mAutonomousCommand != null) {
+        //     mAutonomousCommand.schedule();
+        // }
     }
 
     /** This function is called periodically during autonomous. */

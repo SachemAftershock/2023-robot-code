@@ -271,11 +271,11 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
 
     public void jogElevatorUp() {
-        setSpeed(0.2);
+        setSpeed(0.6);
     }
 
     public void jogElevatorDown() {
-        setSpeed(-0.2);
+        setSpeed(-0.6);
 
     }
 
