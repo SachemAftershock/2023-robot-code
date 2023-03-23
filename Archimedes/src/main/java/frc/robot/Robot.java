@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
         CameraServer.startAutomaticCapture();
 
         mRobotContainer.syncLeds();
+        DriverStation.silenceJoystickConnectionWarning(true);
     }
 
     /**
@@ -69,8 +70,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        mDrive.zeroGyroscope();
-        mRobotContainer.initializeSubsystems();
+        //mRobotContainer.initializeSubsystems();
         mRobotContainer.initialize();
         // CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().schedule(mRobotContainer.getAutonomousCommand());
@@ -90,7 +90,13 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         CommandScheduler.getInstance().cancelAll();
 
-        if(!DriverStation.isFMSAttached()) mRobotContainer.initialize();
+        boolean TEST = false;
+        if (TEST) {
+            mRobotContainer.initialize();
+            System.out.println("YOU ARE IN TEST MODE");
+
+            ButtonBoxPublisher.sendMessage("TEST_MODE");
+        }
 
         mRobotContainer.syncLeds();
 

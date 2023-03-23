@@ -7,6 +7,7 @@ import frc.robot.enums.ArmState;
 import frc.robot.enums.ElevatorState;
 import frc.robot.subsystems.DriveSubsystem;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -23,13 +24,16 @@ public class ManualDriveCommand extends CommandBase {
     private final DoubleSupplier m_translationXSupplier;
     private final DoubleSupplier m_translationYSupplier;
     private final DoubleSupplier m_rotationSupplier;
+
+    private final BooleanSupplier mIsSlowModeSupplier;
     private SlewRateLimiter mRateLimiter;
 
     public ManualDriveCommand(
         DriveSubsystem drivetrainSubsystem, Supplier<ArmState> armStateSupplier,
         Supplier<Boolean> armStowedEnoughSupplier,
         Supplier<ElevatorState> elevatorStateSupplier, DoubleSupplier translationXSupplier,
-        DoubleSupplier translationYSupplier, DoubleSupplier rotationSupplier
+        DoubleSupplier translationYSupplier, DoubleSupplier rotationSupplier,
+        BooleanSupplier isSlowMode
     ) {
         this.mDrivetrainSubsystem = drivetrainSubsystem;
         mArmStateSupplier = armStateSupplier;
@@ -39,6 +43,8 @@ public class ManualDriveCommand extends CommandBase {
         this.m_translationXSupplier = translationXSupplier;
         this.m_translationYSupplier = translationYSupplier;
         this.m_rotationSupplier = rotationSupplier;
+
+        mIsSlowModeSupplier = isSlowMode;
 
         mRateLimiter = new SlewRateLimiter(0.5);
 
@@ -53,18 +59,24 @@ public class ManualDriveCommand extends CommandBase {
         double ySpeed = m_translationYSupplier.getAsDouble();
 
         double rotSpeed = m_rotationSupplier.getAsDouble();
-        if (mArmStowedEnoughSupplier.get()) {
-            xSpeed *= kDriveSpeedFastScaleFactor;
-            ySpeed *= kDriveSpeedFastScaleFactor;
+        
+        if (mIsSlowModeSupplier.getAsBoolean()) {
+            xSpeed *= kDriveSpeedScaleFactor;
+            ySpeed *= kDriveSpeedScaleFactor;
+            rotSpeed *= kDriveSpeedScaleFactor;
         }
-        else if ((mArmStateSupplier.get() != ArmState.eStowEmpty
-            || mElevatorStateSupplier.get() != ElevatorState.eStowEmpty)) {
+        // if (mArmStowedEnoughSupplier.get()) {
+        //     xSpeed *= kDriveSpeedFastScaleFactor;
+        //     ySpeed *= kDriveSpeedFastScaleFactor;
+        // }
+        // else if ((mArmStateSupplier.get() != ArmState.eStowEmpty
+        //     || mElevatorStateSupplier.get() != ElevatorState.eStowEmpty)) {
             
-            if (mArmStateSupplier.get() != null && mElevatorStateSupplier.get() != null) {
-                xSpeed *= kDriveSpeedScaleFactor;
-                ySpeed *= kDriveSpeedScaleFactor;
-            }
-        }
+        //     if (mArmStateSupplier.get() != null && mElevatorStateSupplier.get() != null) {
+        //         xSpeed *= kDriveSpeedScaleFactor;
+        //         ySpeed *= kDriveSpeedScaleFactor;
+        //     }
+        // }
 
         mDrivetrainSubsystem.drive(
             ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotSpeed, mDrivetrainSubsystem.getGyroscopeRotation())

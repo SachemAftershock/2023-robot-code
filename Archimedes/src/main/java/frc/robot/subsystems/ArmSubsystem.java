@@ -112,6 +112,9 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
+
+        // System.out.println(mHookEncoder.getAbsolutePosition());
+
         if (mCurrentState == mDesiredState) {
             // System.out.println("Desired state reached");
             // System.out.println("----------PID ERROR------------" + mPID.getError());
@@ -156,6 +159,7 @@ public class ArmSubsystem extends AftershockSubsystem {
     public void setSetpoint(double setpoint) {
         mSetpoint = setpoint;
     }
+    
 
     public void setDesiredState(ArmState desiredState) {
         mDesiredState = desiredState;

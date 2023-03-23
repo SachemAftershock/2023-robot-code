@@ -42,6 +42,7 @@ import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.BalanceRobotContinousCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.FollowTrajectoryCommandFactory;
+import frc.robot.commands.drive.HoldPositionCommand;
 import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.commands.drive.RotateDriveCommand;
@@ -121,7 +122,8 @@ public class RobotContainer {
                 () -> modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
                 () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
                 () -> -modifyAxis(mPrimaryTwistController.getTwist())
-                    * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant
+                    * DriveConstants.kMaxAngularVelocityRadiansPerSecond * kRotationScalingConstant,
+                mPrimaryThrottleController::getTriggerPressed
             )
         );
     }
@@ -210,15 +212,16 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
-        mPrimaryThrottleController.getTrigger().onTrue(new InstantCommand(() -> {
-            mDriveToCoordinateCommand = new DriveToWaypointCommand(mDriveSubsystem.getWaypoint(), mDriveSubsystem);
-            mDriveToCoordinateCommand.schedule();
-        })).onFalse(new InstantCommand(() -> {
-            mDriveToCoordinateCommand.cancel();
-            ButtonBoxPublisher.enableLed(mDriveSubsystem.getLedPosition());
-        }));
+        // mPrimaryThrottleController.getTrigger().onTrue(new InstantCommand(() -> {
+        //     mDriveToCoordinateCommand = new DriveToWaypointCommand(mDriveSubsystem.getWaypoint(), mDriveSubsystem);
+        //     mDriveToCoordinateCommand.schedule();
+        // })).onFalse(new InstantCommand(() -> {
+        //     mDriveToCoordinateCommand.cancel();
+        //     ButtonBoxPublisher.enableLed(mDriveSubsystem.getLedPosition());
+        // }));
 
-        mPrimaryTwistController.getTrigger().whileTrue(new BalanceRobotContinousCommand(mDriveSubsystem));
+        //mPrimaryTwistController.getTrigger().whileTrue(new BalanceRobotContinousCommand(mDriveSubsystem));
+        mPrimaryTwistController.getTrigger().onTrue(new HoldPositionCommand(mDriveSubsystem));
 
         mButtonBox.cubeToggle().onTrue(new InstantCommand(() -> RobotContainer.setIsCube()));
         mButtonBox.coneToggle().onTrue(new InstantCommand(() -> RobotContainer.setIsCone()));
@@ -274,9 +277,12 @@ public class RobotContainer {
             ButtonBoxPublisher.enableLed(LedPosition.eCancel);
         }));
 
-        mButtonBox.cone1().onTrue(
-            new SetWaypointCommand(kPlacingPoses[0].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo1)
-        );
+        // mButtonBox.cone1().onTrue(
+        //     new SetWaypointCommand(kPlacingPoses[0].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo1)
+        // );
+
+        //mButtonBox.cone1().onTrue(new HoldPositionCommand(mDriveSubsystem));
+
         mButtonBox.cube2().onTrue(
             new SetWaypointCommand(kPlacingPoses[1].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo2)
         );
@@ -488,7 +494,8 @@ public class RobotContainer {
         //return new AutoPathCubeLinear(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
         //return new AutoPathCone(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
         //return new AutoPath2NC(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
-        return new AutoPathConeLinear(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        //return new AutoPathConeLinear(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        return new AutoPathTwoNoCharge(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
     }
 
     private static double deadband(double value, double deadband) {

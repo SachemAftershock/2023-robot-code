@@ -35,7 +35,8 @@ public class CommandFactory {
             System.out.println("-----------RETURNING TO STOW--------------");
             return new SequentialCommandGroup(
                 new StopIntakeCommand(mIntakeSubsystem),
-                new SetElevatorLedCommand(desiredState), new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
+                new SetElevatorLedCommand(desiredState), 
+                new SetArmStateCommand(ArmState.eStowEmpty, armSubsystem),
                 new SetElevatorStateCommand(desiredState.getElevatorState(), elevatorSubsystem)
             );
         }

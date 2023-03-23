@@ -85,10 +85,10 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)
+            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
+            mDrive.followPathTrajectory(true, examplePath)
         );
         //pathToCone.transformBy(mStartingPose);
-        mDrive.followPathTrajectory(true, examplePath);
         
         // addCommands(
             
