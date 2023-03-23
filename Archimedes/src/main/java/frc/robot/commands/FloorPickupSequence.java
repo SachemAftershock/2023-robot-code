@@ -30,8 +30,7 @@ public class FloorPickupSequence extends SequentialCommandGroup{
             new StopIntakeCommand(intake),
             new SetElevatorStateCommand(ElevatorState.eClearBumper, elevator),
             new SetArmStateCommand(ArmState.eStowEmpty, arm)
-        
-        )
+        );
         
     }
     

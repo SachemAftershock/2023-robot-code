@@ -30,6 +30,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.ErrorTracker.ErrorType;
 import frc.robot.auto.fieldOrientedTrajectoryAuto.*;
+import frc.robot.auto.linearAuto.AutoPathConeLinear;
 import frc.robot.auto.linearAuto.AutoPathCubeLinear;
 import frc.robot.auto.linearAuto.AutoPathTwoNoChargeLinear;
 import frc.robot.auto.robotOrientedTrajectoryAuto.AutoPath2NC;
@@ -127,7 +128,6 @@ public class RobotContainer {
 
     public void initialize() {
         mSubsystemManager.initialize();
-        syncLeds();
         // mArmSubsystem.outputTelemetry();
         // mElevatorSubsystem.outputTelemetry();
         // mIntakeSubsystem.outputTelemetry();
@@ -486,8 +486,9 @@ public class RobotContainer {
         // // pathToChargeStation);
 
         //return new AutoPathCubeLinear(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
-        return new AutoPathCone(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        //return new AutoPathCone(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
         //return new AutoPath2NC(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        return new AutoPathConeLinear(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
     }
 
     private static double deadband(double value, double deadband) {
@@ -516,7 +517,7 @@ public class RobotContainer {
         return value;
     }
 
-    private void syncLeds() {
+    public void syncLeds() {
         int[] pressedButtons = mButtonBox.getPressedButtons();
         ButtonBoxPublisher.disableAllLeds(); // TODO if leds don't work, try commenting this out
         for (int button : pressedButtons) {

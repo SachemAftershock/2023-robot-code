@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -33,6 +34,8 @@ public class Robot extends TimedRobot {
         mAutoSelector = new AutoSelector();
 
         CameraServer.startAutomaticCapture();
+
+        mRobotContainer.syncLeds();
     }
 
     /**
@@ -86,7 +89,11 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         CommandScheduler.getInstance().cancelAll();
-        mRobotContainer.initialize();
+
+        if(!DriverStation.isFMSAttached()) mRobotContainer.initialize();
+
+        mRobotContainer.syncLeds();
+
         if (mAutonomousCommand != null) {
             mAutonomousCommand.cancel();
         }
