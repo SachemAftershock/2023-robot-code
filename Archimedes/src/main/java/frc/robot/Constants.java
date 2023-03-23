@@ -158,7 +158,7 @@ public class Constants {
             kButtonBoxButtonMap.put(ButtonPosition.eLow, LedPosition.eLow); // low
             kButtonBoxButtonMap.put(ButtonPosition.eMid, LedPosition.eMid); // mid
             kButtonBoxButtonMap.put(ButtonPosition.eHigh, LedPosition.eHigh); // high
-            kButtonBoxButtonMap.put(ButtonPosition.eJoystickEnable, LedPosition.eJoystickEnable); // enable joystick
+            kButtonBoxButtonMap.put(ButtonPosition.eHook, LedPosition.eJoystickEnable); // enable joystick
         }
 
         public static final double kErrorDelaySeconds = 2.0;
@@ -173,10 +173,10 @@ public class Constants {
 
     public static class ArmConstants {
 
-        public static final double[] kHookMotorGains = {0.001, 0.0, 0.0};
-        public static final double kHoookAttachedPosition = 0.0;
-        public static final double kHoookDetachedPosition = 0.0;
-        public static final double kHookEpsilon = 0.0;
+        public static final double[] kHookMotorGains = { 2.0, 0.0, 0.0 };
+        public static final double kHoookAttachedPosition = 0.19;
+        public static final double kHoookDetachedPosition = 0.48;
+        public static final double kHookEpsilon = 0.05;
 
         public static final double kCubeOffset = 0.0;
         public static final double kMaxVelocityMeterPerSecond = 0.05;

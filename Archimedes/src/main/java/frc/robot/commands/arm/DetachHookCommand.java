@@ -1,18 +1,15 @@
 package frc.robot.commands.arm;
 
 import frc.lib.PID;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.enums.ArmState;
 import frc.robot.subsystems.ArmSubsystem;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+import static frc.robot.Constants.ArmConstants.*;
+
 public class DetachHookCommand extends CommandBase {
-    private ArmState mDesiredState;
     private ArmSubsystem mArmSubsystem;
-    private PID mPID; 
-    private double mCurrent;
-    private double mSetpoint;
+    private PID mPID;
 
     public DetachHookCommand(ArmSubsystem armSubsystem) {
         mArmSubsystem = armSubsystem;
@@ -22,26 +19,26 @@ public class DetachHookCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        mPID.start(ArmConstants.kHookMotorGains);
-        mCurrent = mArmSubsystem.getHookPosition();
-        mSetpoint = ArmConstants.kHoookDetachedPosition;
+        System.out.println("detatch");
+        mPID.start(kHookMotorGains);
     }
 
     @Override
     public void execute() {
-        double speed = mPID.update(mCurrent, mSetpoint);
+        double current = mArmSubsystem.getHookPosition();
+        double setpoint = kHoookDetachedPosition;
+
+        double speed = mPID.update(current, setpoint);
         mArmSubsystem.setHookSpeed(speed);
     }
 
     @Override
     public boolean isFinished() {
-        return Math.abs(mPID.getError()) < ArmConstants.kHookEpsilon;
+        return Math.abs(mPID.getError()) < kHookEpsilon;
     }
 
     @Override
     public void end(boolean interrupted) {
-        mArmSubsystem.stop();
-    }   
+        mArmSubsystem.stopHook();
+    }
 }
-
-

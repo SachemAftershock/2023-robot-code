@@ -34,6 +34,8 @@ import frc.robot.auto.linearAuto.AutoPathTwoNoChargeLinear;
 import frc.robot.auto.robotOrientedTrajectoryAuto.AutoPath2NC;
 import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.arm.AttachHookCommand;
+import frc.robot.commands.arm.DetachHookCommand;
 import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.BalanceRobotContinousCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
@@ -111,7 +113,8 @@ public class RobotContainer {
         configureButtonBindings();
         mDriveSubsystem.setDefaultCommand(
             new ManualDriveCommand(
-                mDriveSubsystem, mArmSubsystem::getState, mArmSubsystem::isArmStowedEnough, mElevatorSubsystem::getState,
+                mDriveSubsystem, mArmSubsystem::getState, mArmSubsystem::isArmStowedEnough,
+                mElevatorSubsystem::getState,
                 () -> modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
                 () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
                 () -> -modifyAxis(mPrimaryTwistController.getTwist())
@@ -146,12 +149,12 @@ public class RobotContainer {
         // }
 
         if (mButtonBox.povUp().getAsBoolean()) {
-             //System.out.println("Going up");
+            // System.out.println("Going up");
             setManualControllState();
             mElevatorSubsystem.jogElevatorUp();
         }
         else if (mButtonBox.povDown().getAsBoolean()) {
-             //System.out.println("Going down");
+            // System.out.println("Going down");
             setManualControllState();
             mElevatorSubsystem.jogElevatorDown();
         }
@@ -369,28 +372,35 @@ public class RobotContainer {
         // mArmSubsystem.stop();
         // }));
 
-        mButtonBox.povUpLeft().onTrue(new InstantCommand(() -> {
-            if (mButtonBox.isJoystickEnabled()) {
-                mElevatorSubsystem.jogElevator(true);
-                mArmSubsystem.jogArm(false);
-            }
-        })).onFalse(new InstantCommand(() -> {
-            mElevatorSubsystem.stop();
-            mArmSubsystem.stop();
-        }));
+        // mButtonBox.povUpLeft().onTrue(new InstantCommand(() -> {
+        // if (mButtonBox.isJoystickEnabled()) {
+        // mElevatorSubsystem.jogElevator(true);
+        // mArmSubsystem.jogArm(false);
+        // }
+        // })).onFalse(new InstantCommand(() -> {
+        // mElevatorSubsystem.stop();
+        // mArmSubsystem.stop();
+        // }));
 
-        mButtonBox.povUpRight().onTrue(new InstantCommand(() -> {
-            if (mButtonBox.isJoystickEnabled()) {
-                mElevatorSubsystem.jogElevator(true);
-                mArmSubsystem.jogArm(true);
-            }
-        })).onFalse(new InstantCommand(() -> {
-            mElevatorSubsystem.stop();
-            mArmSubsystem.stop();
-        }));
+        // mButtonBox.povUpRight().onTrue(new InstantCommand(() -> {
+        // if (mButtonBox.isJoystickEnabled()) {
+        // mElevatorSubsystem.jogElevator(true);
+        // mArmSubsystem.jogArm(true);
+        // }
+        // })).onFalse(new InstantCommand(() -> {
+        // mElevatorSubsystem.stop();
+        // mArmSubsystem.stop();
+        // }));
 
-        mButtonBox.enableJoystick().onTrue(new InstantCommand(() -> mButtonBox.setJoystickEnabled()))
-            .onFalse(new InstantCommand(() -> mButtonBox.setJoystickDisabled()));
+        // mButtonBox.enableJoystick().onTrue(new InstantCommand(() ->
+        // mButtonBox.setJoystickEnabled()))
+        // .onFalse(new InstantCommand(() -> mButtonBox.setJoystickDisabled()));
+        // mButtonBox.hook().onTrue(new InstantCommand(() ->
+        // mArmSubsystem.setHookSpeed(0.2)))
+        // .onFalse(new InstantCommand(() -> mArmSubsystem.stopHook()));
+        mButtonBox.hook().onTrue(new AttachHookCommand(mArmSubsystem)).onFalse(new DetachHookCommand(mArmSubsystem));
+        // DetachHookCommand(mArmSubsystem));
+
     }
 
     public static void setIsCone() {
@@ -455,17 +465,13 @@ public class RobotContainer {
         );
 
         Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(
-            new Pose2d(), 
-            List.of(
-                new Translation2d(-.25, 1.06), 
-                new Translation2d(-.5, 1.69)
-            ),
+            new Pose2d(), List.of(new Translation2d(-.25, 1.06), new Translation2d(-.5, 1.69)),
             new Pose2d(-2, 1.45, new Rotation2d()), config
         );
 
-        //return FollowTrajectoryCommandFactory.generateCommand(mDriveSubsystem, pathToChargeStation);
+        // return FollowTrajectoryCommandFactory.generateCommand(mDriveSubsystem,
+        // pathToChargeStation);
 
-         
         return new AutoPath2NC(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
     }
 

@@ -40,7 +40,7 @@ public class ButtonBox extends CommandGenericHID {
     private static int mediumPostionButtonId = ButtonPosition.eMid.getId();
     private static int highPositionButtonId = ButtonPosition.eHigh.getId();
 
-    private static int enableJoystickId = ButtonPosition.eJoystickEnable.getId();
+    private static int hookId = ButtonPosition.eHook.getId();
 
     private boolean mIsJoysticEnabled = false;
 
@@ -147,8 +147,12 @@ public class ButtonBox extends CommandGenericHID {
     // return this.button(downJoystickButtonId);
     // }
 
-    public Trigger enableJoystick() {
-        return this.button(enableJoystickId);
+    // public Trigger enableJoystick() {
+    // return this.button(hookId);
+    // }
+
+    public Trigger hook() {
+        return this.button(hookId);
     }
 
     public Trigger cancel() {
