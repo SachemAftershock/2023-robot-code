@@ -17,10 +17,10 @@ NT_MESSAGE_PATH = "/ButtonBox/Message"
 
 NT_HEARTBEAT_PATH = "/ButtonBoxHeartbeat/PythonScript"
 
-heartbeat = (
-    NetworkTableInstance.getDefault().getBooleanArrayTopic(NT_HEARTBEAT_PATH).publish()
-)
-heartbeat.setDefault(False)
+# heartbeat = (
+#     NetworkTableInstance.getDefault().getBooleanArrayTopic(NT_HEARTBEAT_PATH).publish()
+# )
+# heartbeat.set(False)
 
 
 def send_serial(serial: Serial, command: str) -> bool:
@@ -137,11 +137,11 @@ def main():
 
 if __name__ == "__main__":
     try:
-        heartbeat.set(True)
+        #heartbeat.set(True)
         main()
     except:
         print_exc()
         print()
         print("Something went wrong in the main loop")
-    finally:
-        heartbeat.set(False)
+    # finally:
+        # heartbeat.set(False)
