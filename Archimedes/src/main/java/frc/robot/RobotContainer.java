@@ -86,7 +86,7 @@ public class RobotContainer {
     private static RobotContainer mInstance;
 
     private static boolean mIsCone = true;
-    private static boolean mWasInFloorPosition = false; 
+    private static boolean mWasInFloorPosition = false;
     private static ControllState mControllState = ControllState.eAutomaticControl;
 
     private final ElevatorSubsystem mElevatorSubsystem = ElevatorSubsystem.getInstance();
@@ -213,15 +213,17 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
         // mPrimaryThrottleController.getTrigger().onTrue(new InstantCommand(() -> {
-        //     mDriveToCoordinateCommand = new DriveToWaypointCommand(mDriveSubsystem.getWaypoint(), mDriveSubsystem);
-        //     mDriveToCoordinateCommand.schedule();
+        // mDriveToCoordinateCommand = new
+        // DriveToWaypointCommand(mDriveSubsystem.getWaypoint(), mDriveSubsystem);
+        // mDriveToCoordinateCommand.schedule();
         // })).onFalse(new InstantCommand(() -> {
-        //     mDriveToCoordinateCommand.cancel();
-        //     ButtonBoxPublisher.enableLed(mDriveSubsystem.getLedPosition());
+        // mDriveToCoordinateCommand.cancel();
+        // ButtonBoxPublisher.enableLed(mDriveSubsystem.getLedPosition());
         // }));
 
-        //mPrimaryTwistController.getTrigger().whileTrue(new BalanceRobotContinousCommand(mDriveSubsystem));
-        mPrimaryTwistController.getTrigger().onTrue(new HoldPositionCommand(mDriveSubsystem));
+        // mPrimaryTwistController.getTrigger().whileTrue(new
+        // BalanceRobotContinousCommand(mDriveSubsystem));
+        mPrimaryTwistController.getTrigger().toggleOnTrue(new HoldPositionCommand(mDriveSubsystem));
 
         mButtonBox.cubeToggle().onTrue(new InstantCommand(() -> RobotContainer.setIsCube()));
         mButtonBox.coneToggle().onTrue(new InstantCommand(() -> RobotContainer.setIsCone()));
@@ -264,8 +266,10 @@ public class RobotContainer {
         );
 
         mButtonBox.humanPlayerPostion().onTrue(
-            CommandFactory.
-                HandleSuperStructureSequence(SuperState.ePlayerStation, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem));
+            CommandFactory.HandleSuperStructureSequence(
+                SuperState.ePlayerStation, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem
+            )
+        );
 
         mButtonBox.stowPostion().onTrue(
             CommandFactory
@@ -278,10 +282,11 @@ public class RobotContainer {
         }));
 
         // mButtonBox.cone1().onTrue(
-        //     new SetWaypointCommand(kPlacingPoses[0].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo1)
+        // new SetWaypointCommand(kPlacingPoses[0].robotPlacementPose, mDriveSubsystem,
+        // LedPosition.eDriveTo1)
         // );
 
-        //mButtonBox.cone1().onTrue(new HoldPositionCommand(mDriveSubsystem));
+        // mButtonBox.cone1().onTrue(new HoldPositionCommand(mDriveSubsystem));
 
         mButtonBox.cube2().onTrue(
             new SetWaypointCommand(kPlacingPoses[1].robotPlacementPose, mDriveSubsystem, LedPosition.eDriveTo2)
@@ -405,8 +410,8 @@ public class RobotContainer {
         // mButtonBox.hook().onTrue(new InstantCommand(() ->
         // mArmSubsystem.setHookSpeed(0.2)))
         // .onFalse(new InstantCommand(() -> mArmSubsystem.stopHook()));
+
         mButtonBox.hook().onTrue(new AttachHookCommand(mArmSubsystem)).onFalse(new DetachHookCommand(mArmSubsystem));
-        // DetachHookCommand(mArmSubsystem));
 
     }
 
@@ -415,7 +420,7 @@ public class RobotContainer {
     }
 
     public static void setNotInFloorAnymore() {
-        mWasInFloorPosition = false; 
+        mWasInFloorPosition = false;
     }
 
     public static boolean getWasInFloor() {
@@ -480,21 +485,27 @@ public class RobotContainer {
         // return new AutoPathTwoNoCharge(mDriveSubsystem, mElevatorSubsystem,
         // mArmSubsystem, mIntakeSubsystem);
         // TrajectoryConfig config = new TrajectoryConfig(
-        //     DriveConstants.kAutoMaxVelocityMetersPerSecond, DriveConstants.kMaxAccelerationMetersPerSecondSquared
+        // DriveConstants.kAutoMaxVelocityMetersPerSecond,
+        // DriveConstants.kMaxAccelerationMetersPerSecondSquared
         // );
 
         // Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(
-        //     new Pose2d(), List.of(new Translation2d(-.25, 1.06), new Translation2d(-.5, 1.69)),
-        //     new Pose2d(-2, 1.45, new Rotation2d()), config
+        // new Pose2d(), List.of(new Translation2d(-.25, 1.06), new Translation2d(-.5,
+        // 1.69)),
+        // new Pose2d(-2, 1.45, new Rotation2d()), config
         // );
 
         // // return FollowTrajectoryCommandFactory.generateCommand(mDriveSubsystem,
         // // pathToChargeStation);
 
-        //return new AutoPathCubeLinear(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
-        //return new AutoPathCone(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
-        //return new AutoPath2NC(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
-        //return new AutoPathConeLinear(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        // return new AutoPathCubeLinear(mDriveSubsystem, mElevatorSubsystem,
+        // mArmSubsystem, mIntakeSubsystem);
+        // return new AutoPathCone(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem,
+        // mIntakeSubsystem);
+        // return new AutoPath2NC(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem,
+        // mIntakeSubsystem);
+        // return new AutoPathConeLinear(mDriveSubsystem, mElevatorSubsystem,
+        // mArmSubsystem, mIntakeSubsystem);
         return new AutoPathTwoNoCharge(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
     }
 

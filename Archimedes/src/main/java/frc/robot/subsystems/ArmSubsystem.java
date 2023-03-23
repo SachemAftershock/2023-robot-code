@@ -159,7 +159,6 @@ public class ArmSubsystem extends AftershockSubsystem {
     public void setSetpoint(double setpoint) {
         mSetpoint = setpoint;
     }
-    
 
     public void setDesiredState(ArmState desiredState) {
         mDesiredState = desiredState;

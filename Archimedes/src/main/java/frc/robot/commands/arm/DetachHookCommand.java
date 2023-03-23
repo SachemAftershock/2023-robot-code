@@ -28,7 +28,7 @@ public class DetachHookCommand extends CommandBase {
     @Override
     public void execute() {
         double current = mArmSubsystem.getHookPosition();
-        double setpoint = kHoookDetachedPosition;
+        double setpoint = kHookDetachedPosition;
 
         double speed = mPID.update(current, setpoint);
         mArmSubsystem.setHookSpeed(speed);

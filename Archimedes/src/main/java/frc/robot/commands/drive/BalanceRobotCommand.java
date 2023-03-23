@@ -28,6 +28,10 @@ public class BalanceRobotCommand extends CommandBase {
     @Override
     public void execute() {
         double robotPitch = mDrive.getPitch();
+
+        // If our current pitch is less than our last pitch by a certain threshold,
+        // we know we're beginning to become level, so kill the motors
+        // and let momentum do the rest
         if (robotPitch - mLastPitch < kBalanceKillDelta) mIsFinished = true;
         mLastPitch = robotPitch;
     }

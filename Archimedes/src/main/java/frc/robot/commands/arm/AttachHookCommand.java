@@ -28,7 +28,7 @@ public class AttachHookCommand extends CommandBase {
     @Override
     public void execute() {
         double current = mArmSubsystem.getHookPosition();
-        double setpoint = kHoookAttachedPosition;
+        double setpoint = kHookAttachedPosition;
 
         double speed = mPID.update(current, setpoint);
         mArmSubsystem.setHookSpeed(speed);

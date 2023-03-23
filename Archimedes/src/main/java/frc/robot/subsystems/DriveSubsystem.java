@@ -105,6 +105,8 @@ public class DriveSubsystem extends AftershockSubsystem {
 	private final SwerveModule mBackLeftModule;
 	private final SwerveModule mBackRightModule;
 
+	private boolean mWheelsLocked;
+
 	private ChassisSpeeds mChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
 	private final Limelight mLimelight;
@@ -170,6 +172,8 @@ public class DriveSubsystem extends AftershockSubsystem {
 		mAntiTiltPID = new PID();
 		mEnableBalance = true;
 		antiTiltSpeed = 0.0;
+
+		mWheelsLocked = false;
 	}
 
 	/**
@@ -263,6 +267,16 @@ public class DriveSubsystem extends AftershockSubsystem {
 		mPoseEstimator.update(getGyroscopeRotation(), getPositions());
 
 		//System.out.println(mPoseEstimator.getEstimatedPosition());
+
+		if (mWheelsLocked) {
+			double angle = Math.toRadians(45);
+
+			mFrontLeftModule.set(0, angle);
+			mFrontRightModule.set(0, -angle);
+			mBackLeftModule.set(0, -angle);
+			mBackRightModule.set(0, angle);
+			return;
+		}
 
 		SwerveModuleState[] states = mKinematics.toSwerveModuleStates(mChassisSpeeds);
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, kManualMaxVelocityMetersPerSecond);
@@ -459,6 +473,14 @@ public class DriveSubsystem extends AftershockSubsystem {
 		double robotRoll = mNavx.getRoll();
 
 		return -1;
+	}
+
+	public void lockWheels() {
+		mWheelsLocked = true;
+	}
+
+	public void unlockWheels() {
+		mWheelsLocked = false;
 	}
 
 	@Override

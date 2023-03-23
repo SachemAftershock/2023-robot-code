@@ -27,4 +27,5 @@
   ],
   "java.test.defaultConfig": "WPIlibUnitTests",
   "java.format.settings.url": ".vscode\\AftershockFormattingGuide.xml",
+  "java.format.enabled": false,
 }
