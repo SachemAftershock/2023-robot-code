@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -14,6 +15,7 @@ import frc.lib.Limelight.FluidicalPoseInfo;
 import frc.robot.ErrorTracker;
 import frc.robot.ErrorTracker.ErrorType;
 import frc.robot.enums.ButtonBoxLedInfo.LedPosition;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
 //import org.photonvision.PhotonCamera;
@@ -31,6 +33,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Ports.DrivePorts.*;
@@ -485,9 +489,25 @@ public class DriveSubsystem extends AftershockSubsystem {
 	public void resetOdometry(PathPlannerTrajectory trag){
 		mPoseEstimator.resetPosition(trag.getInitialHolonomicPose().getRotation(), getPositions(), trag.getInitialHolonomicPose());
 	}
-	// public Command followPathTrajectory(boolean firstPath, PathPlannerTrajectory trag){
-	// 	if(firstPath){
-	// 		resetOdometry(trag);
-	// 	}
-	// }
+	public Command followPathTrajectory(boolean isFirstPath, PathPlannerTrajectory traj){
+		return new SequentialCommandGroup(
+        new InstantCommand(() -> {
+          // Reset odometry for the first path you run during auto
+          if(isFirstPath){
+              this.resetOdometry(traj);
+          }
+        }),
+        new PPSwerveControllerCommand(
+            traj, 
+			this::getPose, // Pose supplier
+            getKinematics(), // SwerveDriveKinematics
+            new PIDController(12.5, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            new PIDController(12.5, 0, 0), // Y controller (usually the same values as X controller)
+            new PIDController(kDriveAngularGains[0], kDriveAngularGains[1], kDriveAngularGains[2]), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            this::drive, // Module states consumer
+            true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+            this // Requires this drive subsystem
+        )
+    );
+	}
 }
