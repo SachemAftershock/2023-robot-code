@@ -290,6 +290,10 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         }
     }
 
+    public void setManualSpeed(double speed) {
+        setSpeed(speed);
+    }
+
     public double getElevatorDistance() {
         double distance = mLidar.getDistanceIn() + kElevatorLidarOffset;
 

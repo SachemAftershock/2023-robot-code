@@ -523,9 +523,9 @@ public class DriveSubsystem extends AftershockSubsystem {
             traj, 
 			this::getPose, // Pose supplier
             getKinematics(), // SwerveDriveKinematics
-            new PIDController(12.5, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            new PIDController(-12.5, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
             new PIDController(12.5, 0, 0), // Y controller (usually the same values as X controller)
-            new PIDController(kDriveAngularGains[0], kDriveAngularGains[1], kDriveAngularGains[2]), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            new PIDController(10, kDriveAngularGains[1], kDriveAngularGains[2]), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
             this::drive, // Module states consumer
             true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
             this // Requires this drive subsystem

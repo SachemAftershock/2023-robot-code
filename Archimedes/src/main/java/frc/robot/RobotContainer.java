@@ -169,15 +169,28 @@ public class RobotContainer {
         }
 
         // if (mButtonBox.povDownLeft().getAsBoolean()) {
-        // System.out.println("Arm going in");
-        // setManualControllState();
-        // mArmSubsystem.jogArmIn();
+        //     System.out.println("Arm going in");
+        //     setManualControllState();
+        //     mArmSubsystem.jogArmIn();
         // } else if (mButtonBox.povDownRight().getAsBoolean()) {
-        // System.out.println("Arm going out");
-        // setManualControllState();
-        // mArmSubsystem.jogArmOut();
+        //     System.out.println("Arm going out");
+        //     setManualControllState();
+        //     mArmSubsystem.jogArmOut();
         // } else {
-        // setAutomaticControllState();
+        //     setAutomaticControllState();
+        // }
+
+        if(mTestController.getAButton() && Math.abs(mTestController.getLeftY()) > 0.05) {
+            setManualControllState();
+            mElevatorSubsystem.setManualSpeed(mTestController.getLeftY());
+        }
+
+        if(mTestController.getAButton() && Math.abs(mTestController.getLeftX()) > 0.05) {
+            
+        }
+
+        // if(mTestController.getAButton() && Math.abs(mTestController.getLeftY()) > 0.05) {
+        //     mElevatorSubsystem.setManualSpeed(mTestController.getLeftY());
         // }
 
     }

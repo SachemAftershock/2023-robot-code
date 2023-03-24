@@ -17,10 +17,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.FollowTrajectoryCommandFactory;
+import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.RotateDriveCommand;
 import frc.robot.commands.elevator.SetElevatorStateCommand;
 import frc.robot.commands.intake.EjectConeCommand;
@@ -47,7 +49,7 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
 
     private Transform2d mTransform2d = new Transform2d(new Pose2d(), mStartingPose);
     
-    PathPlannerTrajectory examplePath = PathPlanner.loadPath("AutoPath2NC", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .3, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
+    PathPlannerTrajectory examplePath = PathPlanner.loadPath("AutoPath2NC", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .4, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
     
     TrajectoryConfig config = new TrajectoryConfig(
         DriveConstants.kAutoMaxVelocityMetersPerSecond * 0.3,
@@ -86,7 +88,8 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-            mDrive.followPathTrajectory(true, examplePath)
+            mDrive.followPathTrajectory(true, examplePath)//,
+            //new LinearDriveCommand(mDrive, 1.5, CardinalDirection.eX)
         );
         //pathToCone.transformBy(mStartingPose);
         

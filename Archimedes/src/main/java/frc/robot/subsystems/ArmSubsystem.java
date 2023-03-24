@@ -181,16 +181,27 @@ public class ArmSubsystem extends AftershockSubsystem {
     }
 
     public void jogArm(boolean isOut) {
-        setSpeed(isOut ? -kJogSpeed : kJogSpeed);
+
+        //double speed = 0.0;
+        // if(getBarDistance() > 15.5) {
+        //     speed = 0.5;
+        // } else {
+        //     speed = 0.75;
+        // }
+
+        setSpeed(isOut ? -0.5 : 0.5);
     }
 
     public void jogArmOut() {
-        setSpeed(-0.9);
+        if(getBarDistance() > 15.5) {
+            setSpeed(-0.5);
+        } else {
+            setSpeed(-0.95);
+        }
     }
 
     public void jogArmIn() {
-        setSpeed(0.6);
-
+        setSpeed(0.75);
     }
 
     public void setHookSpeed(double speed) {

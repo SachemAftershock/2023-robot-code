@@ -8,7 +8,7 @@ public enum ElevatorState {
     eClearBumper(30.0, 30.0),
     eRaised(22.0, 22.0),                                                                                    
     eLow(22.0, 22.0), 
-    eMid(51.0, 51.0), 
+    eMid(51.0, 52.5), 
     eHigh(56.0, 62.0), 
     ePlayerStation(57.75, 60.0),
     eUnknown(-1, -1);
