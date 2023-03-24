@@ -89,7 +89,6 @@ public class AutoPathTwo extends SequentialCommandGroup{
             mDrive.followPathTrajectoryBlue(true, examplePath)
         );
         //pathToCone.transformBy(mStartingPose);
-        mDrive.followPathTrajectory(true, examplePath);
         
         // addCommands(
             

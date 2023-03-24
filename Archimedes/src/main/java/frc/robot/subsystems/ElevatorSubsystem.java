@@ -234,7 +234,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     public void checkBounds(double current) {
         if (current > kElevatorMaxHeight || current < kElevatorMinHeight) {
             System.out.println("ERROR ---------- ELEVATOR OUT OF BOUNDS  ----------");
-            stop();
+            //stop();
             return;
         }
     }
@@ -280,14 +280,14 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
 
     private void setSpeed(double speed) {
-        if (getElevatorHeight() > kElevatorMaxHeight || getElevatorHeight() < kElevatorMinHeight) {
-            DriverStation.reportError("ELEVATOR OUT OF BOUNDS (set speed call)", false);
-            return;
-        }
-        else {
+        // if (getElevatorHeight() > kElevatorMaxHeight || getElevatorHeight() < kElevatorMinHeight) {
+        //     DriverStation.reportError("ELEVATOR OUT OF BOUNDS (set speed call)", false);
+        //     return;
+        // }
+        // else {
             //System.out.println("Speed --> " + speed);
             mMotor.set(speed);
-        }
+        //}
     }
 
     public void setManualSpeed(double speed) {
