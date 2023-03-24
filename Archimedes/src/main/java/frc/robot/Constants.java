@@ -250,11 +250,11 @@ public class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final double[] kPidGains = { 0.2, 0.0, 0.0 };// { 0.06, 0.0, 0.0 };
+        public static final double[] kPidGains = { 10.0, 0.0, 0.0 };// { 0.06, 0.0, 0.0 };
         public static final double[] kTrapezoidalPidGains = { 0.05, 0.0, 0.0 };
         public static final double kMaxVelocityMeterPerSecond = 0.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.25;
-        public static final double kEpsilon = 1.0;
+        public static final double kEpsilon = 3.0;
 
         public static final double kJogSpeed = 0.2;
 

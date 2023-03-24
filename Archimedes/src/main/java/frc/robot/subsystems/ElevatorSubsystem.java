@@ -11,6 +11,7 @@ import frc.robot.enums.ElevatorState;
 
 import com.ctre.phoenixpro.Timestamp;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
@@ -56,6 +57,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private double prevTestDistance;
     private double mSystemTimer;
 
+    private RelativeEncoder mEncoder;
+
     private ElevatorMode mElevatorMode;
 
     public enum ElevatorMode {
@@ -66,6 +69,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
         mLidar = new Lidar(new DigitalInput(kElevatorLidarId));
         mPid = new PID();
+
         mPid.start(kPidGains);
         mConstraints = new TrapezoidProfile.Constraints(
             kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared
@@ -82,6 +86,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         mElevatorMode = ElevatorMode.eStowedEmpty;
 
         mFilter = new MedianFilter(kElevatorMedianFilterSampleSize);
+
+        mEncoder = mMotor.getEncoder();
     }
 
     @Override
@@ -96,14 +102,20 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         counter = 0;
         prevDelta = Double.MAX_VALUE;
         prevTestDistance = getElevatorHeight();
+
+        mEncoder.setPosition(0);
     }
 
     @Override
     public void periodic() {
         //System.out.println(getElevatorHeight());
 
+        // System.out.println(mEncoder.getPosition());
+
         ControllState controlState = RobotContainer.getControllState();
-        double current = getElevatorHeight();
+        // double current = getElevatorHeight();
+
+        double current = mEncoder.getPosition();
         double speed = mMotor.get();
 
         if(mSetpoint != current) {
@@ -122,11 +134,11 @@ public class ElevatorSubsystem extends AftershockSubsystem {
             mElevatorMode = ElevatorMode.eManualControl;
         }
 
-        if (mSetpoint > kElevatorMaxHeight || mSetpoint < kElevatorMinHeight || Double.isNaN(mSetpoint)) {
-            System.out.println("Elevator SETPOINT out of bounds: " + mSetpoint);
-            stop();
-            return;
-        }
+        // if (mSetpoint > kElevatorMaxHeight || mSetpoint < kElevatorMinHeight || Double.isNaN(mSetpoint)) {
+        //     System.out.println("Elevator SETPOINT out of bounds: " + mSetpoint);
+        //     stop();
+        //     return;
+        // }
 
         //System.out.println("Current mode --> " + mElevatorMode);
         
