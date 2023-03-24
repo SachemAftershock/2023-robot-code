@@ -83,13 +83,14 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
         mIntake = intake;
         addCommands(
             new InstantCommand(() -> RobotContainer.setIsCone()),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
+            CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake), 
+            new DelayCommand(0.5),
             new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-            mDrive.followPathTrajectory(true, examplePath)//,
-            //new LinearDriveCommand(mDrive, 1.5, CardinalDirection.eX)
+            mDrive.followPathTrajectoryBlue(true, examplePath)
+            //new LinearDriveCommand(mDrive, 1.5, CardinalDirection.eY)
         );
         //pathToCone.transformBy(mStartingPose);
         

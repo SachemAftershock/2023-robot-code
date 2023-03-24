@@ -17,13 +17,16 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.FollowTrajectoryCommandFactory;
+import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.RotateDriveCommand;
 import frc.robot.commands.elevator.SetElevatorStateCommand;
 import frc.robot.commands.intake.EjectConeCommand;
+import frc.robot.commands.intake.EjectCubeCommand;
 import frc.robot.commands.intake.IngestConeCommand;
 import frc.robot.commands.intake.StopIntakeCommand;
 import frc.robot.enums.ArmState;
@@ -36,7 +39,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.auto.DelayCommand;
 
-public class AutoPathTwo extends SequentialCommandGroup{
+public class AutoPathTwoNoChargeRED extends SequentialCommandGroup{
 
     private final DriveSubsystem mDrive; 
     private final ElevatorSubsystem mElevator;
@@ -47,7 +50,7 @@ public class AutoPathTwo extends SequentialCommandGroup{
 
     private Transform2d mTransform2d = new Transform2d(new Pose2d(), mStartingPose);
     
-    PathPlannerTrajectory examplePath = PathPlanner.loadPath("AutoPath2NC", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .3, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
+    PathPlannerTrajectory examplePath = PathPlanner.loadPath("AutoPath2NC", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .4, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
     
     TrajectoryConfig config = new TrajectoryConfig(
         DriveConstants.kAutoMaxVelocityMetersPerSecond * 0.3,
@@ -73,23 +76,27 @@ public class AutoPathTwo extends SequentialCommandGroup{
 
     Trajectory mNewPathToCone = pathToCone.transformBy(mTransform2d);
 
-    public AutoPathTwo(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+    public AutoPathTwoNoChargeRED(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
         mArm = arm;
         mIntake = intake;
         addCommands(
-            new InstantCommand(() -> RobotContainer.setIsCone()),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
-            new EjectConeCommand(mIntake),
+            //new InstantCommand(() -> RobotContainer.setIsCone()),
+            new InstantCommand(() -> RobotContainer.setIsCube()),
+            CommandFactory.HandleSuperStructureSequence(SuperState.eMid, mElevator, mArm, mIntake), 
+            new DelayCommand(0.5),
+            new EjectCubeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-            mDrive.followPathTrajectoryBlue(true, examplePath)
+            //mDrive.followPathTrajectoryBlue(true, examplePath)
+            new LinearDriveCommand(drive, -1.0, CardinalDirection.eY),
+            new LinearDriveCommand(drive, -2.25, CardinalDirection.eX)
+            //new LinearDriveCommand(mDrive, 1.5, CardinalDirection.eY)
         );
         //pathToCone.transformBy(mStartingPose);
-        mDrive.followPathTrajectory(true, examplePath);
         
         // addCommands(
             

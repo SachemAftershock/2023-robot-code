@@ -216,7 +216,7 @@ public class ArmSubsystem extends AftershockSubsystem {
         //     speed = 0.75;
         // }
 
-        setSpeed(isOut ? -0.5 : 0.5);
+        setSpeed(isOut ? -0.25 : 0.25);
     }
 
     public void jogArmOut() {
@@ -245,6 +245,14 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     public ArmState getState() {
         return mCurrentState;
+    }
+
+    public void attachHook() {
+        mHookState = HookState.eAttached;
+    }
+
+    public void detathHook() {
+        mHookState = HookState.eDetached;
     }
 
     public double getBarDistance() {
