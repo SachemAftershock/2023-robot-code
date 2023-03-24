@@ -26,6 +26,7 @@ import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.RotateDriveCommand;
 import frc.robot.commands.elevator.SetElevatorStateCommand;
 import frc.robot.commands.intake.EjectConeCommand;
+import frc.robot.commands.intake.EjectCubeCommand;
 import frc.robot.commands.intake.IngestConeCommand;
 import frc.robot.commands.intake.StopIntakeCommand;
 import frc.robot.enums.ArmState;
@@ -82,15 +83,15 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
         mArm = arm;
         mIntake = intake;
         addCommands(
-            new InstantCommand(() -> RobotContainer.setIsCone()),
+            new InstantCommand(() -> RobotContainer.setIsCube()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake), 
             new DelayCommand(0.5),
-            new EjectConeCommand(mIntake),
+            new EjectCubeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-            mDrive.followPathTrajectoryBlue(true, examplePath)
-            //new LinearDriveCommand(mDrive, 1.5, CardinalDirection.eY)
+            //mDrive.followPathTrajectoryBlue(true, examplePath)
+            new LinearDriveCommand(mDrive, -3.5, CardinalDirection.eX)
         );
         //pathToCone.transformBy(mStartingPose);
         
