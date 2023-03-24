@@ -181,6 +181,9 @@ public class Constants {
         public static final double kHookDetachedPosition = 0.33;
         public static final double kHookEpsilon = 0.025;
 
+        public static final double[] kHookAttachGains = {15, 0, 0};
+        public static final double[] kHookDetachGains = {5, 0, 0};
+
         public static final double kCubeOffset = 0.0;
         public static final double kMaxVelocityMeterPerSecond = 0.05;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.025;
