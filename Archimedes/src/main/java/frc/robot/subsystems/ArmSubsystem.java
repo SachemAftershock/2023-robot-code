@@ -61,8 +61,16 @@ public class ArmSubsystem extends AftershockSubsystem {
     GenericEntry I = ArmSubsystemTab.add("Arm I", 0).getEntry();
     GenericEntry D = ArmSubsystemTab.add("Arm D", 0).getEntry();
 
+    private HookState mHookState;
+    private PID mHookAttachedPid;
+    private PID mHookDetachedPid;
+
     public enum ArmMode {
         ePIDControl, eManualControl, eIdle, eStowedEmpty, eLocked;
+    }
+
+    public enum HookState {
+        eAttached, eDetached
     }
 
     private ArmSubsystem() {
@@ -96,6 +104,10 @@ public class ArmSubsystem extends AftershockSubsystem {
         mDesiredState = ArmState.eStowEmpty;
 
         mArmMode = ArmMode.eStowedEmpty;
+
+        mHookState = HookState.eDetached;
+        mHookAttachedPid = new PID();
+        mHookDetachedPid = new PID();
     }
 
     @Override
@@ -108,12 +120,27 @@ public class ArmSubsystem extends AftershockSubsystem {
         mPID.start(kGains);
         mSetpoint = getBarDistance();
 
+        mHookAttachedPid.start(kHookAttachGains);
+        mHookDetachedPid.start(kHookDetachGains);
     }
 
     @Override
     public void periodic() {
 
-        // System.out.println(mHookEncoder.getAbsolutePosition());
+        double hookPosition = mHookEncoder.getAbsolutePosition();
+        double speed;
+
+        if (mHookState == HookState.eAttached) {
+            speed = mHookAttachedPid.update(hookPosition, kHookAttachedPosition);
+        }
+        else if (mHookState == HookState.eDetached) {
+            speed = mHookDetachedPid.update(hookPosition, kHookDetachedPosition);
+        }
+        else {
+            speed = 0;
+        }
+
+        setHookSpeed(speed);
 
         if (mCurrentState == mDesiredState) {
             // System.out.println("Desired state reached");

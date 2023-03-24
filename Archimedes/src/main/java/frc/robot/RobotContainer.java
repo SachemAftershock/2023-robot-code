@@ -424,7 +424,9 @@ public class RobotContainer {
         // mArmSubsystem.setHookSpeed(0.2)))
         // .onFalse(new InstantCommand(() -> mArmSubsystem.stopHook()));
 
-        mButtonBox.hook().onTrue(new AttachHookCommand(mArmSubsystem)).onFalse(new DetachHookCommand(mArmSubsystem));
+       // mButtonBox.hook().onTrue(new AttachHookCommand(mArmSubsystem)).onFalse(new DetachHookCommand(mArmSubsystem));
+
+       mButtonBox.hook().onTrue(new InstantCommand()).onFalse(new InstantCommand());
 
     }
 

@@ -1,7 +1,6 @@
 package frc.robot.enums;
 
 import frc.robot.RobotContainer;
-import frc.robot.Constants.ArmConstants;
 
 public enum ArmState {
 
