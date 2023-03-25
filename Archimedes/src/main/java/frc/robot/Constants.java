@@ -36,7 +36,7 @@ public class Constants {
         public static final boolean kSquareAxis = true;
 
         public static final double kDriveSpeedFastScaleFactor = 0.75;
-        public static final double kDriveSpeedScaleFactor = 0.45;
+        public static final double kDriveSpeedScaleFactor = 0.65;
 
         public static final double[] kDriveAngularGains = { 0.013, 0.0, 0.0 }; // dont use I it sucks - Shreyas
         public static final double[] kDriveLinearGains = { 0.7, 0.0, 0.0 };
@@ -250,11 +250,13 @@ public class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final double[] kPidGains = { 10.0, 0.0, 0.0 };// { 0.06, 0.0, 0.0 };
+        public static final double[] kPidGainsLidar = { 0.2, 0.0, 0.0 };
+        public static final double[] kPIDGainsEncoder = { 10.0, 0.0, 0.0 };
         public static final double[] kTrapezoidalPidGains = { 0.05, 0.0, 0.0 };
         public static final double kMaxVelocityMeterPerSecond = 0.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.25;
-        public static final double kEpsilon = 3.0;
+        public static final double kEpsilonEncoderTicks = 3.0;
+        public static final double kEpsilonLidar = 1.0;
 
         public static final double kJogSpeed = 0.2;
 

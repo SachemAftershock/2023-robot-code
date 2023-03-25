@@ -19,6 +19,12 @@ public class LinearDriveCommand extends CommandBase {
 
     // Field Relative : Y direction is horizontal, X direction is downfield
 
+    //Setup position is the robot's intake is facing the grid
+    //Positive X makes the robot drive forward (drives into the grid from setup position)
+    //Negative X makes the robot drive backwards (drives into AWAY from the grid from setup position)
+    //Negative Y (from drivers POV) makes it drive towards the left 
+    //Positive Y (from drivers POV) makes it drive towards the right
+
     public LinearDriveCommand(DriveSubsystem drive, double setpoint, CardinalDirection direction) {
         mDrive = drive;
         mLinearSetpoint = setpoint;

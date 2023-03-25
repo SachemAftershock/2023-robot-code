@@ -30,6 +30,8 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.ErrorTracker.ErrorType;
+import frc.robot.auto.cubeAutoPaths.CubeHighStartingRight;
+import frc.robot.auto.cubeAutoPaths.CubeMidStartingLeft;
 import frc.robot.auto.fieldOrientedTrajectoryAuto.*;
 import frc.robot.auto.linearAuto.AutoPathConeLinear;
 import frc.robot.auto.linearAuto.AutoPathCubeLinear;
@@ -120,7 +122,7 @@ public class RobotContainer {
         mDriveSubsystem.setDefaultCommand(
             new ManualDriveCommand(
                 mDriveSubsystem, mArmSubsystem::getState, mArmSubsystem::isArmStowedEnough,
-                mElevatorSubsystem::getState,
+                mElevatorSubsystem::getElevatorHeight,
                 () -> modifyAxis(mPrimaryThrottleController.getY()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
                 () -> modifyAxis(mPrimaryThrottleController.getX()) * DriveConstants.kManualMaxVelocityMetersPerSecond,
                 () -> -modifyAxis(mPrimaryTwistController.getTwist())
@@ -525,7 +527,7 @@ public class RobotContainer {
         // mArmSubsystem, mIntakeSubsystem);
         
         //return /new LinearDriveCommand(mDriveSubsystem, 5, CardinalDirection.eY);
-        return new AutoPathTwoNoChargeRED(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        return new CubeHighStartingRight(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
 
 
     }

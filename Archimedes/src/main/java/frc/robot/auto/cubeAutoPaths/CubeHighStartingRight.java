@@ -1,4 +1,4 @@
-package frc.robot.auto.fieldOrientedTrajectoryAuto;
+package frc.robot.auto.cubeAutoPaths;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.auto.DelayCommand;
 
-public class AutoPathTwoNoChargeRED extends SequentialCommandGroup{
+public class CubeHighStartingRight extends SequentialCommandGroup{
 
     private final DriveSubsystem mDrive; 
     private final ElevatorSubsystem mElevator;
@@ -76,24 +76,23 @@ public class AutoPathTwoNoChargeRED extends SequentialCommandGroup{
 
     Trajectory mNewPathToCone = pathToCone.transformBy(mTransform2d);
 
-    public AutoPathTwoNoChargeRED(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+    public CubeHighStartingRight(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
         mArm = arm;
         mIntake = intake;
         addCommands(
-            //new InstantCommand(() -> RobotContainer.setIsCone()),
             new InstantCommand(() -> RobotContainer.setIsCube()),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eMid, mElevator, mArm, mIntake), 
+            CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake), 
             new DelayCommand(0.5),
             new EjectCubeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
             //mDrive.followPathTrajectoryBlue(true, examplePath)
-            new LinearDriveCommand(drive, -1.0, CardinalDirection.eY),
-            new LinearDriveCommand(drive, -2.25, CardinalDirection.eX)
+            new LinearDriveCommand(drive, 0.35, CardinalDirection.eY),
+            new LinearDriveCommand(drive, -2.5, CardinalDirection.eX)
             //new LinearDriveCommand(mDrive, 1.5, CardinalDirection.eY)
         );
         //pathToCone.transformBy(mStartingPose);

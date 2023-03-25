@@ -70,7 +70,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         mLidar = new Lidar(new DigitalInput(kElevatorLidarId));
         mPid = new PID();
 
-        mPid.start(kPidGains);
+        mPid.start(kPidGainsLidar);
         mConstraints = new TrapezoidProfile.Constraints(
             kMaxVelocityMeterPerSecond, kMaxAccelerationMetersPerSecondSquared
         );
@@ -113,9 +113,9 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         // System.out.println(mEncoder.getPosition());
 
         ControllState controlState = RobotContainer.getControllState();
-        // double current = getElevatorHeight();
+        double current = getElevatorHeight();
 
-        double current = mEncoder.getPosition();
+        // double current = mEncoder.getPosition();
         double speed = mMotor.get();
 
         if(mSetpoint != current) {
@@ -185,7 +185,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                     return;
                 }
 
-                if (Math.abs(mPid.getError()) < kEpsilon) {
+                if (Math.abs(mPid.getError()) < kEpsilonLidar) {
                     mCurrentState = mDesiredState;
                     mElevatorMode = ElevatorMode.eIdle;
                     return;
