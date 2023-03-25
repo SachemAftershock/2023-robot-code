@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -76,6 +77,12 @@ public class CubeHighStartingRight extends SequentialCommandGroup{
 
     Trajectory mNewPathToCone = pathToCone.transformBy(mTransform2d);
 
+    Trajectory newPath = TrajectoryGenerator.generateTrajectory(new Pose2d(new Translation2d(), new Rotation2d(Math.PI)),
+        List.of(
+        new Translation2d(0.5, -0.5),
+        new Translation2d(0.5, -1.5)
+        ), new Pose2d(0.6, -1.75, new Rotation2d()), config);
+
     public CubeHighStartingRight(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
@@ -83,17 +90,23 @@ public class CubeHighStartingRight extends SequentialCommandGroup{
         mArm = arm;
         mIntake = intake;
         addCommands(
-            new InstantCommand(() -> RobotContainer.setIsCube()),
+            new InstantCommand(() -> RobotContainer.setIsCone()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake), 
             new DelayCommand(0.5),
-            new EjectCubeCommand(mIntake),
+            new EjectConeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-            //mDrive.followPathTrajectoryBlue(true, examplePath)
-            new LinearDriveCommand(drive, 0.35, CardinalDirection.eY),
-            new LinearDriveCommand(drive, -2.5, CardinalDirection.eX)
+            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)
+            //FollowTrajectoryCommandFactory.generateCommand(drive, newPath)
+            // new LinearDriveCommand(drive, 0.11, CardinalDirection.eY),
+            // new DelayCommand(1.0),
+            // new LinearDriveCommand(drive, 0.35, CardinalDirection.eY),
+            // new DelayCommand(1.0),
+            // new LinearDriveCommand(drive, 0.11, CardinalDirection.eX),
+            // new DelayCommand(1.0),
+            // new LinearDriveCommand(drive, -1.5, CardinalDirection.eX)
             //new LinearDriveCommand(mDrive, 1.5, CardinalDirection.eY)
+
         );
         //pathToCone.transformBy(mStartingPose);
         

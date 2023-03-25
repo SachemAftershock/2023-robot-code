@@ -118,7 +118,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 	private boolean mEnableBalance;
 	private double antiTiltSpeed;
 
-	private final boolean mEnableAntiTilt = true;
+	private final boolean mEnableAntiTilt = false;
 
 	private DriveSubsystem() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");

@@ -11,7 +11,8 @@ public enum ElevatorState {
     //eMid(49.0, 50.5 - 5.0),
     eMid(51.0, 52.5), 
     eHigh(56.0, 62.0), 
-    ePlayerStation(57.75, 60.0),
+    //ePlayerStation(57.75, 60.0),
+    ePlayerStation(59.0, 61.5),
     eUnknown(-1, -1);
 
 

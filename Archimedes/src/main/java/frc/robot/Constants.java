@@ -192,7 +192,7 @@ public class Constants {
         public static final double kMaxVelocityMeterPerSecond = 0.05;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.025;
         public static final double kArmOffsetRads = 0;
-        public static final double[] kGains = { 1.2, 0.0, 0.0 };// { 1.2, 0.0, 0.0 };
+        public static final double[] kGains = { 1.2, 0.0, 0.1 };// { 1.2, 0.0, 0.0 };
         public static final double kIntegralZone = 0.0;
         public static final double kDt = 0.02;
 
