@@ -41,9 +41,11 @@ public class ManualDriveCommand extends CommandBase {
         //double rotationSupplier = mRateLimiter.calculate(m_rotationSupplier.getAsDouble());
         //If rate limiting needed for rotations
         double rotationSupplier = mRateLimiter.calculate(m_rotationSupplier.getAsDouble());
+
+        var convertedVals = m_drivetrainSubsystem.runAntiTiltControl(xSupplier, ySupplier);
         
         m_drivetrainSubsystem.drive(
-            ChassisSpeeds.fromFieldRelativeSpeeds(xSupplier, ySupplier, rotationSupplier, m_drivetrainSubsystem.getGyroscopeRotation())
+            ChassisSpeeds.fromFieldRelativeSpeeds(convertedVals[1], convertedVals[0], rotationSupplier, m_drivetrainSubsystem.getGyroscopeRotation())
         );
     }
 
