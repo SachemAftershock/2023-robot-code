@@ -118,6 +118,8 @@ public class DriveSubsystem extends AftershockSubsystem {
 	private boolean mEnableBalance;
 	private double antiTiltSpeed;
 
+	private final boolean mEnableAntiTilt = true;
+
 	private DriveSubsystem() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
@@ -315,6 +317,31 @@ public class DriveSubsystem extends AftershockSubsystem {
 					mBackRightModule.getPosition(), new Rotation2d(mBackRightModule.getSteerAngle())
 				), };
 	}
+
+	public double[] runAntiTiltControl(double powX, double powY) {
+        double robotPitch = mNavx.getPitch();
+        double robotRoll = mNavx.getRoll();
+        double[] NewPowXY = new double[2];
+        NewPowXY[0] = powY;
+        NewPowXY[1] = powX;
+
+        if ( (mEnableAntiTilt) && (Math.abs(robotPitch) > kMinTiltAngle) && (Math.abs(robotPitch) < kMaxTiltAngle) ) {
+            double slope = (kTiltSlope - 0.0) / (kMaxTiltAngle - kMinTiltAngle);
+            double correctionOffset = slope * (robotPitch - kMinTiltAngle);
+            NewPowXY[0] += correctionOffset;
+            System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + " Pitch: " + robotPitch);
+        }
+
+        if ( (mEnableAntiTilt) && (Math.abs(robotRoll) > kMinTiltAngle) && (Math.abs(robotRoll) < kMaxTiltAngle) ) {
+            double slope = (kTiltSlope - 0.0) / (kMaxTiltAngle - kMinTiltAngle);
+            double correctionOffset = slope * (robotRoll - kMinTiltAngle);
+            NewPowXY[1] += correctionOffset;
+            System.out.println("ERROR : Anti-Tilt Control Active " + correctionOffset + " Yaw: " + robotRoll);
+        }
+        
+        return NewPowXY;
+    }
+
 
 	public SwerveDriveKinematics getKinematics() {
 		return mKinematics;
