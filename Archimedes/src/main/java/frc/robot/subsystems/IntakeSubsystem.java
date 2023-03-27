@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static frc.robot.Ports.IntakePorts.*;
 
 import frc.robot.ErrorTracker;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.ErrorTracker.ErrorType;
 import frc.robot.Ports.IntakePorts;
@@ -49,6 +50,10 @@ public class IntakeSubsystem extends AftershockSubsystem {
         // if (mIntakeMotor.get() > 0 && getIntakeDistance() < 5.0) {
         //     stop();
         // }
+
+        if (!RobotContainer.isCone() && mLidar.getDistanceIn() < 5.0 && mIntakeMotor.get() > 0.05) {
+            stop();
+        }
     }
 
     @Override
