@@ -68,6 +68,8 @@ public class Ports {
 
     public static final class ElevatorPorts {
         public static final int kElevatorMotorId = CanAddresses.eCanAddress9.get();
+        public static final int kSecondaryElevatorMotorId = CanAddresses.eCanAddress10.get();
+
         public static final int kElevatorLidarId = DioPorts.eDioPort0.get();
     }
 

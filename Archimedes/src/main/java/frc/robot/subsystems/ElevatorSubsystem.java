@@ -41,6 +41,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private PID mPid;
 
     private CANSparkMax mMotor;
+    private CANSparkMax mSecondaryMotor;
 
     private ElevatorState mCurrentState;
     private ElevatorState mDesiredState;
@@ -79,7 +80,11 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         );
         mMotor = new CANSparkMax(kElevatorMotorId, MotorType.kBrushless);
         mMotor.setIdleMode(IdleMode.kBrake);
-        // mMotor.setInverted(true);
+        mMotor.setInverted(false); // just to be safe
+
+        mSecondaryMotor = new CANSparkMax(kSecondaryElevatorMotorId, MotorType.kBrushless);
+        mSecondaryMotor.setIdleMode(IdleMode.kBrake);
+        mSecondaryMotor.follow(mMotor, true);
 
         mCurrentState = ElevatorState.eStowEmpty;
         mDesiredState = ElevatorState.eStowEmpty;
