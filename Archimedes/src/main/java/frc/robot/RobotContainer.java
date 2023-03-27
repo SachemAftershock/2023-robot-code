@@ -41,6 +41,10 @@ import frc.robot.auto.linearAuto.AutoPathTwoNoChargeLinear;
 import frc.robot.auto.robotOrientedTrajectoryAuto.AutoPath2NC;
 import frc.robot.Constants.LoadingZone;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.FloorPickupSequence;
+import frc.robot.commands.FloorRetractSequence;
+import frc.robot.commands.LowScoreSequence;
+import frc.robot.commands.PrintToConsoleCommand;
 import frc.robot.commands.arm.AttachHookCommand;
 import frc.robot.commands.arm.DetachHookCommand;
 import frc.robot.commands.arm.SetArmStateCommand;
@@ -280,10 +284,9 @@ public class RobotContainer {
             CommandFactory
                 .HandleSuperStructureSequence(SuperState.eMid, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
         );
-        // mButtonBox.floorPosition().onTrue(
-        //     CommandFactory
-        //         .HandleSuperStructureSequence(SuperState.eLow, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
-        // );
+
+        mButtonBox.floorPosition().onTrue(new LowScoreSequence(mArmSubsystem, mElevatorSubsystem, mIntakeSubsystem)
+        );
 
         mButtonBox.humanPlayerPostion().onTrue(
             CommandFactory.HandleSuperStructureSequence(
@@ -336,11 +339,18 @@ public class RobotContainer {
         );
 
         // TODO: Figure out stuff w human player coord left/right position
+        // mButtonBox.leftHumanStation().onTrue(
+        //     new SetWaypointCommand(LoadingZone.kDoubleSubstationPose, mDriveSubsystem, LedPosition.eHumanPlayerLeft)
+        // );
+
         mButtonBox.leftHumanStation().onTrue(
-            new SetWaypointCommand(LoadingZone.kDoubleSubstationPose, mDriveSubsystem, LedPosition.eHumanPlayerLeft)
+            new FloorPickupSequence(mArmSubsystem, mElevatorSubsystem, mIntakeSubsystem)
         );
-        // mButtonBox.rightHumanStation().onTrue(new SetWaypointCommand(,
-        // mDriveSubsystem));
+
+        mButtonBox.rightHumanStation().onTrue( new SequentialCommandGroup(
+            new FloorRetractSequence(mArmSubsystem, mElevatorSubsystem, mIntakeSubsystem),
+            new PrintToConsoleCommand("FLoor retract sequence initiated")
+        ));
         // Function<Boolean, InstantCommand> jogElevatorCommand = (isUp) -> new
         // InstantCommand(() -> {
         // if (mButtonBox.isJoystickEnabled()) mElevatorSubsystem.jogElevator(isUp);

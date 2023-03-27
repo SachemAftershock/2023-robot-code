@@ -18,13 +18,13 @@ import frc.robot.commands.elevator.SetElevatorStateCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 
-public class FloorPickupSequence extends SequentialCommandGroup{
+public class LowScoreSequence extends SequentialCommandGroup{
 
-    public FloorPickupSequence(ArmSubsystem arm, ElevatorSubsystem elevator, IntakeSubsystem intake) {
+    public LowScoreSequence(ArmSubsystem arm, ElevatorSubsystem elevator, IntakeSubsystem intake) {
         addCommands(
             new SetElevatorStateCommand(ElevatorState.eClearBumper, elevator),
-            new SetArmStateCommand(ArmState.eLow, arm),
-            new SetElevatorStateCommand(ElevatorState.eLow, elevator)
+            new SetArmStateCommand(ArmState.eLow, arm)
+            //new SetElevatorStateCommand(ElevatorState.eLow, elevator)
             //new SmartIngestCommand(intake),
             //new DelayCommand(0.5),
             //new StopIntakeCommand(intake),

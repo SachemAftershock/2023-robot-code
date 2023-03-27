@@ -8,8 +8,23 @@ public enum ArmState {
     // These are going to be raw lidar values until we learn how to interpolate
     // correctly
     //eStowEmpty was 17.5;
-    eStowEmpty(17.5 + 0.625, 17.5 + 0.625), eStowLoaded(0, 0), eFloor(16.2, 16.2), eLow(15.25, 15.9), eMid(16.0, 15.3),
-    eHigh(13.25, 13.4), ePlayerStation(16.9, 16.9);// (17.0, 15.5/*16.5*/);
+    // PRE LINK REMOVAL
+    // eStowEmpty(17.5 + 0.625, 17.5 + 0.625), 
+    // eStowLoaded(0, 0), 
+    // eFloor(16.2, 16.2), 
+    // eLow(15.25, 15.9), 
+    // eMid(16.0, 15.3),
+    // eHigh(13.25, 13.4), 
+    // ePlayerStation(16.9, 16.9);// (17.0, 15.5/*16.5*/);
+
+    // POST LINK REMOVAL
+    eStowEmpty(17.7, 17.7), 
+    //eStowLoaded(0, 0), 
+    eFloor(16.47, 16.47), 
+    eLow(16.47, 16.47), 
+    eMid(13.18, 13.18),
+    eHigh(13.25, 13.4), 
+    ePlayerStation(16.9, 16.9);// (17.0, 15.5/*16.5*/);
 
     //high was 13.17 in cone
     private double mCubeLength; 

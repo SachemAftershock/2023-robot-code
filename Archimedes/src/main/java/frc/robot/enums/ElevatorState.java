@@ -3,11 +3,11 @@ package frc.robot.enums;
 import frc.robot.RobotContainer;
 
 public enum ElevatorState {
-    eStowEmpty(25.0, 25.0), 
+    eStowEmpty(26.0, 26.0), 
     eStowLoaded(28.0, 28.0), 
     eClearBumper(30.0, 30.0),
-    eRaised(22.0, 22.0),                                                                                    
-    eLow(22.0, 22.0), 
+    //Raised(22.0, 22.0),                                                                                    
+    eLow(24.5, 24.5), 
     //eMid(49.0, 50.5 - 5.0),
     eMid(51.0, 52.5), 
     eHigh(56.0, 62.0), 
