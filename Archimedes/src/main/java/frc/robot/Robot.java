@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         CommandScheduler.getInstance().cancelAll();
 
-        boolean TEST = false;
+        boolean TEST = true;
         if (TEST) {
             mRobotContainer.initialize();
             System.out.println("YOU ARE IN TEST MODE");

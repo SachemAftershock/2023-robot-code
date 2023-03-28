@@ -24,14 +24,14 @@ public class ManualDriveCommand extends CommandBase {
     private final DoubleSupplier m_translationYSupplier;
     private final DoubleSupplier m_rotationSupplier;
 
-    private final Supplier<Boolean> mIsSlowModeSupplier;
+    private final Supplier<Boolean> mRobotOrientedModeSupplier;
     private SlewRateLimiter mRateLimiter;
 
     public ManualDriveCommand(
         DriveSubsystem drivetrainSubsystem, Supplier<ArmState> armStateSupplier,
         Supplier<Boolean> armStowedEnoughSupplier, Supplier<Double> elevatorStateSupplier,
         DoubleSupplier translationXSupplier, DoubleSupplier translationYSupplier, DoubleSupplier rotationSupplier,
-        Supplier<Boolean> isSlowMode
+        Supplier<Boolean> robotOrientedModeSupplier
     ) {
         this.mDrivetrainSubsystem = drivetrainSubsystem;
         mArmStateSupplier = armStateSupplier;
@@ -42,7 +42,7 @@ public class ManualDriveCommand extends CommandBase {
         this.m_translationYSupplier = translationYSupplier;
         this.m_rotationSupplier = rotationSupplier;
 
-        mIsSlowModeSupplier = isSlowMode;
+        mRobotOrientedModeSupplier = robotOrientedModeSupplier;
 
         mRateLimiter = new SlewRateLimiter(0.5);
 
@@ -58,7 +58,7 @@ public class ManualDriveCommand extends CommandBase {
 
         double rotSpeed = m_rotationSupplier.getAsDouble();
 
-        if (mIsSlowModeSupplier.get()) {
+        if (mRobotOrientedModeSupplier.get()) {
             xSpeed *= kDriveSpeedScaleFactor;
             ySpeed *= kDriveSpeedScaleFactor;
             rotSpeed *= kDriveSpeedScaleFactor;
@@ -83,10 +83,14 @@ public class ManualDriveCommand extends CommandBase {
             ySpeed *= kDriveSpeedScaleFactor;
             //rotSpeed *= kDriveSpeedScaleFactor;
         }
+        
+        var chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotSpeed, mDrivetrainSubsystem.getGyroscopeRotation());
 
-        mDrivetrainSubsystem.drive(
-            ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotSpeed, mDrivetrainSubsystem.getGyroscopeRotation())
-        );
+        if (mRobotOrientedModeSupplier.get()) {
+            chassisSpeeds = new ChassisSpeeds(-xSpeed, ySpeed, rotSpeed);
+        }
+
+        mDrivetrainSubsystem.drive(chassisSpeeds);
     }
 
     @Override

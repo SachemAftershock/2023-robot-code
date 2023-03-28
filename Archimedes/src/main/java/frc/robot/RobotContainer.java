@@ -58,6 +58,7 @@ import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.commands.drive.RotateDriveCommand;
 import frc.robot.commands.drive.SetWaypointCommand;
 import frc.robot.commands.elevator.JogElevatorCommand;
+import frc.robot.commands.elevator.SetElevatorLedCommand;
 import frc.robot.commands.elevator.SetElevatorStateCommand;
 import frc.robot.commands.intake.IngestConeCommand;
 import frc.robot.commands.intake.IngestCubeCommand;
@@ -208,11 +209,20 @@ public class RobotContainer {
 
     public void test() {
 
-        if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 || mTestController.getLeftY() < -0.05)) {
-            mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
-        }
-        else {
-            mElevatorSubsystem.setTestSpeed(0.0);
+        // if (mTestController.getAButton() && (mTestController.getLeftY() > 0.05 || mTestController.getLeftY() < -0.05)) {
+        //     //mElevatorSubsystem.setTestSpeed(mTestController.getLeftY() * 0.8);
+        //     mElevatorSubsystem.jogElevatorUp();
+        // }
+        // else {
+        //     mElevatorSubsystem.setTestSpeed(0.0);
+        // }
+
+        if(mTestController.getAButton()) {
+            mElevatorSubsystem.jogElevatorUp();
+        } else if(mTestController.getYButton()) {
+            mElevatorSubsystem.jogElevatorDown();
+        } else {
+            mElevatorSubsystem.stop();
         }
 
         if (mTestController.getAButton() && (mTestController.getLeftX() > 0.05 || mTestController.getLeftX() < -0.05)) {
@@ -285,7 +295,11 @@ public class RobotContainer {
                 .HandleSuperStructureSequence(SuperState.eMid, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
         );
 
-        mButtonBox.floorPosition().onTrue(new LowScoreSequence(mArmSubsystem, mElevatorSubsystem, mIntakeSubsystem)
+        mButtonBox.floorPosition().onTrue(
+            new SequentialCommandGroup(
+                //new SetElevatorLedCommand(SuperState.eLow),
+                new LowScoreSequence(mArmSubsystem, mElevatorSubsystem, mIntakeSubsystem)
+            )
         );
 
         mButtonBox.humanPlayerPostion().onTrue(
@@ -344,11 +358,11 @@ public class RobotContainer {
         // );
 
         mButtonBox.leftHumanStation().onTrue(
-            new FloorPickupSequence(mArmSubsystem, mElevatorSubsystem, mIntakeSubsystem)
+            new FloorRetractSequence(mArmSubsystem, mElevatorSubsystem, mIntakeSubsystem)
         );
 
         mButtonBox.rightHumanStation().onTrue( new SequentialCommandGroup(
-            new FloorRetractSequence(mArmSubsystem, mElevatorSubsystem, mIntakeSubsystem),
+            new FloorPickupSequence(mArmSubsystem, mElevatorSubsystem, mIntakeSubsystem),
             new PrintToConsoleCommand("FLoor retract sequence initiated")
         ));
         // Function<Boolean, InstantCommand> jogElevatorCommand = (isUp) -> new

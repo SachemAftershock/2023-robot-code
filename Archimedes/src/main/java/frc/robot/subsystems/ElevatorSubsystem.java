@@ -84,7 +84,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
         mSecondaryMotor = new CANSparkMax(kSecondaryElevatorMotorId, MotorType.kBrushless);
         mSecondaryMotor.setIdleMode(IdleMode.kBrake);
-        mSecondaryMotor.follow(mMotor, true);
+        //mSecondaryMotor.follow(mMotor, true); //This should be true
+        mSecondaryMotor.setInverted(true);
 
         mCurrentState = ElevatorState.eStowEmpty;
         mDesiredState = ElevatorState.eStowEmpty;
@@ -115,12 +116,12 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     public void periodic() {
         //System.out.println(getElevatorHeight());
 
-        // System.out.println(mEncoder.getPosition());
+        System.out.println(mEncoder.getPosition());
 
         ControllState controlState = RobotContainer.getControllState();
-        double current = getElevatorHeight();
+        //double current = getElevatorHeight();
 
-        // double current = mEncoder.getPosition();
+        double current = mEncoder.getPosition();
         double speed = mMotor.get();
 
         if(mSetpoint != current) {
@@ -162,7 +163,9 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                 // double idleOutput = mPid.update(current, mSetpoint);
                 // setSpeed(idleOutput);
 
+                mSecondaryMotor.setVoltage(0.3);
                 mMotor.setVoltage(0.3); //was 0.5
+                //stop();
 
                 break;
 
@@ -197,7 +200,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                 }
 
                 //System.out.println("Setpoint --> " + mSetpoint + " Current --> " + current + " speed --> " + output);
-                output = output*0.9;
+                //output = output*0.9;
                 setSpeed(output);
 
                 break;
@@ -279,7 +282,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
 
     public void stop() {
-        // System.out.println("Stopping elevator");
+        System.out.println("Stopping elevator");
         setSpeed(0);
     }
 
@@ -302,8 +305,9 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         //     return;
         // }
         // else {
-            //System.out.println("Speed --> " + speed);
+            if (speed == 0) System.out.println("Speed --> " + speed);
             mMotor.set(speed);
+            mSecondaryMotor.set(speed);
         //}
     }
 
