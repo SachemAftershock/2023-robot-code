@@ -62,6 +62,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     private ElevatorMode mElevatorMode;
 
+    private boolean mLidarFailure;
+
     public enum ElevatorMode {
         eStowedEmpty, eIdle, ePIDControl, eManualControl, eRewinding, eBadState
     }
@@ -94,6 +96,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         mFilter = new MedianFilter(kElevatorMedianFilterSampleSize);
 
         mEncoder = mMotor.getEncoder();
+
+        mLidarFailure = false;
     }
 
     @Override
@@ -116,12 +120,21 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     public void periodic() {
         //System.out.println(getElevatorHeight());
 
-        System.out.println(mEncoder.getPosition());
+        //System.out.println(mEncoder.getPosition() + ", " + getElevatorHeight());
 
         ControllState controlState = RobotContainer.getControllState();
-        //double current = getElevatorHeight();
+        double current = getElevatorHeight();
 
-        double current = mEncoder.getPosition();
+        if (current < kElevatorMinHeight || current > kElevatorMaxHeight) {
+            mLidarFailure = true;
+            stop();
+            mElevatorMode = ElevatorMode.eManualControl;
+        } else {
+            mLidarFailure = false;
+            mElevatorMode = ElevatorMode.eIdle;
+        }
+
+        //double current = mEncoder.getPosition();
         double speed = mMotor.get();
 
         if(mSetpoint != current) {
@@ -130,7 +143,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
         //System.out.println("Desired state --> " + mDesiredState.toString() + " Current state --> " + mCurrentState.toString());
 
-        if(mDesiredState != mCurrentState) {
+        if(mDesiredState != mCurrentState && !mLidarFailure) {
             mElevatorMode = ElevatorMode.ePIDControl;
         } else {
             mElevatorMode = ElevatorMode.eIdle;
@@ -305,7 +318,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         //     return;
         // }
         // else {
-            if (speed == 0) System.out.println("Speed --> " + speed);
+            //if (speed == 0) System.out.println("Speed --> " + speed);
             mMotor.set(speed);
             mSecondaryMotor.set(speed);
         //}

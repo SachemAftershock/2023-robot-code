@@ -259,7 +259,7 @@ public class Constants {
         public static final double[] kTrapezoidalPidGains = { 0.05, 0.0, 0.0 };
         public static final double kMaxVelocityMeterPerSecond = 0.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.25;
-        public static final double kEpsilonEncoderTicks = 3.0;
+        public static final double kEpsilonEncoderTicks = 2;
         public static final double kEpsilonLidar = 1.0;
 
         public static final double kJogSpeed = 0.2;

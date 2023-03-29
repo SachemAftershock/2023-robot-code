@@ -23,8 +23,8 @@ public class FloorRetractSequence extends SequentialCommandGroup{
     public FloorRetractSequence(ArmSubsystem arm, ElevatorSubsystem elevator, IntakeSubsystem intake) {
         addCommands(
             new SetElevatorStateCommand(ElevatorState.eClearBumper, elevator),
-            new SetArmStateCommand(ArmState.eStowEmpty, arm),
-            new SetElevatorStateCommand(ElevatorState.eStowEmpty, elevator)
+            new SetArmStateCommand(ArmState.eStowEmpty, arm)
+            //new SetElevatorStateCommand(ElevatorState.eStowEmpty, elevator)
             //new SmartIngestCommand(intake),
             //new DelayCommand(0.5),
             //new StopIntakeCommand(intake),

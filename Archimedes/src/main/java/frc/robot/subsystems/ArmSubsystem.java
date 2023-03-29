@@ -126,7 +126,7 @@ public class ArmSubsystem extends AftershockSubsystem {
 
     @Override
     public void periodic() {
-
+    
         double hookPosition = mHookEncoder.getAbsolutePosition();
         double speed;
 
@@ -150,6 +150,7 @@ public class ArmSubsystem extends AftershockSubsystem {
 
         double current = mFilter.calculate(getBarDistance());
         double setpoint = mDesiredState.getLength();// ArmConstants.getBarDistance(mDesiredState.getLength());
+        // System.out.println(current);
         // System.out.println(setpoint + ", " + mDesiredState.getLength());
         if (setpoint == -1) {
             System.out.println("ERROR : Arm setpoint invalid");
