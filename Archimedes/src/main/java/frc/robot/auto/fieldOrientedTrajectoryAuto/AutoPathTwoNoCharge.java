@@ -50,6 +50,8 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
 
     private Transform2d mTransform2d = new Transform2d(new Pose2d(), mStartingPose);
     
+    PathPlannerTrajectory chargeStation = PathPlanner.loadPath("ChargeStation", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .2, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
+
     PathPlannerTrajectory examplePath = PathPlanner.loadPath("AutoPath2NC", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .4, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
     
     TrajectoryConfig config = new TrajectoryConfig(
@@ -91,6 +93,7 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
             //mDrive.followPathTrajectoryBlue(true, examplePath)
+            //mDrive.followPathTrajectoryXLinear(true, ChargeStation)
             new LinearDriveCommand(mDrive, -3.5, CardinalDirection.eX)
         );
         //pathToCone.transformBy(mStartingPose);
