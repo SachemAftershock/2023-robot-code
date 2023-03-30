@@ -610,5 +610,26 @@ public class DriveSubsystem extends AftershockSubsystem {
         )
     );
 	}
+	public Command followPathTrajectoryYLinear(boolean isFirstPath, PathPlannerTrajectory traj){
+		return new SequentialCommandGroup(
+        new InstantCommand(() -> {
+          // Reset odometry for the first path you run during auto
+          if(isFirstPath){
+              this.resetOdometry(traj);
+          }
+        }),
+        new PPSwerveControllerCommand(
+            traj, 
+			this::getPose, // Pose supplier
+            getKinematics(), // SwerveDriveKinematics
+            new PIDController(0/*-12.5*/, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            new PIDController(7.95, 0, 0), // Y controller (usually the same values as X controller)
+            new PIDController(10, kDriveAngularGains[1], kDriveAngularGains[2]), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            this::drive, // Module states consumer
+            true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+            this // Requires this drive subsystem
+        )
+    );
+	}
 	
 }
