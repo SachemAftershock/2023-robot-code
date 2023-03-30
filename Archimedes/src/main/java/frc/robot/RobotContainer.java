@@ -32,8 +32,6 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.ErrorTracker.ErrorType;
-import frc.robot.auto.cubeAutoPaths.CubeHighStartingRight;
-import frc.robot.auto.cubeAutoPaths.CubeMidStartingLeft;
 import frc.robot.auto.fieldOrientedTrajectoryAuto.*;
 import frc.robot.auto.linearAuto.AutoPathConeLinear;
 import frc.robot.auto.linearAuto.AutoPathCubeLinear;
@@ -554,11 +552,11 @@ public class RobotContainer {
         // mArmSubsystem, mIntakeSubsystem);
         
         //return /new LinearDriveCommand(mDriveSubsystem, 5, CardinalDirection.eY);
-        return new CubeHighStartingRight(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
-        // return new SequentialCommandGroup(
-        //     new LinearDriveCommand(mDriveSubsystem, 4.0, CardinalDirection.eX),
-        //     new BalanceRobotCommand(mDriveSubsystem)
-        // );
+        //return new CubeHighStartingRight(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        return new SequentialCommandGroup(
+            //new LinearDriveCommand(mDriveSubsystem, 4.0, CardinalDirection.eX),
+            new BalanceRobotCommand(mDriveSubsystem)
+        );
        
 
     }

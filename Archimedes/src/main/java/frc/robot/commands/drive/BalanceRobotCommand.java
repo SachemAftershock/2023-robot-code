@@ -22,7 +22,7 @@ public class BalanceRobotCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        mDrive.drive(new ChassisSpeeds(0, -1d, 0));
+        mDrive.drive(new ChassisSpeeds(-1d, 0.0, 0));
     }
 
     @Override

@@ -363,12 +363,18 @@ public class DriveSubsystem extends AftershockSubsystem {
 		mLedPosition = position;
 	}
 
+	/*
+	 * @return The robot relative pitch
+	 */
 	public double getPitch() {
-		return mNavx.getPitch();
+		return mNavx.getRoll();
 	}
 
+	/*
+	 * @return The robot relative roll
+	 */
 	public double getRoll() {
-		return mNavx.getRoll();
+		return mNavx.getPitch();
 	}
 
 	public double[] runBalanceControl(double pow, double rot) {
@@ -527,6 +533,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 	@Override
 	public void outputTelemetry() {
+		SmartDashboard.putNumber("Robot Pitch ", mNavx.getPitch());
 	}
 
 	public synchronized static DriveSubsystem getInstance() {
