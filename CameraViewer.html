@@ -7,15 +7,22 @@
     <title>263 Camera Viewer</title>
   </head>
   <body>
-    <img src="http://10.2.63.2:1181/?action=stream" alt="Camera Stream" />
+    <!-- <img src="http://10.2.63.2:1181/?action=stream" alt="Camera Stream" /> -->
+    <img src="http://roboRIO-263-FRC.local:1181/?action=stream" alt="Camera Stream" />
     <style>
       img {
-        height: 90vh;
+        height: 100vh;
         width: auto;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+      }
+
+      body {
+        background-color: black;
+        color: white;
+        font-size: 72px;
       }
     </style>
   </body>
