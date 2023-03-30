@@ -3,8 +3,10 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
@@ -46,6 +48,7 @@ import org.photonvision.EstimatedRobotPose;
 
 public class DriveSubsystem extends AftershockSubsystem {
 	private static DriveSubsystem mInstance;
+	private Mk4ModuleConfiguration mConfiguration;
 
 	/**
 	 * The maximum voltage that will be delivered to the drive motors.
@@ -123,8 +126,9 @@ public class DriveSubsystem extends AftershockSubsystem {
 	private DriveSubsystem() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
-		mNavx = new AHRS(SPI.Port.kMXP, (byte) 200);
+		mConfiguration = new Mk4ModuleConfiguration();
 
+		mNavx = new AHRS(SPI.Port.kMXP, (byte) 200);
 		// mPhotonCamera = new PhotonCamera("photonvision");
 
 		mFrontLeftModule = Mk4SwerveModuleHelper.createFalcon500Neo(

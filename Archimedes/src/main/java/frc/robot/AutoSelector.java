@@ -99,7 +99,7 @@ public class AutoSelector {
             case ePath1NC:
                 return new AutoPathOneNoCharge(DriveSubsystem.getInstance(), ElevatorSubsystem.getInstance(), ArmSubsystem.getInstance(), IntakeSubsystem.getInstance());
             case ePath2NC:
-                return new AutoPathTwoNoCharge(DriveSubsystem.getInstance(), ElevatorSubsystem.getInstance(), ArmSubsystem.getInstance(), IntakeSubsystem.getInstance());
+                return new TaxiPath(DriveSubsystem.getInstance(), ElevatorSubsystem.getInstance(), ArmSubsystem.getInstance(), IntakeSubsystem.getInstance());
             case ePath3NC:
                 return new AutoPathThreeNoCharge(DriveSubsystem.getInstance(), ElevatorSubsystem.getInstance(), ArmSubsystem.getInstance(), IntakeSubsystem.getInstance());
             case ePath4NC:

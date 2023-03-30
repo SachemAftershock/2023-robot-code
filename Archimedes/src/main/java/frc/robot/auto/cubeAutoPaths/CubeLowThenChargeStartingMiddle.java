@@ -15,6 +15,7 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.LowScoreSequence;
 import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.BalanceRobotCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
@@ -37,14 +38,14 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.auto.DelayCommand;
 
-public class CubeMidThenChargeStartingMiddle extends SequentialCommandGroup{
+public class CubeLowThenChargeStartingMiddle extends SequentialCommandGroup{
 
     private final DriveSubsystem mDrive; 
     private final ElevatorSubsystem mElevator;
     private final ArmSubsystem mArm;
     private final IntakeSubsystem mIntake;
 
-    public CubeMidThenChargeStartingMiddle(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+    public CubeLowThenChargeStartingMiddle(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
@@ -52,7 +53,7 @@ public class CubeMidThenChargeStartingMiddle extends SequentialCommandGroup{
         mIntake = intake;
         addCommands(
             new InstantCommand(() -> RobotContainer.setIsCube()),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eMid, mElevator, mArm, mIntake), 
+            new LowScoreSequence(arm, elevator, intake),
             new DelayCommand(0.5),
             new EjectCubeCommand(mIntake),
             new DelayCommand(0.5),

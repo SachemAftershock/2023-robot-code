@@ -5,8 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.SubsystemManager;
@@ -71,9 +73,12 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         //mRobotContainer.initializeSubsystems();
+        System.out.println("Time 1 --> " + Timer.getFPGATimestamp());
         mRobotContainer.initialize();
+        System.out.println("Time 2 --> " + Timer.getFPGATimestamp());
         // CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().schedule(mRobotContainer.getAutonomousCommand());
+        System.out.println("Time 3 --> " + Timer.getFPGATimestamp());
         //mAutonomousCommand = mRobotContainer.getAutonomousCommand();
         // CommandScheduler.getInstance().schedule(mAutoSelector.getSelectedAutoCommand());
         // if (mAutonomousCommand != null) {

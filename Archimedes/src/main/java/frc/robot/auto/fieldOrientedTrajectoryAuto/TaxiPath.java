@@ -39,7 +39,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.auto.DelayCommand;
 
-public class AutoPathTwoNoCharge extends SequentialCommandGroup{
+public class TaxiPath extends SequentialCommandGroup{
 
     private final DriveSubsystem mDrive; 
     private final ElevatorSubsystem mElevator;
@@ -78,23 +78,23 @@ public class AutoPathTwoNoCharge extends SequentialCommandGroup{
 
     Trajectory mNewPathToCone = pathToCone.transformBy(mTransform2d);
 
-    public AutoPathTwoNoCharge(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+    public TaxiPath(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
         mArm = arm;
         mIntake = intake;
         addCommands(
-            new InstantCommand(() -> RobotContainer.setIsCube()),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake), 
-            new DelayCommand(0.5),
-            new EjectCubeCommand(mIntake),
-            new DelayCommand(0.5),
-            new StopIntakeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-            //mDrive.followPathTrajectoryBlue(true, examplePath)
-            //mDrive.followPathTrajectoryXLinear(true, ChargeStation)
-            new LinearDriveCommand(mDrive, -3.5, CardinalDirection.eX)
+            // new InstantCommand(() -> RobotContainer.setIsCube()),
+            // CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake), 
+            // new DelayCommand(0.5),
+            // new EjectCubeCommand(mIntake),
+            // new DelayCommand(0.5),
+            // new StopIntakeCommand(mIntake),
+            // CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
+            // //mDrive.followPathTrajectoryBlue(true, examplePath)
+            mDrive.followPathTrajectoryXLinear(true, chargeStation)
+            //new LinearDriveCommand(mDrive, -3.5, CardinalDirection.eX)
         );
         //pathToCone.transformBy(mStartingPose);
         
