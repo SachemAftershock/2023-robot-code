@@ -19,6 +19,7 @@ import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.BalanceRobotCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.FollowTrajectoryCommandFactory;
+import frc.robot.commands.drive.HoldPositionCommand;
 import frc.robot.commands.drive.LinearDriveCommand;
 import frc.robot.commands.drive.RotateDriveCommand;
 import frc.robot.commands.elevator.SetElevatorStateCommand;
@@ -57,7 +58,9 @@ public class CubeMidThenChargeStartingMiddle extends SequentialCommandGroup{
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-            new BalanceRobotCommand(drive)
+            new BalanceRobotCommand(drive),
+            new DelayCommand(1.0),
+            new HoldPositionCommand(drive)
            
         );
         

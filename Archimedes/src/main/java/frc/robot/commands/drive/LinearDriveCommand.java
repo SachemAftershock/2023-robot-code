@@ -6,7 +6,9 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public class LinearDriveCommand extends CommandBase {
 
@@ -35,6 +37,16 @@ public class LinearDriveCommand extends CommandBase {
 
     @Override
     public void initialize() {
+
+        double angle = Math.toRadians(90.0);
+        SwerveModuleState[] states = {
+            new SwerveModuleState(0.0, new Rotation2d(angle)),
+            new SwerveModuleState(0.0, new Rotation2d(-angle)),
+            new SwerveModuleState(0.0, new Rotation2d(-angle)),
+            new SwerveModuleState(0.0, new Rotation2d(angle)),
+        };
+
+        mDrive.drive(states);
         mCurrentPose = 0.0;
 
         if (mDirection == CardinalDirection.eY) {
