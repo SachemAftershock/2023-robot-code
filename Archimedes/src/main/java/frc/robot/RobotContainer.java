@@ -32,8 +32,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.ErrorTracker.ErrorType;
-import frc.robot.auto.cubeAutoPaths.CubeHighStartingRight;
-import frc.robot.auto.cubeAutoPaths.CubeMidStartingLeft;
+import frc.robot.auto.cubeAutoPaths.CubeLowThenChargeStartingMiddle;
 import frc.robot.auto.fieldOrientedTrajectoryAuto.*;
 import frc.robot.auto.linearAuto.AutoPathConeLinear;
 import frc.robot.auto.linearAuto.AutoPathCubeLinear;
@@ -524,42 +523,16 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // return new AutoPathTwoNoChargeLinear(mDriveSubsystem, mElevatorSubsystem,
-        // mArmSubsystem, mIntakeSubsystem);
-        // return new RotateDriveCommand(mDriveSubsystem, 180);
-        // return new LinearDriveCommand(mDriveSubsystem, -0.3, CardinalDirection.eY);
-        // return new AutoPathTwoNoCharge(mDriveSubsystem, mElevatorSubsystem,
-        // mArmSubsystem, mIntakeSubsystem);
-        // TrajectoryConfig config = new TrajectoryConfig(
-        // DriveConstants.kAutoMaxVelocityMetersPerSecond,
-        // DriveConstants.kMaxAccelerationMetersPerSecondSquared
-        // );
+     
+        //return new LinearDriveCommand(mDriveSubsystem, 0.5, CardinalDirection.eY);
+        //return new CubeHighStartingRight(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        return new CubeLowThenChargeStartingMiddle(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        //return new BalanceRobotCommand(mDriveSubsystem);
 
-        // Trajectory pathToChargeStation = TrajectoryGenerator.generateTrajectory(
-        // new Pose2d(), List.of(new Translation2d(-.25, 1.06), new Translation2d(-.5,
-        // 1.69)),
-        // new Pose2d(-2, 1.45, new Rotation2d()), config
-        // );
-
-        // // return FollowTrajectoryCommandFactory.generateCommand(mDriveSubsystem,
-        // // pathToChargeStation);
-
-        // return new AutoPathCubeLinear(mDriveSubsystem, mElevatorSubsystem,
-        // mArmSubsystem, mIntakeSubsystem);
-        // return new AutoPathCone(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem,
-        // mIntakeSubsystem);
-        // return new AutoPath2NC(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem,
-        // mIntakeSubsystem);
-        // return new AutoPathConeLinear(mDriveSubsystem, mElevatorSubsystem,
-        // mArmSubsystem, mIntakeSubsystem);
-        
-        //return /new LinearDriveCommand(mDriveSubsystem, 5, CardinalDirection.eY);
-        return new CubeHighStartingRight(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
         // return new SequentialCommandGroup(
-        //     new LinearDriveCommand(mDriveSubsystem, 4.0, CardinalDirection.eX),
-        //     new BalanceRobotCommand(mDriveSubsystem)
+        //     new CubeLowThenChargeStartingMiddle(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem),
+        //     new TaxiPath(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
         // );
-       
 
     }
 

@@ -3,8 +3,10 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
@@ -46,6 +48,7 @@ import org.photonvision.EstimatedRobotPose;
 
 public class DriveSubsystem extends AftershockSubsystem {
 	private static DriveSubsystem mInstance;
+	private Mk4ModuleConfiguration mConfiguration;
 
 	/**
 	 * The maximum voltage that will be delivered to the drive motors.
@@ -123,8 +126,9 @@ public class DriveSubsystem extends AftershockSubsystem {
 	private DriveSubsystem() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
-		mNavx = new AHRS(SPI.Port.kMXP, (byte) 200);
+		mConfiguration = new Mk4ModuleConfiguration();
 
+		mNavx = new AHRS(SPI.Port.kMXP, (byte) 200);
 		// mPhotonCamera = new PhotonCamera("photonvision");
 
 		mFrontLeftModule = Mk4SwerveModuleHelper.createFalcon500Neo(
@@ -363,12 +367,18 @@ public class DriveSubsystem extends AftershockSubsystem {
 		mLedPosition = position;
 	}
 
+	/*
+	 * @return The robot relative pitch
+	 */
 	public double getPitch() {
-		return mNavx.getPitch();
+		return mNavx.getRoll();
 	}
 
+	/*
+	 * @return The robot relative roll
+	 */
 	public double getRoll() {
-		return mNavx.getRoll();
+		return mNavx.getPitch();
 	}
 
 	public double[] runBalanceControl(double pow, double rot) {
@@ -527,6 +537,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 
 	@Override
 	public void outputTelemetry() {
+		SmartDashboard.putNumber("Robot Pitch ", mNavx.getPitch());
 	}
 
 	public synchronized static DriveSubsystem getInstance() {
@@ -596,6 +607,27 @@ public class DriveSubsystem extends AftershockSubsystem {
             getKinematics(), // SwerveDriveKinematics
             new PIDController(-7.95/*-12.5*/, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
             new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
+            new PIDController(10, kDriveAngularGains[1], kDriveAngularGains[2]), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            this::drive, // Module states consumer
+            true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+            this // Requires this drive subsystem
+        )
+    );
+	}
+	public Command followPathTrajectoryYLinear(boolean isFirstPath, PathPlannerTrajectory traj){
+		return new SequentialCommandGroup(
+        new InstantCommand(() -> {
+          // Reset odometry for the first path you run during auto
+          if(isFirstPath){
+              this.resetOdometry(traj);
+          }
+        }),
+        new PPSwerveControllerCommand(
+            traj, 
+			this::getPose, // Pose supplier
+            getKinematics(), // SwerveDriveKinematics
+            new PIDController(0/*-12.5*/, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            new PIDController(7.95, 0, 0), // Y controller (usually the same values as X controller)
             new PIDController(10, kDriveAngularGains[1], kDriveAngularGains[2]), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
             this::drive, // Module states consumer
             true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true

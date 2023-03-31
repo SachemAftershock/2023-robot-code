@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Class to Manage All Subsystems
@@ -24,7 +25,10 @@ public class SubsystemManager {
      * Initializes all Subsystems
      */
     public void initialize() {
-        mAllSubsystems.forEach(AftershockSubsystem::initialize);
+        mAllSubsystems.forEach((subsystem) -> {
+            System.out.println(subsystem + " " + Timer.getFPGATimestamp());
+            subsystem.initialize();
+        });
     }
 
     /**

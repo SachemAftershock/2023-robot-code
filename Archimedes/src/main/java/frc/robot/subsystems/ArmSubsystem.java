@@ -168,7 +168,8 @@ public class ArmSubsystem extends AftershockSubsystem {
         // output = output*0.5;
         // }
 
-        output = output * 0.5;
+        //output = output * 0.5;
+        output = output*0.75;
 
         // System.out.println("ERROR: Current " + current + " SetPoint " + setpoint + "
         // Output " + output);

@@ -1,5 +1,10 @@
 package frc.robot.auto.fieldOrientedTrajectoryAuto;
 
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -31,7 +36,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.auto.DelayCommand;
 
-public class AutoPathZeroNoCharge extends SequentialCommandGroup {
+public class BalanceDock extends SequentialCommandGroup {
 
     private final DriveSubsystem mDrive;
     private final ElevatorSubsystem mElevator;
@@ -41,6 +46,7 @@ public class AutoPathZeroNoCharge extends SequentialCommandGroup {
     TrajectoryConfig config = new TrajectoryConfig(
         DriveConstants.kAutoMaxVelocityMetersPerSecond * 0.3, DriveConstants.kMaxAccelerationMetersPerSecondSquared
     );
+    PathPlannerTrajectory chargeStation = PathPlanner.loadPath("ChargeStation", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .2, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
 
     Trajectory pathToCube = TrajectoryGenerator.generateTrajectory(
         new Pose2d(new Translation2d(1.9, 1.08), new Rotation2d(1 / 2 * Math.PI)),
@@ -59,41 +65,23 @@ public class AutoPathZeroNoCharge extends SequentialCommandGroup {
         new Pose2d(3.92, 2.39, new Rotation2d()), config
     );
 
-    public AutoPathZeroNoCharge(
-        DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake
-    ) {
+    public BalanceDock(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
         mArm = arm;
         mIntake = intake;
-
         addCommands(
-            // Places cone preloaded in robot
-            new InstantCommand(() -> RobotContainer.setIsCube()),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
-            new EjectConeCommand(mIntake), new DelayCommand(0.5), new StopIntakeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-
-            // Robot moves to cone on field
-            FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCube), new RotateDriveCommand(mDrive, 180),
-
-            // Sequence for picking up cube and stowing
-            new IngestConeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eLow, mElevator, mArm, mIntake),
-            new DelayCommand(0.5), new StopIntakeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-
-            // Driving back
-            new RotateDriveCommand(mDrive, 180),
-            FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToCommunity),
-            new DriveToWaypointCommand(SlotState.ePosition1.getPosition(), mDrive),
-
-            // Placing cube sequence
-            CommandFactory.HandleSuperStructureSequence(SuperState.eMid, mElevator, mArm, mIntake),
-            new EjectConeCommand(mIntake), new DelayCommand(0.5), new StopIntakeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)
-        // FollowTrajectoryCommandFactory.generateCommand(mDrive, pathToChargeStation)
+            // new InstantCommand(() -> RobotContainer.setIsCube()),
+            // CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake), 
+            // new DelayCommand(0.5),
+            // new EjectCubeCommand(mIntake),
+            // new DelayCommand(0.5),
+            // new StopIntakeCommand(mIntake),
+            // CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
+            // //mDrive.followPathTrajectoryBlue(true, examplePath)
+            mDrive.followPathTrajectoryXLinear(true, chargeStation)
+            //new LinearDriveCommand(mDrive, -3.5, CardinalDirection.eX)
         );
     }
 
