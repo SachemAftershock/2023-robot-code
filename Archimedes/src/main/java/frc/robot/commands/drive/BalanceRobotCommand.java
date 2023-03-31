@@ -4,6 +4,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.PID;
+import frc.lib.SlidingWindow;
 import frc.robot.subsystems.DriveSubsystem;
 
 import static frc.robot.Constants.DriveConstants.BalanceConstants.*;
@@ -19,13 +20,17 @@ public class BalanceRobotCommand extends CommandBase {
     private int index;
     private PID mPID; 
 
+    private SlidingWindow mWindow;
+
     public BalanceRobotCommand(DriveSubsystem drive) {
         mDrive = drive;
         mIsFinished = false;
         mLastPitch = 0;
-        pitches = new double[kWindowSize];
-        index = 0;
+   
         mPID = new PID();
+
+        mWindow = new SlidingWindow(kWindowSize, kBalanceKillDelta);
+
         addRequirements(mDrive);
     }
 
@@ -54,32 +59,20 @@ public class BalanceRobotCommand extends CommandBase {
             return;
         }
 
-        pitches[index++]  = -mDrive.getPitch();
-        if (index < kWindowSize) return; 
+        mWindow.add(-mDrive.getPitch());
+        if (!mWindow.windowReady()) return;
 
-        double delta = pitches[kWindowSize - 1] - pitches[0];
-
-        if (delta < 0) {
+        if (mWindow.getDelta().doubleValue() < 0) {
             mDrive.drive(new ChassisSpeeds(kSecondSpeed, 0.0, 0.0));
         }
 
-        System.out.println("Delta --> " + delta);
+        System.out.println("Delta --> " + mWindow.getDelta());
 
-        if (delta < kBalanceKillDelta) {
+        if (mWindow.checkDeltaLess()) {
             System.out.println("ERROR: JUST KILLING ROBOT");
             mIsPID = true; 
         }
         
-        pitches = shiftArray(pitches);
-        index = kWindowSize - 1;
-    }
-
-    public double[] shiftArray(double[] arr) {
-        double[] out = new double[arr.length];
-        for (int i = 1; i < arr.length; i++) {
-            out[i - 1] = arr[i];
-        }
-        return out;
     }
 
     @Override
