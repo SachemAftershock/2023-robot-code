@@ -27,8 +27,8 @@ Button driveToButtons[] = {
     Button(DriveToCube8ButtonInfo),
     Button(DriveToCone9ButtonInfo),
     Button(CancelButtonInfo),
-    Button(HumanPlayerLeftButtonInfo),
-    Button(HumanPlayerRightButtonInfo),
+    // Button(HumanPlayerLeftButtonInfo),
+    // Button(HumanPlayerRightButtonInfo),
 };
 
 size_t driveToButtonArraySize = sizeof(driveToButtons) / sizeof(driveToButtons[0]);
@@ -58,6 +58,8 @@ Button ElevatorButtonArray[] = {
     Button(ElevatorLowButtonInfo),
     Button(ElevatorMiddleButtonInfo),
     Button(ElevatorHighButtonInfo),
+    Button(HumanPlayerLeftButtonInfo),
+    Button(HumanPlayerRightButtonInfo),
 };
 size_t ElevatorButtonArraySize = sizeof(ElevatorButtonArray) / sizeof(ElevatorButtonArray[0]);
 ToggleButtonGroup ElevatorButtonGroup(ElevatorButtonArray, ElevatorButtonArraySize, ElevatorButtonArray[0]);

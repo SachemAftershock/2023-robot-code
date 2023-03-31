@@ -29,8 +29,8 @@ LED DriveToLeds[] = {
     DriveToCone7,
     DriveToCube8,
     DriveToCone9,
-    HumanLeft,
-    HumanRight,
+    // HumanLeft,
+    // HumanRight,
     Cancel,
 };
 LedGroup driveToLedGroup(DriveToLeds, sizeof(DriveToLeds) / sizeof(DriveToLeds[0]));
@@ -47,6 +47,8 @@ LED elevatorLeds[] = {
     elevatorLow,
     elevatorMid,
     elevatorHigh,
+    HumanLeft,
+    HumanRight,
 };
 LedGroup elevatorLedGroup(elevatorLeds, sizeof(elevatorLeds) / sizeof(elevatorLeds[0]));
 
