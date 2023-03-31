@@ -176,8 +176,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                 // double idleOutput = mPid.update(current, mSetpoint);
                 // setSpeed(idleOutput);
 
-                mSecondaryMotor.setVoltage(0.3);
-                mMotor.setVoltage(0.3); //was 0.5
+                mSecondaryMotor.setVoltage(0.075);
+                mMotor.setVoltage(0.075); //was 0.5
                 //stop();
 
                 break;
