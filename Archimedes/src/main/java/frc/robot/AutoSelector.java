@@ -83,7 +83,7 @@ public class AutoSelector {
     public Command getSelectedAutoCommand() {
         switch(mSelectedAutoScenario) {
             case ePath0:
-                return new AutoPathZero(DriveSubsystem.getInstance(), ElevatorSubsystem.getInstance(), ArmSubsystem.getInstance(), IntakeSubsystem.getInstance());
+                return new BalanceDockMobility(DriveSubsystem.getInstance(), ElevatorSubsystem.getInstance(), ArmSubsystem.getInstance(), IntakeSubsystem.getInstance());
             case ePath1:
                 return new AutoPathOne(DriveSubsystem.getInstance(), ElevatorSubsystem.getInstance(), ArmSubsystem.getInstance(), IntakeSubsystem.getInstance());
             case ePath2:
@@ -95,7 +95,7 @@ public class AutoSelector {
             case ePath5:
                 return new AutoPathFive(DriveSubsystem.getInstance(), ElevatorSubsystem.getInstance(), ArmSubsystem.getInstance(), IntakeSubsystem.getInstance());
             case ePath0NC:
-                return new AutoPathZeroNoCharge(DriveSubsystem.getInstance(), ElevatorSubsystem.getInstance(), ArmSubsystem.getInstance(), IntakeSubsystem.getInstance());
+                return new BalanceDock(DriveSubsystem.getInstance(), ElevatorSubsystem.getInstance(), ArmSubsystem.getInstance(), IntakeSubsystem.getInstance());
             case ePath1NC:
                 return new AutoPathOneNoCharge(DriveSubsystem.getInstance(), ElevatorSubsystem.getInstance(), ArmSubsystem.getInstance(), IntakeSubsystem.getInstance());
             case ePath2NC:
