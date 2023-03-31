@@ -17,8 +17,6 @@ public class BalanceRobotCommand extends CommandBase {
     private boolean mIsFinished;
     private boolean mIsPID; 
 
-    private double[] pitches;
-    private int index;
     private PID mPID; 
 
     private SlidingWindow mWindow;
