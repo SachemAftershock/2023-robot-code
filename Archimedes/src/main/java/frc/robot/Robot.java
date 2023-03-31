@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.SubsystemManager;
+import frc.robot.commands.drive.HoldPositionCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -73,6 +74,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         //mRobotContainer.initializeSubsystems();
+        DriveSubsystem.getInstance().unlockWheels();
         System.out.println("Time 1 --> " + Timer.getFPGATimestamp());
         mRobotContainer.initialize();
         System.out.println("Time 2 --> " + Timer.getFPGATimestamp());
@@ -94,6 +96,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         CommandScheduler.getInstance().cancelAll();
+        DriveSubsystem.getInstance().unlockWheels();
 
         boolean TEST = false;
         if (TEST) {

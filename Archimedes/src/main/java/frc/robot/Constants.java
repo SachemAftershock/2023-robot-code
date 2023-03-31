@@ -116,7 +116,12 @@ public class Constants {
         public static final double kTiltSlope = 0.4;
 
         public static class BalanceConstants {
-            public static final double kBalanceKillDelta = -6.5;//-3 / 25d;
+            public static final double kBalanceKillDelta = -5.5;//-3 / 25d;
+            public static final double kSpeedAttack = -10.0;
+            public static final double kSecondSpeed = -10.0;
+            public static final int kWindowSize = 20;
+            public static final double[] kBalancePIDGains = {0.1, 0.0, 0.0};
+            public static final double kBalanceRobotEpsilon = 0.75;
         }
 
     }

@@ -32,7 +32,9 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.ErrorTracker.ErrorType;
+import frc.robot.auto.cubeAutoPaths.CubeLowOnly;
 import frc.robot.auto.cubeAutoPaths.CubeLowThenChargeStartingMiddle;
+import frc.robot.auto.cubeAutoPaths.CubeMidOnly;
 import frc.robot.auto.fieldOrientedTrajectoryAuto.*;
 import frc.robot.auto.linearAuto.AutoPathConeLinear;
 import frc.robot.auto.linearAuto.AutoPathCubeLinear;
@@ -526,13 +528,13 @@ public class RobotContainer {
      
         //return new LinearDriveCommand(mDriveSubsystem, 0.5, CardinalDirection.eY);
         //return new CubeHighStartingRight(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
-        return new CubeLowThenChargeStartingMiddle(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
+        //return new CubeLowThenChargeStartingMiddle(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
         //return new BalanceRobotCommand(mDriveSubsystem);
 
-        // return new SequentialCommandGroup(
-        //     new CubeLowThenChargeStartingMiddle(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem),
-        //     new TaxiPath(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
-        // );
+        return new SequentialCommandGroup(
+            new CubeLowOnly(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem),
+            new TaxiPath(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+        );
 
     }
 
