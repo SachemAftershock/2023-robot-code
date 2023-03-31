@@ -5,6 +5,8 @@ import frc.lib.Lidar;
 import frc.lib.PID;
 import frc.robot.RobotContainer;
 import frc.robot.enums.ControllState;
+import frc.robot.ButtonBox;
+import frc.robot.ButtonBoxPublisher;
 import frc.robot.ErrorTracker;
 import frc.robot.ErrorTracker.ErrorType;
 import frc.robot.enums.ElevatorState;
@@ -21,6 +23,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,6 +48,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     private ElevatorState mCurrentState;
     private ElevatorState mDesiredState;
+
+    private ElevatorMode mLastMode;
     private final MedianFilter mFilter;
 
     ShuffleboardTab ElevatorSubsystemTab = Shuffleboard.getTab("Elevator Subsystem");
@@ -56,7 +61,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     private int counter;
     private double prevDelta;
     private double prevTestDistance;
-    private double mSystemTimer;
+    private double mTimeToLastMeasurement = 0;
+    private double mLastMeasurement = 0;
 
     private RelativeEncoder mEncoder;
 
@@ -143,9 +149,9 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
         //System.out.println("Desired state --> " + mDesiredState.toString() + " Current state --> " + mCurrentState.toString());
 
-        if(mDesiredState != mCurrentState && !mLidarFailure) {
+        if(mElevatorMode != ElevatorMode.eRewinding && mDesiredState != mCurrentState && !mLidarFailure) {
             mElevatorMode = ElevatorMode.ePIDControl;
-        } else {
+        } else if (mElevatorMode != ElevatorMode.eRewinding) {
             mElevatorMode = ElevatorMode.eIdle;
         }
 
@@ -186,18 +192,20 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                 //Only be in this state if the elevator is moving
                 if(mPid.isPaused()) mPid.resumePID();
                 checkBounds(current);
-                mSystemTimer = System.currentTimeMillis();
-                //This time is in miliseconds
-                //Was 1000 before
-                // if(mSystemTimer > 100) {
-                //     double currentTestDistance = getElevatorHeight();
-                //     if(Math.abs(speed) > 0.0 && Math.abs(currentTestDistance - prevTestDistance) > kEpsilon) {
-                //         System.out.println("ERROR : ---- Elevator Wound Backwards ----" + " speed (in RPM) --> " + 
-                //         speed + " Distance delta --> " + Math.abs(currentTestDistance - prevTestDistance));
-                //         stop();
-                //         mElevatorMode = ElevatorMode.eRewinding;
-                //     }
-                // }
+
+                
+                if(Math.abs(mPid.update(current, mSetpoint)) > 0.0 && Math.abs(getElevatorHeight() - mLastMeasurement) < kEpsilonLidar + 1) {
+                    System.out.println("ERROR : ---- Elevator Wound Backwards ----" + " speed (in RPM) --> " + 
+                    speed + " Distance delta --> " + Math.abs(getElevatorHeight() - mLastMeasurement));
+                    stop();
+                    mElevatorMode = ElevatorMode.eRewinding;
+                    return;
+                }
+
+                if (Timer.getFPGATimestamp() - mTimeToLastMeasurement > 500) {
+                    mLastMeasurement = getElevatorHeight();
+                    mTimeToLastMeasurement = Timer.getFPGATimestamp();
+                }
 
                 double output = mPid.update(current, mSetpoint);
 
@@ -220,6 +228,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
             case eManualControl:
                 //Pauses the PID and re-engages it once manual control is released
+                if (mLastMode != ElevatorMode.eManualControl) RobotContainer.getInstance().syncLeds();
                 if(!(mPid.isPaused())) mPid.pausePID();
                 // Use this check if driver is stupid and unwinds the rope
                 // if(mSystemTimer > 200) {
@@ -243,6 +252,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                 //If an unwind has been detected elevator will automatically go into this state 
                 //and attempt to rewind the rope
                 mPid.pausePID();
+                stop();
+                ButtonBoxPublisher.enableAllLeds();
                 // mSystemTimer = System.currentTimeMillis();
                 // if(mSystemTimer > 100) {
                 //     double currentTestDistance = getElevatorHeight();
@@ -261,6 +272,8 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                 System.out.println("------ Elevator in erraneous state ------");
                 break;
         }
+
+        mLastMode = mElevatorMode;
 
     }
 

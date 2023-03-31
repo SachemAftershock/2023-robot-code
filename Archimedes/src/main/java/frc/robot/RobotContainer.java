@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 
@@ -533,9 +534,8 @@ public class RobotContainer {
 
         return new SequentialCommandGroup(
             new CubeLowOnly(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem),
-            new TaxiPath(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+            new TaxiAndCubePickupRight(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
         );
-
     }
 
     private static double deadband(double value, double deadband) {

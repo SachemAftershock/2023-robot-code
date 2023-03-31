@@ -58,10 +58,10 @@ public class CubeLowThenChargeStartingMiddle extends SequentialCommandGroup{
             new EjectCubeCommand(mIntake),
             new DelayCommand(0.5),
             new StopIntakeCommand(mIntake),
-            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
-            new BalanceRobotCommand(drive),
-            new DelayCommand(1.0),
-            new HoldPositionCommand(drive)
+            CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)
+            //new BalanceRobotCommand(drive)
+            // new DelayCommand(1.0),
+            // new HoldPositionCommand(drive)
            
         );
         

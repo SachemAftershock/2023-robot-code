@@ -19,6 +19,7 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.LowScoreSequence;
 import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.FollowTrajectoryCommandFactory;
@@ -28,6 +29,7 @@ import frc.robot.commands.elevator.SetElevatorStateCommand;
 import frc.robot.commands.intake.EjectConeCommand;
 import frc.robot.commands.intake.EjectCubeCommand;
 import frc.robot.commands.intake.IngestConeCommand;
+import frc.robot.commands.intake.IngestCubeCommand;
 import frc.robot.commands.intake.StopIntakeCommand;
 import frc.robot.enums.ArmState;
 import frc.robot.enums.ElevatorState;
@@ -39,7 +41,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.auto.DelayCommand;
 
-public class TaxiPath extends SequentialCommandGroup{
+public class TaxiRight extends SequentialCommandGroup{
 
     private final DriveSubsystem mDrive; 
     private final ElevatorSubsystem mElevator;
@@ -54,11 +56,13 @@ public class TaxiPath extends SequentialCommandGroup{
 
     PathPlannerTrajectory examplePath = PathPlanner.loadPath("AutoPath2NC", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .4, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
     
-    PathPlannerTrajectory mobility = PathPlanner.loadPath("DriveX", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .5, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
+    PathPlannerTrajectory mobility = PathPlanner.loadPath("DriveX", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .45, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
     
     PathPlannerTrajectory right = PathPlanner.loadPath("DriveLeft", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .5, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
 
     PathPlannerTrajectory left = PathPlanner.loadPath("DriveRight", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .5, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
+
+    PathPlannerTrajectory pickup = PathPlanner.loadPath("RightPieceArc", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .2, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
 
     TrajectoryConfig config = new TrajectoryConfig(
         DriveConstants.kAutoMaxVelocityMetersPerSecond * 0.3,
@@ -84,7 +88,7 @@ public class TaxiPath extends SequentialCommandGroup{
 
     Trajectory mNewPathToCone = pathToCone.transformBy(mTransform2d);
 
-    public TaxiPath(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
+    public TaxiRight(DriveSubsystem drive, ElevatorSubsystem elevator, ArmSubsystem arm, IntakeSubsystem intake) {
 
         mDrive = drive;
         mElevator = elevator;
@@ -101,7 +105,6 @@ public class TaxiPath extends SequentialCommandGroup{
             // //mDrive.followPathTrajectoryBlue(true, examplePath)
             mDrive.followPathTrajectoryYLinear(true, right),
             mDrive.followPathTrajectoryXLinear(true, mobility)
-            //new LinearDriveCommand(mDrive, -3.5, CardinalDirection.eX)
         );
         //pathToCone.transformBy(mStartingPose);
         

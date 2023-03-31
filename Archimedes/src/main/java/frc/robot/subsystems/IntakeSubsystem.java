@@ -51,9 +51,11 @@ public class IntakeSubsystem extends AftershockSubsystem {
         //     stop();
         // }
 
-        if (!RobotContainer.isCone() && mLidar.getDistanceIn() < 5.0 && mIntakeMotor.get() > 0.05) {
-            stop();
-        }
+        // if (!RobotContainer.isCone() && mLidar.getDistanceIn() < 5.0 && mIntakeMotor.get() > 0.05) {
+        //     stop();
+        // }
+
+        //DONT UNCOMMENT THIS
     }
 
     @Override

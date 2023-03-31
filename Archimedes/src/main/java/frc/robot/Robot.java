@@ -20,7 +20,7 @@ public class Robot extends TimedRobot {
     private Command mAutonomousCommand;
 
     private RobotContainer mRobotContainer;
-    private AutoSelector mAutoSelector;
+    //private AutoSelector mAutoSelector;
     private DriveSubsystem mDrive;
 
     /**
@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
 
         mDrive = DriveSubsystem.getInstance();
 
-        mAutoSelector = new AutoSelector();
+        //mAutoSelector = new AutoSelector();
 
         CameraServer.startAutomaticCapture();
 
@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        mAutoSelector.selectAuto();
+        //mAutoSelector.selectAuto();
     }
 
     /**
@@ -97,6 +97,8 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         CommandScheduler.getInstance().cancelAll();
         DriveSubsystem.getInstance().unlockWheels();
+
+        System.out.println("Alliance --> " + DriverStation.getAlliance());
 
         boolean TEST = false;
         if (TEST) {
@@ -138,6 +140,8 @@ public class Robot extends TimedRobot {
 
         mRobotContainer.test();
         mRobotContainer.testPeriodic();
+
+        //System.out.println("Alliance --> " + DriverStation.getAlliance());
     }
 
     /** This function is called once when the robot is first started up. */

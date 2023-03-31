@@ -69,7 +69,9 @@ public class AutoPathCube extends SequentialCommandGroup {
             // Places cube preloaded in robot
             new InstantCommand(() -> RobotContainer.setIsCube()),
             CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake),
-            new EjectConeCommand(mIntake), new DelayCommand(0.5), new StopIntakeCommand(mIntake),
+            new EjectConeCommand(mIntake), 
+            new DelayCommand(0.5), 
+            new StopIntakeCommand(mIntake),
             CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake)
 
         );
