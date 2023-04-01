@@ -56,7 +56,7 @@ public class TaxiRight extends SequentialCommandGroup{
 
     PathPlannerTrajectory examplePath = PathPlanner.loadPath("AutoPath2NC", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .4, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
     
-    PathPlannerTrajectory mobility = PathPlanner.loadPath("DriveX", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .45, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
+    PathPlannerTrajectory mobility = PathPlanner.loadPath("DriveX", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .4, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
     
     PathPlannerTrajectory right = PathPlanner.loadPath("DriveLeft", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .5, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
 
@@ -103,7 +103,7 @@ public class TaxiRight extends SequentialCommandGroup{
             // new StopIntakeCommand(mIntake),
             // CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
             // //mDrive.followPathTrajectoryBlue(true, examplePath)
-            mDrive.followPathTrajectoryYLinear(true, right),
+            //mDrive.followPathTrajectoryYLinear(true, right),
             mDrive.followPathTrajectoryXLinear(true, mobility)
         );
         //pathToCone.transformBy(mStartingPose);

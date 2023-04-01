@@ -46,24 +46,26 @@ public class BalanceRobotTimeIntervalCommand extends CommandBase {
         mWindow.add(-mDrive.getPitch());
         if (!mWindow.windowReady()) return;
 
+        System.out.println("State --> " + mState);
+        final double tipAngle = 10.0;
         switch (mState) {
             case SCALE_CHARGE_STATION:
-                if (mWindow.getDelta().doubleValue() < 0) {
+                if (mWindow.getDelta().doubleValue() < -tipAngle) {
                     mState = State.TILT_BACK;
-                    mDrive.drive(new ChassisSpeeds(kSecondSpeed, 0, 0));
+                    mDrive.drive(new ChassisSpeeds(kSecondSpeed + 5, 0, 0));
                 }
                 break;
             case TILT_BACK:
-                if (mWindow.getDelta().doubleValue() > 0) {
+                if (mWindow.getDelta().doubleValue() > tipAngle) {
                     mState = State.TILT_FORWARD;
                     mTiltBackTime = Timer.getFPGATimestamp();
-                    mDrive.drive(new ChassisSpeeds(-kSecondSpeed, 0, 0));
+                    mDrive.drive(new ChassisSpeeds(-(kSecondSpeed + 5), 0, 0));
                 }
                 break;
             case TILT_FORWARD:
-                if (mWindow.getDelta().doubleValue() < 0) {
+                if (mWindow.getDelta().doubleValue() < -tipAngle - 0.5) {
                     mTiltForwardTime = Timer.getFPGATimestamp();
-                    mDrive.drive(new ChassisSpeeds(kSecondSpeed, 0, 0));
+                    mDrive.drive(new ChassisSpeeds(kSecondSpeed + 5, 0, 0));
                     mState = State.FIND_MIDDLE;
                 }
                 break;

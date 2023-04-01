@@ -33,6 +33,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.CardinalDirection;
 import frc.robot.ErrorTracker.ErrorType;
+import frc.robot.auto.cubeAutoPaths.CubeHighOnly;
 import frc.robot.auto.cubeAutoPaths.CubeLowOnly;
 import frc.robot.auto.cubeAutoPaths.CubeLowThenChargeStartingMiddle;
 import frc.robot.auto.cubeAutoPaths.CubeMidOnly;
@@ -52,6 +53,8 @@ import frc.robot.commands.arm.DetachHookCommand;
 import frc.robot.commands.arm.SetArmStateCommand;
 import frc.robot.commands.drive.BalanceRobotCommand;
 import frc.robot.commands.drive.BalanceRobotContinousCommand;
+import frc.robot.commands.drive.BalanceRobotForceDampCommand;
+import frc.robot.commands.drive.BalanceRobotTimeIntervalCommand;
 import frc.robot.commands.drive.DriveToWaypointCommand;
 import frc.robot.commands.drive.FollowTrajectoryCommandFactory;
 import frc.robot.commands.drive.HoldPositionCommand;
@@ -531,10 +534,15 @@ public class RobotContainer {
         //return new CubeHighStartingRight(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
         //return new CubeLowThenChargeStartingMiddle(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem);
         //return new BalanceRobotCommand(mDriveSubsystem);
+        //return new BalanceRobotTimeIntervalCommand(mDriveSubsystem);
+        //return new BalanceRobotForceDampCommand(mDriveSubsystem);
 
+        //USe this for QUAL 61
         return new SequentialCommandGroup(
             new CubeLowOnly(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem),
-            new TaxiAndCubePickupRight(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+            //new CubeHighOnly(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem),
+            //new BalanceRobotTimeIntervalCommand(mDriveSubsystem)
+            new TaxiRight(mDriveSubsystem, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem).withTimeout(2.25)
         );
     }
 

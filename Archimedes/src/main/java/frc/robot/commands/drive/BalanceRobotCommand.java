@@ -27,6 +27,8 @@ public class BalanceRobotCommand extends CommandBase {
 
     int in = 0;
 
+    private double mFirstTipBackTime = 0;
+
     public BalanceRobotCommand(DriveSubsystem drive) {
         mDrive = drive;
         mIsFinished = false;
@@ -56,13 +58,13 @@ public class BalanceRobotCommand extends CommandBase {
         }
         //System.out.println("Pitch --> " + -mDrive.getPitch());
 
-        // if (mDrive.getPitch() <= -12) {
+        if (mDrive.getPitch() <= -12) {
 
-        // }
+        }
 
         if (mIsPID) {
             //System.out.println("---------- STARTING PID ----------");
-            double speed = -mPID.update(mDrive.getPitch(), 0.0) * 2.75;
+            double speed = -mPID.update(mDrive.getPitch(), 0.0) * 4.25;
             System.out.println(speed);
             mDrive.drive(new ChassisSpeeds(speed, 0.0, 0.0));
 
@@ -71,6 +73,7 @@ public class BalanceRobotCommand extends CommandBase {
                 //mIsFinished = true;
 
                 ++in;
+                
                 if (in > 2) {
                     mIsFinished = true;
                 }

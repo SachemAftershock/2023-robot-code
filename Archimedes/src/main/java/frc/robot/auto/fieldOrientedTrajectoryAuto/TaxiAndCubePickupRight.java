@@ -56,7 +56,7 @@ public class TaxiAndCubePickupRight extends SequentialCommandGroup{
 
     PathPlannerTrajectory examplePath = PathPlanner.loadPath("AutoPath2NC", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .4, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
     
-    PathPlannerTrajectory mobility = PathPlanner.loadPath("DriveX", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .45, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
+    PathPlannerTrajectory mobility = PathPlanner.loadPath("DriveX", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .1, DriveConstants.kMaxAccelerationMetersPerSecondSquared*.1));
     
     PathPlannerTrajectory left = PathPlanner.loadPath("DriveLeft", new PathConstraints(DriveConstants.kAutoMaxVelocityMetersPerSecond * .5, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
 
@@ -96,7 +96,7 @@ public class TaxiAndCubePickupRight extends SequentialCommandGroup{
         mIntake = intake;
         addCommands(
             // new InstantCommand(() -> RobotContainer.setIsCube()),
-            // CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake), 
+            // //CommandFactory.HandleSuperStructureSequence(SuperState.eHigh, mElevator, mArm, mIntake), 
             // new DelayCommand(0.5),
             // new EjectCubeCommand(mIntake),
             // new DelayCommand(0.5),
@@ -104,15 +104,15 @@ public class TaxiAndCubePickupRight extends SequentialCommandGroup{
             // CommandFactory.HandleSuperStructureSequence(SuperState.eStow, mElevator, mArm, mIntake),
             // //mDrive.followPathTrajectoryBlue(true, examplePath)
             mDrive.followPathTrajectoryYLinear(true, left),
-            mDrive.followPathTrajectoryXLinear(true, mobility)
-            // new RotateDriveCommand(drive, 180),
-            // new LowScoreSequence(arm, elevator, intake),
-            // new IngestCubeCommand(intake),
-            // mDrive.followPathTrajectory(true, pickup),
-            // new DelayCommand(0.5),
-            // new StopIntakeCommand(intake),
-            // new SetElevatorStateCommand(ElevatorState.eClearBumper, elevator),
-            // new SetArmStateCommand(ArmState.eStowEmpty, arm)
+            mDrive.followPathTrajectoryXLinear(false, mobility),
+            new RotateDriveCommand(drive, 180),
+            new LowScoreSequence(arm, elevator, intake),
+            new IngestCubeCommand(intake),
+            mDrive.followPathTrajectory(false, pickup),
+            new DelayCommand(0.5),
+            new StopIntakeCommand(intake),
+            new SetElevatorStateCommand(ElevatorState.eClearBumper, elevator),
+            new SetArmStateCommand(ArmState.eStowEmpty, arm)
             //new LinearDriveCommand(mDrive, -3.5, CardinalDirection.eX)
         );
         //pathToCone.transformBy(mStartingPose);

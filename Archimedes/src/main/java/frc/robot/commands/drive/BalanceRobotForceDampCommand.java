@@ -8,14 +8,17 @@ import frc.robot.subsystems.DriveSubsystem;
 import static frc.robot.Constants.DriveConstants.BalanceConstants.*;
 
 public class BalanceRobotForceDampCommand extends CommandBase {
-    private final double kMaxSpeed = 0.7;
-    private final double kDampRate = 0.1;
+    private final double kMaxSpeed = 15.0;
+    private final double kDampRate = 5.0;
 
     private final DriveSubsystem mDrive;
 
     private final SlidingWindow mWindow;
     private double mCurrentSpeedDamp = kMaxSpeed;
 
+    private boolean mLastDecremented = false;
+
+    private int iteration = 0;
     public BalanceRobotForceDampCommand(DriveSubsystem drive) {
         mDrive = drive;
         mWindow = new SlidingWindow(kWindowSize);
@@ -32,13 +35,23 @@ public class BalanceRobotForceDampCommand extends CommandBase {
         mWindow.add(-mDrive.getPitch());
         if(!mWindow.windowReady()) return;
 
-        if (mWindow.getDelta().doubleValue() < kBalanceKillDelta) {
+        if (mWindow.getDelta().doubleValue() < kBalanceKillDelta && !mLastDecremented) {
             mCurrentSpeedDamp -= kDampRate;
             mDrive.drive(new ChassisSpeeds(-mCurrentSpeedDamp, 0,0));
+            mLastDecremented = true;
         }
         else if (mWindow.getDelta().doubleValue() > -kBalanceKillDelta) {
             mDrive.drive(new ChassisSpeeds(mCurrentSpeedDamp,0,0));
         }
+        else {
+            ++iteration;
+            if (iteration > 100) {
+                mLastDecremented = false;
+                iteration = 0;
+            }
+        }
+
+        System.out.println("Speed --> " + mCurrentSpeedDamp);
     }
 
     @Override

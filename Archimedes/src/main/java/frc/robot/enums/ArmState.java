@@ -23,7 +23,7 @@ public enum ArmState {
     eFloor(16.47, 16.47), 
     eLow(16.47, 16.47), 
     eMid(13.18, 13.18),
-    eHigh(13.25, 13.4), 
+    eHigh(13.25, 11.0), 
     ePlayerStation(16.9, 16.9);// (17.0, 15.5/*16.5*/);
 
     //high was 13.17 in cone
