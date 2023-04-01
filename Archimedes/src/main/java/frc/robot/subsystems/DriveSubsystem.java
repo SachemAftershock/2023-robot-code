@@ -237,6 +237,7 @@ public class DriveSubsystem extends AftershockSubsystem {
 			pcw = null;
 		}
 
+		unlockWheels();
 		drive(new ChassisSpeeds());
 	}
 
@@ -373,7 +374,6 @@ public class DriveSubsystem extends AftershockSubsystem {
 	public double getPitch() {
 		return mNavx.getRoll();
 	}
-
 	/*
 	 * @return The robot relative roll
 	 */
