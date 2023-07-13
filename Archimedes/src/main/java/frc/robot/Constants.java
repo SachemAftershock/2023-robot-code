@@ -272,8 +272,8 @@ public class Constants {
         public static final double kElevatorLidarOffset = 0.0;
         public static final double kElevatorLidarHeightFromGround = 3.75;
         public static final int kElevatorMedianFilterSampleSize = 10;
-        public static final double kElevatorMaxHeight = 68.0;
-        public static final double kElevatorMinHeight = 17.0;
+        public static final double kElevatorMaxHeight = 45.0;
+        public static final double kElevatorMinHeight = 5.0;
         public static final double kCompensatingVoltage = 0.0;
 
     }

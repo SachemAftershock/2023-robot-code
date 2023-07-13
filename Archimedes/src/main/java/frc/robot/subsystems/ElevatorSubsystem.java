@@ -9,6 +9,7 @@ import frc.robot.ButtonBox;
 import frc.robot.ButtonBoxPublisher;
 import frc.robot.ErrorTracker;
 import frc.robot.ErrorTracker.ErrorType;
+import frc.robot.auto.DelayCommand;
 import frc.robot.enums.ElevatorState;
 
 import com.ctre.phoenixpro.Timestamp;
@@ -70,11 +71,14 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
     private boolean mLidarFailure;
 
+    DigitalInput limitSwitch = new DigitalInput(5);
+
     public enum ElevatorMode {
         eStowedEmpty, eIdle, ePIDControl, eManualControl, eRewinding, eBadState
     }
 
     private ElevatorSubsystem() {
+
 
         mLidar = new Lidar(new DigitalInput(kElevatorLidarId));
         mPid = new PID();
@@ -127,6 +131,10 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         //System.out.println(getElevatorHeight());
 
         //System.out.println(mEncoder.getPosition() + ", " + getElevatorHeight());
+        if(limitSwitch.get())
+        {
+            System.out.println("Bottom limit reached");
+        }
 
         ControllState controlState = RobotContainer.getControllState();
         double current = getElevatorHeight();
@@ -228,24 +236,26 @@ public class ElevatorSubsystem extends AftershockSubsystem {
 
             case eManualControl:
                 //Pauses the PID and re-engages it once manual control is released
-                if (mLastMode != ElevatorMode.eManualControl) RobotContainer.getInstance().syncLeds();
-                if(!(mPid.isPaused())) mPid.pausePID();
-                // Use this check if driver is stupid and unwinds the rope
-                // if(mSystemTimer > 200) {
-                //     double currentTestDistance = getElevatorHeight();
-                //     if(Math.abs(speed) > 0.0 &&  Math.abs(currentTestDistance - prevTestDistance) < kEpsilon) {
-                //         System.out.println("ERROR : ---- Elevator Wound Backwards ----" + " speed --> " + 
-                //         speed + " Distance delta --> " + Math.abs(currentTestDistance - prevTestDistance));
-                //         stop();
-                //         mElevatorMode = ElevatorMode.eRewinding;
-                //     }
-                //     prevTestDistance = currentTestDistance;
-                // }
+                if (mLastMode != ElevatorMode.eManualControl)
+                 RobotContainer.getInstance().syncLeds();
 
-                //System.out.println("Manual getting called");
+                /*if(!(mPid.isPaused()))
+                 mPid.pausePID();
+                // Use this check if driver is stupid and unwinds the rope
+                Timer.delay(0.04);
+                   double currentTestDistance = getElevatorHeight();
+                     if(Math.abs(speed) > 0.0 &&  Math.abs(currentTestDistance - prevTestDistance) == 0) {
+                         System.out.println("ERROR : ---- Elevator Wound Backwards ----" + " speed --> " + 
+                         speed + " Distance delta --> " + Math.abs(currentTestDistance - prevTestDistance));
+                         stop();
+                         mElevatorMode = ElevatorMode.eRewinding;
+                     }
+                     prevTestDistance = currentTestDistance;
+
+                System.out.println("Manual getting called");
                 
                 setSetpoint(getElevatorHeight());
-
+                */
                 break;
 
             case eRewinding:
@@ -317,11 +327,26 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
 
     public void jogElevatorUp() {
-        setSpeed(0.6);
+        if(getElevatorHeight() < kElevatorMaxHeight)
+        {
+            setSpeed(0.6);
+        }
+        else
+        {
+            stop();
+            System.out.println("Height bound reached");
+        }
     }
 
     public void jogElevatorDown() {
-        setSpeed(-0.6);
+        if(getElevatorHeight() > kElevatorMinHeight)
+        {
+            setSpeed(-0.6);
+        }
+        else
+        {
+            stop();
+        }
 
     }
 
@@ -338,7 +363,15 @@ public class ElevatorSubsystem extends AftershockSubsystem {
     }
 
     public void setManualSpeed(double speed) {
-        setSpeed(speed);
+        if(getElevatorHeight() < kElevatorMaxHeight && getElevatorHeight() > kElevatorMinHeight && speed != 0)
+        {
+            setSpeed(speed);
+        }
+        else
+        {
+            stop();
+            System.out.println("STOPPING");
+        }
     }
 
     public double getElevatorDistance() {

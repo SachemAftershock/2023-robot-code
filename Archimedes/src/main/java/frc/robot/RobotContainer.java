@@ -89,6 +89,9 @@ import java.util.List;
 import java.util.ResourceBundle.Control;
 import java.util.function.Function;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+
 import static frc.robot.Constants.DriveConstants.kRotationScalingConstant;
 
 /**
@@ -200,6 +203,7 @@ public class RobotContainer {
         if(mTestController.getAButton() && Math.abs(mTestController.getLeftY()) > 0.05) {
             setManualControllState();
             mElevatorSubsystem.setManualSpeed(mTestController.getLeftY());
+            System.out.println("manual elevator height");
         }
 
         if(mTestController.getAButton() && Math.abs(mTestController.getLeftX()) > 0.05) {
@@ -221,11 +225,14 @@ public class RobotContainer {
         // else {
         //     mElevatorSubsystem.setTestSpeed(0.0);
         // }
+        
 
         if(mTestController.getAButton()) {
             mElevatorSubsystem.jogElevatorUp();
+            System.out.println("going up");
         } else if(mTestController.getYButton()) {
             mElevatorSubsystem.jogElevatorDown();
+            System.out.println("going down");
         } else {
             mElevatorSubsystem.stop();
         }
@@ -250,8 +257,8 @@ public class RobotContainer {
         mSubsystemManager.initialize();
     }
 
-    private void configureButtonBindings() {
-        // mPrimaryThrottleController.getTrigger().onTrue(new InstantCommand(() -> {
+    private void configureButtonBindings() { 
+                // mPrimaryThrottleController.getTrigger().onTrue(new InstantCommand(() -> {
         // mDriveToCoordinateCommand = new
         // DriveToWaypointCommand(mDriveSubsystem.getWaypoint(), mDriveSubsystem);
         // mDriveToCoordinateCommand.schedule();
