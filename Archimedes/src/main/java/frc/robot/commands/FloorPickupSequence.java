@@ -28,7 +28,9 @@ public class FloorPickupSequence extends SequentialCommandGroup{
             new InstantCommand(() -> ButtonBoxPublisher.enableLed(LedPosition.eHumanPlayerRight)),
             new SetElevatorStateCommand(ElevatorState.eClearBumper, elevator),
             new SetArmStateCommand(ArmState.eLow, arm),
+            new DelayCommand(0.5),
             new SetElevatorStateCommand(ElevatorState.eLow, elevator)
+            
             //new SmartIngestCommand(intake),
             //new DelayCommand(0.5),
             //new StopIntakeCommand(intake),

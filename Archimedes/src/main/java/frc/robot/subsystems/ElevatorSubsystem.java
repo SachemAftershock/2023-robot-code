@@ -131,15 +131,15 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         //System.out.println(getElevatorHeight());
 
         //System.out.println(mEncoder.getPosition() + ", " + getElevatorHeight());
-        if(limitSwitch.get())
+        /**if(limitSwitch.get())
         {
             System.out.println("Bottom limit reached");
-        }
+        }**/
 
         ControllState controlState = RobotContainer.getControllState();
         double current = getElevatorHeight();
 
-        if (current < kElevatorMinHeight || current > kElevatorMaxHeight) {
+        if (current < kElevatorMinHeight || current > 35.0/*kElevatorMaxHeight*/) {
             mLidarFailure = true;
             stop();
             mElevatorMode = ElevatorMode.eManualControl;
@@ -235,14 +235,16 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                 break;
 
             case eManualControl:
+                if (mLastMode != ElevatorMode.eManualControl) RobotContainer.getInstance().syncLeds();
+                if(!(mPid.isPaused())) mPid.pausePID();
                 //Pauses the PID and re-engages it once manual control is released
                 if (mLastMode != ElevatorMode.eManualControl)
                  RobotContainer.getInstance().syncLeds();
 
-                /*if(!(mPid.isPaused()))
-                 mPid.pausePID();
+                // if(!(mPid.isPaused()))
+                //  mPid.pausePID();
                 // Use this check if driver is stupid and unwinds the rope
-                Timer.delay(0.04);
+                /*Timer.delay(0.04);
                    double currentTestDistance = getElevatorHeight();
                      if(Math.abs(speed) > 0.0 &&  Math.abs(currentTestDistance - prevTestDistance) == 0) {
                          System.out.println("ERROR : ---- Elevator Wound Backwards ----" + " speed --> " + 
@@ -252,10 +254,12 @@ public class ElevatorSubsystem extends AftershockSubsystem {
                      }
                      prevTestDistance = currentTestDistance;
 
+                */
+
                 System.out.println("Manual getting called");
                 
                 setSetpoint(getElevatorHeight());
-                */
+                
                 break;
 
             case eRewinding:
@@ -407,6 +411,7 @@ public class ElevatorSubsystem extends AftershockSubsystem {
         // SmartDashboard.putNumber("Raw Distance", mLidar.getDistanceIn());
         SmartDashboard.putNumber("Elevator Distance", getElevatorHeight());
         SmartDashboard.putString("Elevator Mode ", mElevatorMode.toString());
+        SmartDashboard.putNumber("Elevator Speed RPM", mMotor.getEncoder().getVelocity());
     }
 
     public synchronized static ElevatorSubsystem getInstance() {

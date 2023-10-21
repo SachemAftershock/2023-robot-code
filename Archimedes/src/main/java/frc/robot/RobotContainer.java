@@ -47,6 +47,7 @@ import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FloorPickupSequence;
 import frc.robot.commands.FloorRetractSequence;
 import frc.robot.commands.LowScoreSequence;
+import frc.robot.commands.MidScoreSequence;
 import frc.robot.commands.PrintToConsoleCommand;
 import frc.robot.commands.arm.AttachHookCommand;
 import frc.robot.commands.arm.DetachHookCommand;
@@ -298,13 +299,18 @@ public class RobotContainer {
             ButtonBoxPublisher.disableLed(LedPosition.eEject);
         }));
 
-        mButtonBox.highPosition().onTrue(
-            CommandFactory
-                .HandleSuperStructureSequence(SuperState.eHigh, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
-        );
+        // mButtonBox.highPosition().onTrue(
+        //     CommandFactory
+        //         .HandleSuperStructureSequence(SuperState.eHigh, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+        // );
+
         mButtonBox.mediumPosition().onTrue(
-            CommandFactory
-                .HandleSuperStructureSequence(SuperState.eMid, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+            // CommandFactory
+            //     .HandleSuperStructureSequence(SuperState.eMid, mElevatorSubsystem, mArmSubsystem, mIntakeSubsystem)
+            new SequentialCommandGroup(
+                new MidScoreSequence(mArmSubsystem, mElevatorSubsystem, mIntakeSubsystem)
+
+            )
         );
 
         mButtonBox.floorPosition().onTrue(

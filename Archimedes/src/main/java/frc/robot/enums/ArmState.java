@@ -21,8 +21,10 @@ public enum ArmState {
     eStowEmpty(17.7, 17.7), 
     //eStowLoaded(0, 0), 
     eFloor(16.47, 16.47), 
-    eLow(16.47, 16.47), 
-    eMid(13.18, 13.18),
+    //was 16.47
+    eLow(16, 16), 
+    //eMid(13.18, 13.18),
+    eMid(16.0, 16.0),
     eHigh(13.25, 11.0), 
     ePlayerStation(16.9, 16.9);// (17.0, 15.5/*16.5*/);
 

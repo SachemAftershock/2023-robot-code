@@ -278,7 +278,8 @@ public class ArmSubsystem extends AftershockSubsystem {
 
         // SmartDashboard.putNumber("Raw Bar Distance", mLidar.getDistanceIn());
         SmartDashboard.putNumber("Bar Distance", getBarDistance());
-        SmartDashboard.putNumber("Arm Motor Velocity", mLeftArmMotor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Arm Motor Rpm", mLeftArmMotor.getEncoder().getVelocity());
+        SmartDashboard.putString("Arm State", mArmMode.toString());
     }
 
     @Override

@@ -21,21 +21,14 @@ import frc.robot.commands.elevator.SetElevatorStateCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 
-public class FloorRetractSequence extends SequentialCommandGroup{
+public class MidScoreSequence extends SequentialCommandGroup{
 
-    public FloorRetractSequence(ArmSubsystem arm, ElevatorSubsystem elevator, IntakeSubsystem intake) {
+    public MidScoreSequence(ArmSubsystem arm, ElevatorSubsystem elevator, IntakeSubsystem intake) {
         addCommands(
-            new InstantCommand(() -> ButtonBoxPublisher.enableLed(LedPosition.eHumanPlayerLeft)),
-            new SetElevatorStateCommand(ElevatorState.eClearBumper, elevator),
-            new SetArmStateCommand(ArmState.eStowEmpty, arm),
-            //added
-            new SetElevatorStateCommand(ElevatorState.eClearBumper, elevator)
-            //new SetElevatorStateCommand(ElevatorState.eStowEmpty, elevator)
-            //new SmartIngestCommand(intake),
-            //new DelayCommand(0.5),
-            //new StopIntakeCommand(intake),
-            // new SetElevatorStateCommand(ElevatorState.eClearBumper, elevator),
-            // new SetArmStateCommand(ArmState.eStowEmpty, arm)
+            new InstantCommand(() -> ButtonBoxPublisher.enableLed(LedPosition.eHumanPlayerRight)),
+            new SetElevatorStateCommand(ElevatorState.eMid, elevator),
+            new SetArmStateCommand(ArmState.eMid, arm)
+
         );
         
     }
