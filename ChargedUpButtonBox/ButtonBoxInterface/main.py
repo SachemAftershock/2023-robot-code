@@ -3,7 +3,7 @@ from serial import Serial, SerialTimeoutException, SerialException
 from serial.tools import list_ports
 from traceback import print_exc
 
-SERIAL_PORT = "COM7"  # Leave empty to try to find port automatically
+SERIAL_PORT = ""  # Leave empty to try to find port automatically
 ARDUINO_NAME = "Arduino Mega 2560"  # The arduino to search for when scanning ports. Can leave blank if not scanning
 TEAM_NUMBER = 263
 NT_NAME = "DS Laptop"
